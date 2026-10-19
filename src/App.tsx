@@ -5,6 +5,7 @@ import { Header } from './components/blocks/Header'
 import { Hero } from './components/blocks/Hero'
 import { Industries } from './components/blocks/Industries'
 import { Logos } from './components/blocks/Logos'
+import { NextSteps } from './components/blocks/NextSteps'
 
 // The living UI Kit is loaded only when /ui-kit is opened, so it does not weigh on the site itself.
 const UiKitPage = lazy(() => import('./ui-kit/UiKitPage'))
@@ -28,6 +29,7 @@ export default function App() {
         <Features />
         <Industries />
         <Global />
+        <NextSteps />
       </main>
     </>
   )
