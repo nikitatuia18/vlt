@@ -2,7 +2,7 @@ import type { ComponentProps, ReactNode } from 'react'
 import exportIconSrc from '../../assets/icons/export.svg'
 import { Icon } from './Icon'
 
-export type ButtonLinkVariant = 'primary' | 'secondary'
+export type ButtonLinkVariant = 'primary' | 'secondary' | 'inverse'
 export type ButtonLinkSize = 'md' | 'lg'
 export type ButtonLinkIcon = 'export'
 
@@ -29,6 +29,8 @@ const variantClasses: Record<ButtonLinkVariant, string> = {
     'bg-surface-brand-default text-typography-static-w hover:bg-surface-brand-hover active:bg-surface-brand-active',
   secondary:
     'bg-surface-subtle text-typography-primary ring-1 ring-inset ring-border-subtle hover:bg-surface-hover',
+  // White in both themes (static colors): for a button on a brand-colored banner.
+  inverse: 'bg-surface-static-w text-typography-static-b hover:bg-surface-static-w/90',
 }
 
 // Icon slot (px) per button size, and the glyph size inside the slot as drawn in Figma (insets 4.58% / 5.21%).

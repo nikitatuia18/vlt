@@ -23,7 +23,7 @@
 ## 3. Компоненты (`src/components/ui/`)
 | Компонент | Назначение | Свойства |
 |---|---|---|
-| `ButtonLink` | кнопка-ссылка «таблетка» (`<a>`) | `variant`: `primary` \| `secondary`; `size`: `md` (44 px, шапка) \| `lg` (56 px, секции); `icon`: `'export'`; остальное как у `<a>` |
+| `ButtonLink` | кнопка-ссылка «таблетка» (`<a>`) | `variant`: `primary` \| `secondary` \| `inverse` (белая кнопка на баннере цвета бренда, статичные цвета, одинакова в обеих темах); `size`: `md` (44 px, шапка) \| `lg` (56 px, секции); `icon`: `'export'`; остальное как у `<a>` |
 | `IconButton` | круглая кнопка под одну иконку 24 px | `size`: `md` 44 px (шапка) \| `lg` 48 px; как у `<button>`; обязателен `aria-label` |
 | `IconLink` | то же, но ссылка (`<a>`), например стрелка в карточке | `size` как у `IconButton`; как у `<a>`; обязателен `aria-label` |
 | `Badge` | маленькая пилюля-метка, например «Coming soon» | `icon`: `'clock'`; как у `<span>` |
@@ -33,14 +33,15 @@
 | `CornerDots` | две точки 5 px на углах блока ровно там, где линии колонки встречают горизонтальную линию | `edge`: `'top'` \| `'bottom'`; `block`: имя блока для `data-el`; родитель должен быть позиционирован; точки лежат поверх соседнего блока (`z-10`), иначе он закрывает их внешнюю половину |
 | `ColumnFade` | две вертикальные линии колонки, продолженные за блок и гаснущие в ноль (начинаются у угловых точек) | `edge`: `'bottom'` (вниз) \| `'top'` (вверх); `block`: имя блока для `data-el` (`{block}__deco-column-fade-{top|bottom}-{left|right}`); `length`: длина, px (160); родитель позиционирован |
 | `Header` | шапка сайта на все страницы: логотип, меню, переключатель темы, две кнопки; на планшете и телефоне бургер | `navItems` (по умолчанию меню сайта из `navigation.ts`), `currentId`: выбранный пункт (серая заливка, как при наведении), `primaryCta`, `secondaryCta`, `isPinned` (по умолчанию закреплён вверху и прячется при прокрутке вниз) |
-| `InteractiveDots` | «живой» фон: точки отталкиваются курсором (<canvas>, прозрачный) | `spacing` 40, `dotSize` 1, `radius` 150, `force` 1, `ease` 0.1 (значения утверждённого прототипа); `className` |
+| `InteractiveDots` | «живой» фон: точки отталкиваются курсором (<canvas>, прозрачный) | `spacing` 40, `dotSize` 1, `radius` 150, `force` 1, `ease` 0.1 (значения утверждённого прототипа); `colorClass`: класс цвета точек (по умолчанию `text-surface-dots`, на баннере цвета бренда светлый `text-icon-static-w`); `className` |
 
 Служебное: `src/lib/theme.ts` — хук `useTheme` (тема живёт в `data-theme` на `<html>`).
 
 ### Откуда что взялось
 - **Header** теперь сам в UI Kit (`src/components/ui/Header/`): раньше был блоком. Дал: `ButtonLink` (md), `IconButton`, `ThemeToggle`, `Icon`, `Container`, пилюли меню (пока внутри блока).
 - **Hero** дал: размер `lg` у кнопки, иконку export 24 px, `InteractiveDots`, радиусы 32 / 48.
-- **InteractiveDots** теперь в двух местах: фон Hero и фон карточки Crypto Processing (Features), поэтому он в UI Kit.`n- **Industries** дал: ColumnFade (линии колонки уходят вниз за блок и гаснут), нижние CornerDots и линию под блоком.
+- **InteractiveDots** теперь в двух местах: фон Hero и фон карточки Crypto Processing (Features), поэтому он в UI Kit.`n- **Cta** дал: вариант `inverse` у `ButtonLink`, `colorClass` у `InteractiveDots` (светлые точки на баннере) и радиус 60 (исключение из токенов).
+- **Industries** дал: ColumnFade (линии колонки уходят вниз за блок и гаснут), нижние CornerDots и линию под блоком.
 - **Features** дал: `Badge`, `IconLink`, `IconButton` размера `lg`, `CornerDots`, радиус 40.
 
 ### Пока внутри блоков (вынести, когда повторится)

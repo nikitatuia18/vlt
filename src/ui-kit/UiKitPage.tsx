@@ -165,7 +165,7 @@ export default function UiKitPage() {
         <Section
           id="buttons"
           title="Buttons"
-          note="ButtonLink: two variants and two sizes (md 44 px in the header, lg 56 px in sections). Hover, active and focus states use the Figma tokens; try them with the mouse and the keyboard."
+          note="ButtonLink: three variants (primary, secondary, inverse for a brand-colored banner) and two sizes (md 44 px in the header, lg 56 px in sections). Hover, active and focus states use the Figma tokens; try them with the mouse and the keyboard."
         >
           <div className="flex flex-col gap-6">
             {(['md', 'lg'] as const).map((size) => (
@@ -184,6 +184,17 @@ export default function UiKitPage() {
                 </div>
               </div>
             ))}
+            <div className="flex flex-col gap-3">
+              <h3 className="type-ui-md text-typography-primary">variant inverse (on a brand-colored banner)</h3>
+              <div className="flex flex-wrap items-center gap-4 rounded-32 bg-surface-brand-default p-6">
+                <ButtonLink href="#" size="lg" variant="inverse" icon="export" onClick={preventNavigation}>
+                  Inverse with icon
+                </ButtonLink>
+                <ButtonLink href="#" size="md" variant="inverse" onClick={preventNavigation}>
+                  Inverse
+                </ButtonLink>
+              </div>
+            </div>
           </div>
         </Section>
 

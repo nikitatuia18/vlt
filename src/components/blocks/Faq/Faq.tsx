@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { ColumnFade } from '../../ui/ColumnFade'
 import { Container } from '../../ui/Container'
 import { CornerDots } from '../../ui/CornerDots'
 import { FaqItem } from './FaqItem'
@@ -48,10 +47,8 @@ export function Faq() {
             ))}
           </ul>
 
-          {/* The end of the block: dots on the corners at the line. The block below (the call to action) is not built yet,
-              so the column lines go on and fade out for now. */}
+          {/* The end of the block: dots on the corners at the line; the column goes on in the call to action below without a break. */}
           <CornerDots edge="bottom" block="faq" />
-          <ColumnFade edge="bottom" block="faq" />
         </div>
       </Container>
     </section>

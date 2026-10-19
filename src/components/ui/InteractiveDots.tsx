@@ -12,6 +12,8 @@ type InteractiveDotsProps = {
   force?: number
   /** Return-to-place speed per frame, 0..1. */
   ease?: number
+  /** Text color class that gives the dot color. Default surface-dots; on a colored background pass a light one. */
+  colorClass?: string
   className?: string
 }
 
@@ -37,6 +39,7 @@ export function InteractiveDots({
   radius = 150,
   force = 1,
   ease = 0.1,
+  colorClass = 'text-surface-dots',
   className = '',
 }: InteractiveDotsProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -191,5 +194,5 @@ export function InteractiveDots({
     }
   }, [theme, spacing, dotSize, radius, force, ease])
 
-  return <canvas ref={canvasRef} aria-hidden="true" className={`block size-full text-surface-dots ${className}`} />
+  return <canvas ref={canvasRef} aria-hidden="true" className={`block size-full ${colorClass} ${className}`} />
 }

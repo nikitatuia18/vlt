@@ -172,6 +172,7 @@
   --radius-32: 2rem; /* hero__dash */
   --radius-40: 2.5rem; /* features cards */
   --radius-48: 3rem; /* hero__media */
+  --radius-60: 3.75rem; /* EXCEPTION: cta banner, no close token, see docs/tokens-map.md (not from Figma variables) */
   --radius-pill: 9999px; /* buttons, menu items, round icon buttons */
 
   /* Layout (derived): content column of the page, 1440 px in the desktop frame */

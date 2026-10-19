@@ -1,4 +1,5 @@
 import { lazy, Suspense } from 'react'
+import { Cta } from './components/blocks/Cta'
 import { Faq } from './components/blocks/Faq'
 import { Features } from './components/blocks/Features'
 import { Global } from './components/blocks/Global'
@@ -35,6 +36,7 @@ export default function App() {
         <Global />
         <NextSteps />
         <Faq />
+        <Cta />
       </main>
     </>
   )
