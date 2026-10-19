@@ -2,11 +2,13 @@ import { expect, test } from '@playwright/test'
 import {
   BRAND_COUNT,
   GRID_ORIGIN,
-  LOOP_LENGTH,
   SPACING,
   TILE_SIZE,
+  WAVELENGTH,
   slotRange,
-  tilePosition,
+  tileBrand,
+  tileX,
+  tileY,
   waveY,
 } from '../src/components/blocks/Logos/wave'
 
@@ -21,9 +23,10 @@ test('the curve passes through the seven design heights', () => {
   samples.forEach((height, k) => expect(waveY(GRID_ORIGIN + k * SPACING)).toBeCloseTo(height, 6))
 })
 
-test('the curve is periodic: seven tiles = 861 px', () => {
+test('the curve is periodic: seven tiles = one wavelength (861 px)', () => {
+  expect(WAVELENGTH).toBeCloseTo(7 * SPACING, 9)
   for (const x of [-700, -123.4, 0, 57.7, 311, 999.9, 1800]) {
-    expect(waveY(x + 7 * SPACING)).toBeCloseTo(waveY(x), 6)
+    expect(waveY(x + WAVELENGTH)).toBeCloseTo(waveY(x), 6)
   }
 })
 
@@ -35,30 +38,46 @@ test('the curve stays inside the design range (no wild overshoot)', () => {
   }
 })
 
-test('tiles at rest sit where the design puts tiles 7 to 20 (x within 3.5 px, y within 1.5 px)', () => {
+test('with the wave at phase 0 the tiles stand where the design puts tiles 7 to 20 (x within 3.5 px, y within 1.5 px)', () => {
   designTiles.forEach(([left, top], index) => {
     const slot = 7 + index
-    const { x, y } = tilePosition(slot, 0)
-    expect(Math.abs(x - left)).toBeLessThanOrEqual(3.5)
-    expect(Math.abs(y - top)).toBeLessThanOrEqual(1.5)
+    expect(Math.abs(tileX(slot) - left)).toBeLessThanOrEqual(3.5)
+    expect(Math.abs(tileY(slot, 0) - top)).toBeLessThanOrEqual(1.5)
   })
 })
 
 test('brands repeat every 9 tiles in the design order', () => {
-  expect(tilePosition(0, 0).brand).toBe(0)
-  expect(tilePosition(8, 0).brand).toBe(BRAND_COUNT - 1)
-  expect(tilePosition(9, 0).brand).toBe(0)
-  expect(tilePosition(-1, 0).brand).toBe(BRAND_COUNT - 1)
+  expect(tileBrand(0)).toBe(0)
+  expect(tileBrand(8)).toBe(BRAND_COUNT - 1)
+  expect(tileBrand(9)).toBe(0)
+  expect(tileBrand(-1)).toBe(BRAND_COUNT - 1)
 })
 
-test('the loop is seamless: after 9 tiles the picture is identical', () => {
-  for (const offset of [0, 1.7, 400, 1000]) {
-    for (let slot = -3; slot < 30; slot++) {
-      const now = tilePosition(slot, offset)
-      const later = tilePosition(slot + BRAND_COUNT, offset + LOOP_LENGTH)
-      expect(later.x).toBeCloseTo(now.x, 6)
-      expect(later.y).toBeCloseTo(now.y, 6)
-      expect(later.brand).toBe(now.brand)
+test('the wave runs from right to left: a crest moves to smaller x as the phase grows', () => {
+  // Position of the highest point (smallest y) of the curve within `radius` px of `around`, for a wave at the given phase.
+  const crestNear = (phase: number, around: number, radius: number) => {
+    let bestX = around
+    let bestY = Infinity
+    for (let x = around - radius; x <= around + radius; x += 0.5) {
+      const y = waveY(x + phase)
+      if (y < bestY) { bestY = y; bestX = x }
+    }
+    return bestX
+  }
+  const start = crestNear(0, 690, 100) // the crest of the design near x = 690
+  // After the wave has run `phase` px, the crest stands `phase` px to the left. (Had it gone right, the window would
+  // not contain a crest and the highest point would lie on the edge of the window, not in its middle.)
+  for (const phase of [60, 100, 200]) {
+    expect(crestNear(phase, start - phase, 100)).toBeCloseTo(start - phase, 0)
+  }
+  // And it is really not a crest on the other side.
+  expect(Math.abs(crestNear(100, start + 100, 100) - (start + 100))).toBeGreaterThan(50)
+})
+
+test('the loop is seamless: after one wavelength the picture is identical', () => {
+  for (const phase of [0, 1.7, 400, 860]) {
+    for (let slot = -3; slot < 40; slot++) {
+      expect(tileY(slot, phase + WAVELENGTH)).toBeCloseTo(tileY(slot, phase), 6)
     }
   }
 })
@@ -70,20 +89,14 @@ const columnLeft = (viewport: number) => {
   return (viewport - content) / 2
 }
 
-test('the screen is always full of tiles, at every width and every moment of the loop', () => {
+test('there are always enough tiles, at every width and at both ends of the scroll drift', () => {
+  const drift = 250
   for (const viewport of [393, 768, 1024, 1280, 1440, 1920, 2560, 3840]) {
     const left = columnLeft(viewport)
-    const { first, last } = slotRange(left, viewport)
-    // At rest: the tile before the first one would be entirely off the left edge of the screen.
-    expect(tilePosition(first, 0).x - SPACING + TILE_SIZE).toBeLessThanOrEqual(-left)
-    for (let offset = 0; offset < LOOP_LENGTH; offset += 7.3) {
-      const xs: number[] = []
-      for (let slot = first; slot <= last; slot++) xs.push(tilePosition(slot, offset).x)
-      // Tiles are SPACING apart (no holes). The next tile after the last one would be entirely off the right edge,
-      // so there is never an empty place on the screen at any moment of the loop.
-      expect(Math.max(...xs) + SPACING).toBeGreaterThanOrEqual(viewport - left)
-      const visible = xs.filter((x) => x + TILE_SIZE > -left && x < viewport - left)
-      expect(visible.length).toBeGreaterThan(0)
-    }
+    const { first, last } = slotRange(left, viewport, drift)
+    // No drift: the tile before the first one would be entirely off the left edge of the screen.
+    expect(left + tileX(first) - SPACING + TILE_SIZE).toBeLessThanOrEqual(0)
+    // Full drift (strip moved 250 px left): the tile after the last one would be entirely off the right edge.
+    expect(left + tileX(last + 1) - drift).toBeGreaterThanOrEqual(viewport)
   }
 })

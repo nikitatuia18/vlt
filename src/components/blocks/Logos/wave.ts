@@ -1,8 +1,9 @@
 /*
  * Geometry of the logo wave (Figma block `logos`). Pure functions, no DOM: tested in tests/logos-wave.spec.ts.
  *
- * Coordinates are in px, x measured from the left edge of the content column (`logos__track-wrap`),
- * y from its top. The tiles slide along a fixed curve: a tile's height is a function of where it is on the screen.
+ * The tiles stand still in a row; a wave runs through them and lifts each tile to the height of the curve.
+ * Coordinates are in px: x is measured from the left edge of the content column (`logos__track-wrap`),
+ * y from its top.
  */
 
 /** Tile (circle) size in px: 48 px icon + 16 px padding on each side. */
@@ -17,12 +18,12 @@ export const GRID_ORIGIN = -551
 /** Number of different brands; the brand sequence repeats every 9 tiles. */
 export const BRAND_COUNT = 9
 
-/** After moving this far (9 tiles) the picture repeats exactly, so the loop is seamless. */
-export const LOOP_LENGTH = BRAND_COUNT * SPACING
+/** The curve repeats every seven tiles (861 px). The wave runs this far per cycle. */
+export const WAVELENGTH = 7 * SPACING
 
 /**
  * Heights of the curve at seven consecutive tile positions, taken from the design (tiles 7 to 13 of the frame;
- * the next seven repeat them within 1 px). The curve is periodic with these seven tiles (861 px).
+ * the next seven repeat them within 1 px). With the wave at phase 0 the tiles stand exactly as in the design.
  * The first seven tiles of the design are drawn about half a tile out of phase with the rest; the curve follows the rest.
  */
 const WAVE_SAMPLES = [61.5, 37.0, 12.1, 0.6, 25.1, 49.7, 74.0] as const
@@ -45,21 +46,27 @@ export function waveY(x: number): number {
   )
 }
 
-/** Position and brand of the tile in slot `slot` after the track has moved `offset` px to the left. */
-export function tilePosition(slot: number, offset: number) {
-  const x = GRID_ORIGIN + slot * SPACING - offset
-  return { x, y: waveY(x), brand: mod(slot, BRAND_COUNT) }
-}
+/** x of the tile in slot `slot`. Tiles never move along x by themselves. */
+export const tileX = (slot: number) => GRID_ORIGIN + slot * SPACING
+
+/** Which brand (index in `brands`) stands in slot `slot`. */
+export const tileBrand = (slot: number) => mod(slot, BRAND_COUNT)
 
 /**
- * Which slots must exist so that the screen is always full while the offset runs from 0 to LOOP_LENGTH.
- * `columnLeft` is the x of the content column on the screen, `viewportWidth` the width of the screen.
+ * Height of the tile in slot `slot` while the wave is at `phase` px. The wave runs from right to left:
+ * a crest that was at x is at x - phase later. After WAVELENGTH px the picture repeats exactly.
  */
-export function slotRange(columnLeft: number, viewportWidth: number) {
+export const tileY = (slot: number, phase: number) => waveY(tileX(slot) + phase)
+
+/**
+ * Which slots must exist so that the screen is always full while the strip drifts left by 0..`drift` px
+ * (the scroll shift). `columnLeft` is the x of the content column on the screen, `viewportWidth` the screen width.
+ */
+export function slotRange(columnLeft: number, viewportWidth: number, drift: number) {
   const leftEdge = -columnLeft - TILE_SIZE
-  const rightEdge = viewportWidth - columnLeft + TILE_SIZE
+  const rightEdge = viewportWidth - columnLeft + drift
   return {
     first: Math.ceil((leftEdge - GRID_ORIGIN) / SPACING),
-    last: Math.floor((rightEdge + LOOP_LENGTH - GRID_ORIGIN) / SPACING),
+    last: Math.floor((rightEdge - GRID_ORIGIN) / SPACING),
   }
 }
