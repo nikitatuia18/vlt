@@ -1,7 +1,7 @@
 type ColumnFadeProps = {
   /** Where the lines leave the block: `bottom` runs them down past the lower edge, `top` up past the upper edge. */
   edge: 'top' | 'bottom'
-  /** Block name for the `data-el` of the lines: `{block}__deco-column-fade-{left|right}`. */
+  /** Block name for the `data-el` of the lines: `{block}__deco-column-fade-{top|bottom}-{left|right}`. */
   block: string
   /** Length of the lines in px; they fade out completely at the end. */
   length?: number
@@ -19,7 +19,7 @@ export function ColumnFade({ edge, block, length = 160 }: ColumnFadeProps) {
       {(['left', 'right'] as const).map((side) => (
         <span
           key={side}
-          data-el={`${block}__deco-column-fade-${side}`}
+          data-el={`${block}__deco-column-fade-${edge}-${side}`}
           aria-hidden="true"
           style={{ height: length }}
           // The column lines run on the inner 1 px of the left and right edges (see CornerDots).

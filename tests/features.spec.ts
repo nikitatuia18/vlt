@@ -83,7 +83,8 @@ test('desktop frame (2560): column 1440, cards and gaps as in the design, sectio
 
   // Whole section: 140 + 208 + 48 + 1124 + 140 + 1 px border.
   const whole = await section(page).boundingBox()
-  expect(whole?.height).toBeCloseTo(1661, 0)
+  // 1 px more than in the design: the line on top of the block (border of the section)
+  expect(whole!.height - 1).toBeCloseTo(1661, 0)
 })
 
 test('cards: radius 40, white and grey fills, 40 px padding on desktop', async ({ page }) => {

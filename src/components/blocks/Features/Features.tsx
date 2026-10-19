@@ -1,3 +1,4 @@
+import { ColumnFade } from '../../ui/ColumnFade'
 import { Container } from '../../ui/Container'
 import { CornerDots } from '../../ui/CornerDots'
 import { InteractiveDots } from '../../ui/InteractiveDots'
@@ -15,12 +16,12 @@ import { FeatureCard, SoonCard } from './FeatureCard'
  */
 export function Features() {
   return (
-    <section data-el="features" aria-labelledby="features-title" className="border-b border-border-subtle">
+    <section data-el="features" aria-labelledby="features-title" className="border-y border-border-subtle">
       <Container>
         <div
           data-el="features__container"
-          // The column outline is drawn inside (a ring, like a Figma stroke), so it does not narrow the content. It is fully transparent (border/alpha-0).
-          className="relative flex flex-col items-center gap-8 py-12 ring-1 ring-border-alpha-0 ring-inset tablet:gap-10 tablet:py-20 desktop:gap-12 desktop:px-10 desktop:py-35"
+          // The column lines are drawn inside (an inset shadow, like a Figma stroke), so they do not narrow the content.
+          className="relative flex flex-col items-center gap-8 py-12 shadow-[inset_1px_0_0_var(--color-border-subtle),inset_-1px_0_0_var(--color-border-subtle)] tablet:gap-10 tablet:py-20 desktop:gap-12 desktop:px-10 desktop:py-35"
         >
           <div
             data-el="features__header"
@@ -61,8 +62,11 @@ export function Features() {
             </div>
           </div>
 
-          {/* Decorative dots on the bottom corners of the column, as in the design (UI Kit component). */}
+          {/* Decorative dots on the corners of the column where it meets the lines above and below (UI Kit component). */}
+          <CornerDots edge="top" block="features" />
           <CornerDots edge="bottom" block="features" />
+          {/* The column lines go on above the block and fade out (the block above has no column lines). */}
+          <ColumnFade edge="top" block="features" />
         </div>
       </Container>
     </section>

@@ -1,6 +1,8 @@
 import { useAnimationFrame, useInView, useMotionValue, useReducedMotion } from 'motion/react'
 import { useRef, useState } from 'react'
+import { ColumnFade } from '../../ui/ColumnFade'
 import { Container } from '../../ui/Container'
+import { CornerDots } from '../../ui/CornerDots'
 import { StepCard } from './StepCard'
 import { steps } from './steps'
 
@@ -50,12 +52,12 @@ export function NextSteps() {
   }
 
   return (
-    <section data-el="next-steps" aria-labelledby="next-steps-title" className="border-b border-border-subtle">
+    <section data-el="next-steps" aria-labelledby="next-steps-title" className="border-y border-border-subtle">
       <Container>
         <div
           data-el="next-steps__container"
-          // The column outline is drawn inside (a ring, like a Figma stroke), so it does not narrow the content. It is fully transparent (border/alpha-0).
-          className="flex flex-col gap-8 py-12 ring-1 ring-border-alpha-0 ring-inset tablet:gap-10 tablet:py-20 desktop:gap-12 desktop:px-10 desktop:py-35"
+          // The column lines are drawn inside (an inset shadow, like a Figma stroke), so they do not narrow the content.
+          className="relative flex flex-col gap-8 py-12 shadow-[inset_1px_0_0_var(--color-border-subtle),inset_-1px_0_0_var(--color-border-subtle)] tablet:gap-10 tablet:py-20 desktop:gap-12 desktop:px-10 desktop:py-35"
         >
           <div
             data-el="next-steps__header"
@@ -89,6 +91,13 @@ export function NextSteps() {
               />
             ))}
           </ol>
+
+          {/* The block stands between blocks without column lines: dots on its corners at both lines, and the column
+              lines go on above and below it and fade out (to be revisited when the FAQ block below gets its own column). */}
+          <CornerDots edge="top" block="next-steps" />
+          <CornerDots edge="bottom" block="next-steps" />
+          <ColumnFade edge="top" block="next-steps" />
+          <ColumnFade edge="bottom" block="next-steps" />
         </div>
       </Container>
     </section>

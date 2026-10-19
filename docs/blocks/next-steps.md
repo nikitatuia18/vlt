@@ -32,3 +32,6 @@ Figma: кадр `page-home--desktop` → слой `next-steps` (`1110:9039`). К
 - 03 Start the process: «We set up your account, connect the payment rails you need and run the first test payments together with your team.»
 - 04 Go live: «You send your first live transaction. After the launch our team stays with you, so every payment keeps moving.»
 - Исправлено в макете: «Pass kyb» → «Pass KYB» (аббревиатура), в тексте шага 01 добавлена точка в конце.
+
+## Колонка, линии и точки (добавлено по просьбе дизайнера)
+Колонка блока видна (order-subtle, раньше прозрачная). Сверху и снизу у блока линия (order-y секции) с точками на углах (CornerDots), линии колонки продолжаются выше и ниже блока на 160 px и гаснут (ColumnFade 	op и ottom): выше блок global и ниже будет faq — колонки у них нет. Когда у блока faq появится колонка, нижнее затухание нужно будет убрать.

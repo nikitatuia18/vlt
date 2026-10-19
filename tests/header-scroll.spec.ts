@@ -39,7 +39,7 @@ test('a tiny movement in the other direction does not flip the header', async ({
 
 test('scrolling back to the very top shows the header', async ({ page }) => {
   await scrollBy(page, 1500)
-  await page.evaluate(() => window.scrollTo(0, 0))
+  await scrollBy(page, -3000) // the smooth scroll goes on by itself, so go back with the wheel like a user
   await page.waitForTimeout(700)
   await expect(header(page)).toHaveAttribute('data-hidden', 'false')
   expect(await top(page)).toBe(0)
