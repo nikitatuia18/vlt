@@ -1,5 +1,6 @@
 import { lazy, Suspense } from 'react'
 import { Features } from './components/blocks/Features'
+import { Global } from './components/blocks/Global'
 import { Header } from './components/blocks/Header'
 import { Hero } from './components/blocks/Hero'
 import { Industries } from './components/blocks/Industries'
@@ -26,6 +27,7 @@ export default function App() {
         <Logos />
         <Features />
         <Industries />
+        <Global />
       </main>
     </>
   )

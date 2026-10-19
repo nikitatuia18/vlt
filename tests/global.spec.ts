@@ -1,0 +1,91 @@
+﻿import { expect, test, type Page } from '@playwright/test'
+
+const viewports = [
+  { name: 'mobile-393', width: 393, height: 850 },
+  { name: 'tablet-768', width: 768, height: 900 },
+  { name: 'tablet-1024', width: 1024, height: 800 },
+  { name: 'desktop-1280', width: 1280, height: 800 },
+  { name: 'desktop-1440', width: 1440, height: 900 },
+  { name: 'desktop-1920', width: 1920, height: 1080 },
+  { name: 'desktop-2560', width: 2560, height: 1200 },
+]
+
+// Ids are listed here (not imported): the data modules import SVG files, which the test runner cannot load.
+const pinIds = ['ca', 'us', 'eu', 'ge', 'in', 'br', 'cl', 'kg', 'ar']
+const routeIds = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+const section = (page: Page) => page.locator('[data-el="global"]')
+
+const open = async (page: Page, width: number, height: number) => {
+  await page.setViewportSize({ width, height })
+  await page.goto('/')
+  await page.evaluate(() => document.fonts.ready)
+  await section(page).scrollIntoViewIfNeeded()
+  await page.waitForTimeout(500)
+}
+
+for (const viewport of viewports) {
+  test(`global screenshot ${viewport.name}`, async ({ page }) => {
+    await open(page, viewport.width, viewport.height)
+    await section(page).screenshot({ path: `tests/artifacts/global-${viewport.name}.png` })
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)
+    expect(overflow).toBe(0)
+  })
+}
+
+test('global has the text, the numbers and the layers of the contract', async ({ page }) => {
+  await open(page, 1440, 900)
+  await expect(page.locator('[data-el="global__title"]')).toHaveText(/Go global without\s*rebuilding your\s*payments stack\./)
+  await expect(page.locator('[data-el="global__desc"]')).toContainText('through one integration')
+  await expect(page.locator('[data-el="global__metric-uptime-value"]')).toHaveText('99.9%')
+  await expect(page.locator('[data-el="global__metric-rails-value"]')).toHaveText('15+')
+  await expect(page.locator('[data-el="global__metric-latency-value"]')).toHaveText('<1 sec')
+  // The signature dots are the lowest layer.
+  await expect(page.locator('[data-el="global__bg"] canvas')).toHaveCount(1)
+  await expect(page.locator('[data-el="global__map"]')).toHaveCount(1)
+  await expect(page.locator('[data-el^="global__route-"]')).toHaveCount(routeIds.length)
+  await expect(page.locator('[data-el^="global__pin-"][data-el$="-label"]')).toHaveCount(pinIds.length)
+})
+
+test('global in wide layout: map behind the text, metrics left, message right', async ({ page }) => {
+  await open(page, 1920, 1080)
+  const metrics = (await page.locator('[data-el="global__metrics"]').boundingBox())!
+  const message = (await page.locator('[data-el="global__message"]').boundingBox())!
+  const map = (await page.locator('[data-el="global__map"]').boundingBox())!
+  expect(metrics.x).toBeLessThan(message.x)
+  expect(Math.abs(metrics.y + metrics.height - (message.y + message.height))).toBeLessThan(2)
+  // The map is wider than the text columns: it lies behind them.
+  expect(map.width).toBeGreaterThan(metrics.width + message.width)
+})
+
+test('global in stacked layout: map above the text, no horizontal scroll', async ({ page }) => {
+  await open(page, 1024, 800)
+  const map = (await page.locator('[data-el="global__map"]').boundingBox())!
+  const message = (await page.locator('[data-el="global__message"]').boundingBox())!
+  expect(map.y + map.height).toBeLessThanOrEqual(message.y + 1)
+  expect(map.x).toBeGreaterThanOrEqual(-1)
+  expect(map.x + map.width).toBeLessThanOrEqual(1025)
+})
+
+test('global map is animated: cards and routes change over time', async ({ page }) => {
+  await open(page, 1440, 900)
+  const opacity = (selector: string) => page.locator(selector).evaluate((el) => Number(getComputedStyle(el).opacity))
+  const first = await opacity('[data-el="global__pin-us"]')
+  await page.waitForTimeout(3500)
+  const later = await opacity('[data-el="global__pin-us"]')
+  expect(Math.abs(first - later)).toBeGreaterThan(0.05)
+})
+
+test.describe('reduced motion', () => {
+  test.use({ reducedMotion: 'reduce' })
+  test('everything stands still in the final state: all cards and routes visible', async ({ page }) => {
+    await open(page, 1440, 900)
+    for (const id of pinIds) {
+      expect(await page.locator(`[data-el="global__pin-${id}"]`).evaluate((el) => Number(getComputedStyle(el).opacity))).toBe(1)
+    }
+    for (const id of routeIds) {
+      expect(await page.locator(`[data-el="global__route-${id}"]`).evaluate((el) => Number(getComputedStyle(el).opacity))).toBe(1)
+    }
+  })
+})
+
