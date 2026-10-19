@@ -1,16 +1,16 @@
 import { expect, test, type Page } from '@playwright/test'
+import { industries } from '../src/components/blocks/Industries/items'
 
 const viewports = [
-  { name: 'mobile-393', width: 393, height: 850 },
-  { name: 'tablet-768', width: 768, height: 900 },
-  { name: 'tablet-1024', width: 1024, height: 800 },
-  { name: 'desktop-1280', width: 1280, height: 800 },
-  { name: 'desktop-1440', width: 1440, height: 900 },
-  { name: 'desktop-2560', width: 2560, height: 1200 },
+  { name: 'mobile-393', width: 393, height: 850, gap: 32 },
+  { name: 'tablet-768', width: 768, height: 900, gap: 40 },
+  { name: 'tablet-1024', width: 1024, height: 800, gap: 40 },
+  { name: 'desktop-1280', width: 1280, height: 800, gap: 48 },
+  { name: 'desktop-1440', width: 1440, height: 900, gap: 48 },
+  { name: 'desktop-2560', width: 2560, height: 1200, gap: 48 },
 ]
 
-const ids = ['industry-first', 'ecommerce', 'startups', 'luxury-automotive', 'real-estate', 'export-import', 'operations-payroll']
-const titles = ['Industry-first scenarios', 'E-commerce', 'Startups', 'Luxury goods and Automotive', 'Real estate', 'Export/Import', 'Operations and payroll']
+const ids = industries.map((item) => item.id)
 
 const section = (page: Page) => page.locator('[data-el="industries"]')
 const item = (page: Page, id: string) => page.locator(`[data-el="industries__item-${id}"]`)
@@ -36,21 +36,29 @@ for (const viewport of viewports) {
     await page.evaluate(() => document.fonts.ready)
     await scrollToProgress(page, 0.3)
     await page.screenshot({ path: `tests/artifacts/industries-${viewport.name}.png` })
+    await scrollToProgress(page, 0.01)
+    await page.screenshot({ path: `tests/artifacts/industries-${viewport.name}-start.png` })
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)
     expect(overflow).toBe(0)
   })
 }
 
-test('texts: the title and the seven items (the typo "E-comersce" of the design is fixed)', async ({ page }) => {
+test('texts: the title, the seven items, a description and a "Book a demo" button for each (six texts are drafts)', async ({ page }) => {
   await page.goto('/')
   await expect(page.getByRole('heading', { level: 2, name: 'From first payment to final payout.' })).toBeAttached()
-  for (let i = 0; i < ids.length; i++) {
-    await expect(page.locator(`[data-el="industries__item-${ids[i]}-title"]`)).toHaveText(titles[i])
+  expect(industries.map((i) => i.title)).toEqual([
+    'Industry-first scenarios', 'E-commerce', 'Startups', 'Luxury goods and Automotive', 'Real estate', 'Export/Import', 'Operations and payroll',
+  ])
+  for (const entry of industries) {
+    await expect(page.locator(`[data-el="industries__item-${entry.id}-title"]`)).toHaveText(entry.title)
+    await expect(page.locator(`[data-el="industries__item-${entry.id}-desc"]`)).toHaveText(entry.description.join(''))
+    await expect(page.locator(`[data-el="industries__item-${entry.id}-cta"]`)).toHaveText('Book a demo')
+    await expect(page.locator(`[data-el="industries__item-${entry.id}-cta"]`)).toHaveAttribute('href', '#book-a-demo')
   }
+  // The text of the design is kept as it is.
   await expect(page.locator('[data-el="industries__item-startups-desc"]')).toHaveText(
     'Let your clients pay in crypto, and receive fiat.Forget about chargebacks',
   )
-  await expect(page.locator('[data-el="industries__item-startups-cta"]')).toHaveText('Book a demo')
 })
 
 test('the section is pinned: it is 100vh + 6 x 60vh tall and the stage stays at the top of the screen while you scroll', async ({ page }) => {
@@ -85,18 +93,64 @@ test('scrolling opens the items one after another, in the order of the list', as
   expect(await activeId(page)).toBe('industry-first')
 })
 
-test('the title stays in place and the open item stands opposite it', async ({ page }) => {
+for (const viewport of viewports) {
+  test(`the title does not move at all while scrolling (position and width) at ${viewport.name}`, async ({ page }) => {
+    await page.setViewportSize({ width: viewport.width, height: viewport.height })
+    await page.goto('/')
+    await page.evaluate(() => document.fonts.ready)
+    await scrollToProgress(page, 0.02)
+    const reference = await box(page, '[data-el="industries__title"]')
+    // Every item in turn becomes the open one (the widest, "Luxury goods and Automotive", used to push the title around).
+    for (let index = 0; index < ids.length; index++) {
+      await scrollToProgress(page, (index + 0.5) / ids.length)
+      const current = await box(page, '[data-el="industries__title"]')
+      expect({ x: current.x, y: current.y, width: current.width, height: current.height }, ids[index]).toEqual({
+        x: reference.x,
+        y: reference.y,
+        width: reference.width,
+        height: reference.height,
+      })
+    }
+  })
+
+  test(`the list starts right under the title (gap ${viewport.gap} px), no big empty space, at ${viewport.name}`, async ({ page }) => {
+    await page.setViewportSize({ width: viewport.width, height: viewport.height })
+    await page.goto('/')
+    await page.evaluate(() => document.fonts.ready)
+    await scrollToProgress(page, 0.01) // the first item is open
+    const title = await box(page, '[data-el="industries__title"]')
+    const region = await box(page, '[data-el="industries__list-region"]')
+    expect(region.y - (title.y + title.height)).toBeCloseTo(viewport.gap, 0)
+    // A list that does not fit starts at the very top of its area: no empty band between it and the title.
+    // A list that fits is centered as a whole, so it has only half of the free space above it (never a big gap).
+    const first = (await item(page, ids[0]).boundingBox())!
+    const list = await box(page, '[data-el="industries__list"]')
+    const freeSpace = Math.max(0, region.height - list.height)
+    expect(Math.abs(first.y - region.y - freeSpace / 2)).toBeLessThan(2)
+    expect(first.y - region.y).toBeLessThan(40)
+  })
+}
+
+test('the list slides: at the start it begins under the title, in the middle the open item is centered, at the end it rests on the bottom', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
   await page.goto('/')
-  await scrollToProgress(page, 0.05)
-  const titleY = (await box(page, '[data-el="industries__title"]')).y
-  for (const [progress, id] of [[0.05, 'industry-first'], [0.4, 'startups'], [0.7, 'real-estate'], [0.99, 'operations-payroll']] as const) {
+  const region = async () => box(page, '[data-el="industries__list-region"]')
+  const list = async () => box(page, '[data-el="industries__list"]')
+  // The list is taller than its area here, so it has to slide.
+  await scrollToProgress(page, 0.01)
+  expect((await list()).height).toBeGreaterThan((await region()).height)
+
+  for (const [progress, id] of [[0.5, 'luxury-automotive'], [0.64, 'real-estate']] as const) {
     await scrollToProgress(page, progress)
-    expect((await box(page, '[data-el="industries__title"]')).y).toBeCloseTo(titleY, 0)
-    const region = await box(page, '[data-el="industries__list-region"]')
+    const area = await region()
     const open = (await item(page, id).boundingBox())!
-    expect(Math.abs(open.y + open.height / 2 - (region.y + region.height / 2)), `item ${id}`).toBeLessThan(3)
+    expect(Math.abs(open.y + open.height / 2 - (area.y + area.height / 2)), `centered ${id}`).toBeLessThan(3)
   }
+
+  await scrollToProgress(page, 0.99)
+  const area = await region()
+  const slid = await list()
+  expect(Math.abs(slid.y + slid.height - (area.y + area.height))).toBeLessThan(3) // the bottom of the list on the bottom of the area
 })
 
 test('the open item is a white card (radius 32, padding 60 x 40) and the description unfolds; closed items are grey and folded', async ({ page }) => {
@@ -120,34 +174,30 @@ test('the open item is a white card (radius 32, padding 60 x 40) and the descrip
   await expect(details).toHaveAttribute('aria-hidden', 'true')
   expect((await details.boundingBox())!.height).toBeLessThan(2)
   await expect(page.locator('[data-el="industries__item-startups-cta"]')).toHaveAttribute('tabindex', '-1')
-  expect((await inner.evaluate((el) => getComputedStyle(el).paddingLeft))).toBe('0px')
+  expect(await inner.evaluate((el) => getComputedStyle(el).paddingLeft)).toBe('0px')
 })
 
-test('desktop layout: title on the left at 64 px, the list on the right, items are single lines', async ({ page }) => {
+test('desktop frame (2560): the title is centered above the list at 64 px, items are single lines', async ({ page }) => {
   await page.setViewportSize({ width: 2560, height: 1200 })
   await page.goto('/')
   await page.evaluate(() => document.fonts.ready)
   await scrollToProgress(page, 0.4)
-  const title = page.locator('[data-el="industries__title"]')
-  expect(await title.evaluate((el) => getComputedStyle(el).fontSize)).toBe('64px')
-  const list = await box(page, '[data-el="industries__list-region"]')
-  const header = await box(page, '[data-el="industries__header"]')
-  expect(header.x + header.width).toBeLessThanOrEqual(list.x) // the title is left of the list
-  // 60 px between the title area and the list.
-  expect(list.x - (header.x + header.width)).toBeCloseTo(60, 0)
+  const titleElement = page.locator('[data-el="industries__title"]')
+  expect(await titleElement.evaluate((el) => getComputedStyle(el).fontSize)).toBe('64px')
+  const title = await box(page, '[data-el="industries__title"]')
+  expect(title.x + title.width / 2).toBeCloseTo(1280, 0) // centered on the screen
+  const region = await box(page, '[data-el="industries__list-region"]')
+  expect(title.y + title.height).toBeLessThanOrEqual(region.y)
   for (const id of ids) {
     const titleBox = (await page.locator(`[data-el="industries__item-${id}-title"]`).boundingBox())!
     expect(titleBox.height, id).toBeCloseTo(72, 0) // one line of 72
   }
 })
 
-test('mobile: title above the list, smaller type, nothing sticks out', async ({ page }) => {
+test('mobile: smaller type, nothing sticks out sideways', async ({ page }) => {
   await page.setViewportSize({ width: 393, height: 850 })
   await page.goto('/')
   await scrollToProgress(page, 0.4)
-  const title = await box(page, '[data-el="industries__title"]')
-  const region = await box(page, '[data-el="industries__list-region"]')
-  expect(title.y + title.height).toBeLessThanOrEqual(region.y + 1)
   expect(await page.locator('[data-el="industries__title"]').evaluate((el) => getComputedStyle(el).fontSize)).toBe('32px')
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)
   expect(overflow).toBe(0)

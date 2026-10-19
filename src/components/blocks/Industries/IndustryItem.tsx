@@ -6,7 +6,7 @@ import type { IndustryItemData } from './items'
 type IndustryItemProps = {
   item: IndustryItemData
   isActive: boolean
-  /** The list reads the position of the open item to keep it opposite the title. */
+  /** The list reads the position of the open item to keep it in view. */
   setRef: (element: HTMLLIElement | null) => void
 }
 
@@ -21,7 +21,6 @@ const titleClasses = 'type-heading-lg tablet:type-heading-xl min-[64rem]:type-di
  */
 export function IndustryItem({ item, isActive, setRef }: IndustryItemProps) {
   const { id, title, description, cta } = item
-  const hasDetails = Boolean(description || cta)
 
   return (
     <li ref={setRef} data-el={`industries__item-${id}`} data-active={isActive} className="flex justify-center">
@@ -35,51 +34,45 @@ export function IndustryItem({ item, isActive, setRef }: IndustryItemProps) {
       >
         <h3
           data-el={`industries__item-${id}-title`}
-          className={`${titleClasses} desktop:whitespace-nowrap transition-colors duration-700 ${
+          className={`${titleClasses} transition-colors duration-700 desktop:whitespace-nowrap ${
             isActive ? 'text-typography-primary' : 'text-typography-tertiary'
           }`}
         >
           {title}
         </h3>
 
-        {hasDetails && (
-          // Always in the page (screen readers and search see the text), but folded and not focusable while the item is closed.
-          <motion.div
-            data-el={`industries__item-${id}-details`}
-            initial={false}
-            animate={{ height: isActive ? 'auto' : 0, opacity: isActive ? 1 : 0 }}
-            transition={{ duration: duration.reveal, ease: easeOut }}
-            aria-hidden={!isActive}
-            inert={!isActive}
-            className="overflow-hidden"
-          >
-            <div className="flex flex-col items-center gap-8 pt-4">
-              {description && (
-                <p
-                  data-el={`industries__item-${id}-desc`}
-                  className="type-body-md max-w-142.5 text-typography-secondary tablet:type-body-lead"
-                >
-                  {description.map((line) => (
-                    <span key={line} className="block">
-                      {line}
-                    </span>
-                  ))}
-                </p>
-              )}
-              {cta && (
-                <ButtonLink
-                  href={cta.href}
-                  size="lg"
-                  icon="export"
-                  data-el={`industries__item-${id}-cta`}
-                  tabIndex={isActive ? undefined : -1}
-                >
-                  {cta.label}
-                </ButtonLink>
-              )}
-            </div>
-          </motion.div>
-        )}
+        {/* Always in the page (screen readers and search see the text), but folded and not focusable while the item is closed. */}
+        <motion.div
+          data-el={`industries__item-${id}-details`}
+          initial={false}
+          animate={{ height: isActive ? 'auto' : 0, opacity: isActive ? 1 : 0 }}
+          transition={{ duration: duration.reveal, ease: easeOut }}
+          aria-hidden={!isActive}
+          inert={!isActive}
+          className="overflow-hidden"
+        >
+          <div className="flex flex-col items-center gap-8 pt-4">
+            <p
+              data-el={`industries__item-${id}-desc`}
+              className="type-body-md max-w-142.5 text-typography-secondary tablet:type-body-lead"
+            >
+              {description.map((line) => (
+                <span key={line} className="block">
+                  {line}
+                </span>
+              ))}
+            </p>
+            <ButtonLink
+              href={cta.href}
+              size="lg"
+              icon="export"
+              data-el={`industries__item-${id}-cta`}
+              tabIndex={isActive ? undefined : -1}
+            >
+              {cta.label}
+            </ButtonLink>
+          </div>
+        </motion.div>
       </div>
     </li>
   )
