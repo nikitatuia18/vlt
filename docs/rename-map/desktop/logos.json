@@ -20,8 +20,8 @@
     ["1110:8710", "Utila_Icon_-_Dark_0 1", "img-logo-utila"],
     ["1110:8713", "[Copy] Frame 2087330883", "logos__item-multimoney", "бренд MultiMoney (подтверждено пользователем)"],
     ["1110:8714", "Payment Icon", "logos__item-multimoney-icon"],
-    ["1110:8716", "[Copy] Frame 2087330883", "logos__item-fill"],
-    ["1110:8717", "Payment Icon", "logos__item-fill-icon"],
+    ["1110:8716", "[Copy] Frame 2087330883", "logos__item-flitt"],
+    ["1110:8717", "Payment Icon", "logos__item-flitt-icon"],
     ["1110:8719", "[Copy] Frame 2087330883", "logos__item-apple-pay"],
     ["1110:8720", "Payment Icon", "logos__item-apple-pay-icon"],
     ["1110:8722", "[Copy] Frame 2087330884", "logos__item-apple-pay-dup1"],
@@ -57,7 +57,7 @@
     ["1110:8790", "Payment Icon", "logos__item-multimoney-dup1-icon"],
     ["1110:8792", "[Copy] Frame 2087330890", "logos__item-multimoney-dup2", "бренд MultiMoney (подтверждено пользователем)"],
     ["1110:8793", "Payment Icon", "logos__item-multimoney-dup2-icon"],
-    ["1110:8795", "[Copy] Frame 2087330883", "logos__item-fill-dup1"],
-    ["1110:8796", "Payment Icon", "logos__item-fill-dup1-icon"]
+    ["1110:8795", "[Copy] Frame 2087330883", "logos__item-flitt-dup1"],
+    ["1110:8796", "Payment Icon", "logos__item-flitt-dup1-icon"]
   ]
 }

@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react'
 import { Header } from './components/blocks/Header'
 import { Hero } from './components/blocks/Hero'
+import { Logos } from './components/blocks/Logos'
 
 // The living UI Kit is loaded only when /ui-kit is opened, so it does not weigh on the site itself.
 const UiKitPage = lazy(() => import('./ui-kit/UiKitPage'))
@@ -20,6 +21,7 @@ export default function App() {
       <Header />
       <main>
         <Hero />
+        <Logos />
       </main>
     </>
   )
