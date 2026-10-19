@@ -1,6 +1,8 @@
 import { useAnimationFrame, useMotionValueEvent, useReducedMotion, useScroll } from 'motion/react'
 import { useRef, useState } from 'react'
+import { ColumnFade } from '../../ui/ColumnFade'
 import { Container } from '../../ui/Container'
+import { CornerDots } from '../../ui/CornerDots'
 import { DESIGN_ACTIVE_ID, industries } from './items'
 import { IndustryItem } from './IndustryItem'
 
@@ -83,11 +85,11 @@ export function Industries() {
   const scrollLength = `calc(100svh + ${(industries.length - 1) * SCROLL_PER_ITEM_VH}vh)`
 
   return (
-    <section data-el="industries" aria-labelledby="industries-title">
+    <section data-el="industries" aria-labelledby="industries-title" className="border-b border-border-subtle">
       <Container ref={tallRef} style={reducedMotion ? undefined : { height: scrollLength }}>
         <div
           data-el="industries__container"
-          className="h-full shadow-[inset_1px_0_0_var(--color-border-subtle),inset_-1px_0_0_var(--color-border-subtle)]"
+          className="relative h-full shadow-[inset_1px_0_0_var(--color-border-subtle),inset_-1px_0_0_var(--color-border-subtle)]"
         >
           <div
             ref={stageRef}
@@ -134,6 +136,11 @@ export function Industries() {
               </ul>
             </div>
           </div>
+
+          {/* The end of the block, like the top of the block above: a line with dots on the corners. The column lines go
+              on below the block and fade out into the next one (it has no column lines). */}
+          <CornerDots edge="bottom" block="industries" />
+          <ColumnFade edge="bottom" block="industries" />
         </div>
       </Container>
     </section>

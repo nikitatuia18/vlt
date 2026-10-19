@@ -31,6 +31,7 @@
 | `Icon` | одноцветный SVG из Figma цветом текста | `src`, `width`, `height` (размер SVG из Figma) |
 | `Container` | колонка контента: содержимое до 1440 px, боковой отступ (16 / 32 / 80) снаружи | как у `<div>` |
 | `CornerDots` | две точки 5 px на углах блока ровно там, где линии колонки встречают горизонтальную линию | `edge`: `'top'` \| `'bottom'`; `block`: имя блока для `data-el`; родитель должен быть позиционирован |
+| `ColumnFade` | две вертикальные линии колонки, продолженные за блок и гаснущие в ноль (начинаются у угловых точек) | `edge`: `'bottom'` (вниз) \| `'top'` (вверх); `block`: имя блока для `data-el`; `length`: длина, px (160); родитель позиционирован |
 | `InteractiveDots` | «живой» фон: точки отталкиваются курсором (<canvas>, прозрачный) | `spacing` 40, `dotSize` 1, `radius` 150, `force` 1, `ease` 0.1 (значения утверждённого прототипа); `className` |
 
 Служебное: `src/lib/theme.ts` — хук `useTheme` (тема живёт в `data-theme` на `<html>`).
@@ -38,7 +39,8 @@
 ### Откуда что взялось
 - **Header** дал: `ButtonLink` (md), `IconButton`, `ThemeToggle`, `Icon`, `Container`, пилюли меню (пока внутри блока).
 - **Hero** дал: размер `lg` у кнопки, иконку export 24 px, `InteractiveDots`, радиусы 32 / 48.
-- **InteractiveDots** теперь в двух местах: фон Hero и фон карточки Crypto Processing (Features), поэтому он в UI Kit.`n- **Features** дал: `Badge`, `IconLink`, `IconButton` размера `lg`, `CornerDots`, радиус 40.
+- **InteractiveDots** теперь в двух местах: фон Hero и фон карточки Crypto Processing (Features), поэтому он в UI Kit.`n- **Industries** дал: ColumnFade (линии колонки уходят вниз за блок и гаснут), нижние CornerDots и линию под блоком.
+- **Features** дал: `Badge`, `IconLink`, `IconButton` размера `lg`, `CornerDots`, радиус 40.
 
 ### Пока внутри блоков (вынести, когда повторится)
 - Карточки `FeatureCard` / `SoonCard` (`Features`): белая карточка с круглой ссылкой и серая с бейджем.

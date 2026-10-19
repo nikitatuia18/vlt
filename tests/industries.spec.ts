@@ -64,7 +64,8 @@ test('texts: the title, the seven items, a description and a "Book a demo" butto
 test('the section is pinned: it is 100vh + 6 x 60vh tall and the stage stays at the top of the screen while you scroll', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
   await page.goto('/')
-  expect((await section(page).boundingBox())!.height).toBeCloseTo(900 + 6 * 0.6 * 900, 0)
+  // 1 px more: the line under the block (border of the section)
+  expect((await section(page).boundingBox())!.height - 1).toBeCloseTo(900 + 6 * 0.6 * 900, 0)
   for (const progress of [0.05, 0.4, 0.9]) {
     await scrollToProgress(page, progress)
     expect((await box(page, '[data-el="industries__stage"]')).y).toBeCloseTo(0, 0)

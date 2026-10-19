@@ -76,7 +76,8 @@ export function NextSteps() {
             </p>
           </div>
 
-          <ol ref={cardsRef} data-el="next-steps__cards" className="flex flex-col gap-4 min-[90rem]:flex-row min-[90rem]:gap-6">
+          {/* @container: the text of the open card takes its final width from the width of this row (see StepCard). */}
+          <ol ref={cardsRef} data-el="next-steps__cards" className="@container flex flex-col gap-4 min-[90rem]:flex-row min-[90rem]:gap-6">
             {steps.map((step, index) => (
               <StepCard
                 key={step.id}

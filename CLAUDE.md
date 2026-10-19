@@ -37,10 +37,11 @@
 | Собрать один блок статикой | `block-builder` |
 | Покадровая анимация блока → код | `motion-builder` |
 | Сравнить браузер с Figma | `visual-qa` |
+| Написать или поправить тексты сайта (черновики) | `copywriter` |
 Мелкие правки делаем сами, без субагента. Тяжёлые ответы Figma (деревья, скриншоты) — через субагента.
 
 ## Скиллы (`.claude/skills/`)
-`figma-layer-naming`, `figma-to-tokens`, `figma-block-to-code`, `figma-motion-spec`, `visual-qa`.
+`figma-layer-naming`, `figma-to-tokens`, `figma-block-to-code`, `figma-motion-spec`, `visual-qa`, `project-copywriting`.
 
 ## Правила
 - **Сначала дизайн-система.** Перед любым элементом (кнопка, иконка, текст, цвет, отступ) смотри `docs/ui-kit.md`, `/ui-kit` и токены; не рисуй «на глаз». Нужного нет — предложи добавить в UI Kit, а не лепи локальный вариант.

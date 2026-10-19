@@ -5,6 +5,7 @@ import sunIcon from '../assets/icons/sun.svg'
 import { Badge } from '../components/ui/Badge'
 import { ButtonLink } from '../components/ui/ButtonLink'
 import { Container } from '../components/ui/Container'
+import { ColumnFade } from '../components/ui/ColumnFade'
 import { CornerDots } from '../components/ui/CornerDots'
 import { Icon } from '../components/ui/Icon'
 import { IconButton } from '../components/ui/IconButton'
@@ -299,6 +300,22 @@ export default function UiKitPage() {
                   className="relative h-24 shadow-[inset_1px_0_0_var(--color-border-subtle),inset_-1px_0_0_var(--color-border-subtle)]"
                 >
                   <CornerDots edge="bottom" block="ui-kit" />
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-col gap-3">
+              <h3 className="type-ui-md text-typography-primary">ColumnFade</h3>
+              <p className="type-body-sm text-typography-secondary">
+                The column lines continued beyond the block and fading out, starting at the corner dots. Put it next to CornerDots in the
+                positioned column box; edge is the side where the lines leave the block.
+              </p>
+              <div className="mb-24 border-b border-border-subtle">
+                <div
+                  data-el="ui-kit__column-fade-demo"
+                  className="relative h-24 shadow-[inset_1px_0_0_var(--color-border-subtle),inset_-1px_0_0_var(--color-border-subtle)]"
+                >
+                  <CornerDots edge="bottom" block="ui-kit-fade" />
+                  <ColumnFade edge="bottom" block="ui-kit" length={96} />
                 </div>
               </div>
             </div>

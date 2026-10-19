@@ -113,6 +113,34 @@ test('the time stops while the cards are off the screen', async ({ page }) => {
   expect(await barShare(page, 'book-demo')).toBeCloseTo(before, 2)
 })
 
+test('the text of an opening step does not re-wrap or jump while the card grows', async ({ page }) => {
+  await open(page, 1440, 900)
+  await card(page, 'start-process').click()
+  // Sample the text of the opening card every frame during the first second of the animation.
+  const samples = await page.evaluate(
+    () =>
+      new Promise<{ height: number; width: number; left: number }[]>((resolve) => {
+        const text = document.querySelector('[data-el="next-steps__card-start-process-desc"]') as HTMLElement
+        const found: { height: number; width: number; left: number }[] = []
+        const started = performance.now()
+        const tick = () => {
+          const box = text.getBoundingClientRect()
+          found.push({ height: Math.round(box.height), width: Math.round(box.width), left: Math.round(box.left * 10) / 10 })
+          if (performance.now() - started < 1000) requestAnimationFrame(tick)
+          else resolve(found)
+        }
+        tick()
+      }),
+  )
+  // The text keeps one width and one height from the first frame (no re-wrapping), and only the growing card uncovers it.
+  expect(new Set(samples.map((sample) => sample.height)).size).toBe(1)
+  expect(new Set(samples.map((sample) => sample.width)).size).toBe(1)
+  expect(samples.length).toBeGreaterThan(20)
+  // The text appears with a delay, after the card has started to grow
+  const early = await card(page, 'start-process').locator('[data-el="next-steps__card-start-process-desc"]').evaluate((el) => Number(getComputedStyle(el.parentElement!).opacity))
+  expect(early).toBeGreaterThan(0.9) // after the second it is fully there
+})
+
 test('stacked layout (tablet): cards one under another, the open one is taller', async ({ page }) => {
   await open(page, 768, 900)
   const first = (await card(page, 'book-demo').boundingBox())!

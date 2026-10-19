@@ -58,15 +58,22 @@ export function StepCard({ step, isActive, progress, staticProgress, onOpen }: S
         <div
           aria-hidden={!isActive}
           inert={!isActive}
-          className={`grid transition-[grid-template-rows,opacity] duration-700 ease-out ${
-            isActive ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
-          }`}
+          className={`grid transition-[grid-template-rows] duration-700 ease-out ${isActive ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}
         >
           <div className="min-h-0 overflow-hidden">
-            <div className="flex flex-col gap-6 pt-2 min-[90rem]:gap-8">
+            {/*
+              In the row layout the text has the FINAL width of the open card from the start (open-width in `cqw` of the
+              row of cards), so it never re-wraps while the card grows: the growing card just uncovers it, like a fill.
+              It fades in a little later, when the card is already almost wide, and fades out fast on closing.
+            */}
+            <div
+              className={`flex flex-col gap-6 pt-2 transition-opacity ease-out min-[90rem]:w-[calc((100cqw-392px)*0.4348)] min-[90rem]:gap-8 ${
+                isActive ? 'opacity-100 delay-300 duration-500' : 'opacity-0 duration-200'
+              }`}
+            >
               <p
                 data-el={`next-steps__card-${id}-desc`}
-                className="type-body-md text-typography-secondary min-[90rem]:type-body-lead min-[90rem]:max-w-115"
+                className="type-body-md text-typography-secondary min-[90rem]:type-body-lead"
               >
                 {description}
               </p>
