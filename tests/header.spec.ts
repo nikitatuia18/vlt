@@ -116,3 +116,34 @@ test('tablet and mobile: theme toggle and secondary CTA are not in the bar', asy
     await expect(page.locator('[data-el="header__container"] [data-el="header__cta-secondary"]')).toBeHidden()
   }
 })
+
+test('the selected menu item is filled like a hovered one: grey in Light, lighter than the bar in Dark', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 800 })
+  await page.goto('/')
+  const fill = (id: string) => page.locator(`[data-el="header__menu-item-${id}"]`).evaluate((el) => getComputedStyle(el).backgroundColor)
+  const current = page.locator('[data-el="header__menu-item-products"]')
+  await expect(current).toHaveAttribute('aria-current', 'true')
+  await expect(page.locator('[data-el="header__menu-item-solutions"]')).not.toHaveAttribute('aria-current', 'true')
+  expect(await fill('products')).toBe('rgb(243, 243, 243)') // surface/hover, Light = neutral/100 (#f3f3f3)
+  expect(await fill('solutions')).toBe('rgba(0, 0, 0, 0)') // the others have no fill until hovered
+  // The same color as the fill of a hovered item.
+  await page.locator('[data-el="header__menu-item-solutions"]').hover()
+  await expect(page.locator('[data-el="header__menu-item-solutions"]')).toHaveCSS('background-color', 'rgb(243, 243, 243)')
+
+  await page.locator('[data-el="header__theme-toggle"]').click()
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
+  await page.mouse.move(700, 600)
+  await expect(current).toHaveCSS('background-color', 'rgb(38, 38, 38)') // surface/hover, Dark = neutral/800
+  await page.locator('[data-el="header"]').screenshot({ path: 'tests/artifacts/header-desktop-1440-dark.png' })
+})
+
+test('the Header is one reusable component: the page chooses the current item (UI Kit shows two of them)', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto('/ui-kit')
+  const headers = page.locator('[data-el="ui-kit__header"] [data-el="header"]')
+  await expect(headers).toHaveCount(2)
+  await expect(headers.nth(0).locator('[data-el="header__menu"] [aria-current="true"]')).toHaveText('Products')
+  await expect(headers.nth(1).locator('[data-el="header__menu"] [aria-current="true"]')).toHaveText('Pricing')
+  // In the UI Kit they are not pinned: they stay in the flow.
+  expect(await headers.nth(0).evaluate((el) => getComputedStyle(el).position)).toBe('relative')
+})

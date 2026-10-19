@@ -2,13 +2,13 @@ import { motion, useMotionValueEvent, useScroll } from 'motion/react'
 import { useEffect, useId, useRef, useState } from 'react'
 import { duration, easeOut } from '../../../motion/tokens'
 import logo from '../../../assets/brand/logo-velant-pay.svg'
-import { ButtonLink } from '../../ui/ButtonLink'
-import { Container } from '../../ui/Container'
-import { Icon } from '../../ui/Icon'
-import { IconButton } from '../../ui/IconButton'
-import { ThemeToggle } from '../../ui/ThemeToggle'
+import { ButtonLink } from '../ButtonLink'
+import { Container } from '../Container'
+import { Icon } from '../Icon'
+import { IconButton } from '../IconButton'
+import { ThemeToggle } from '../ThemeToggle'
 import { MenuToggleIcon } from './MenuToggleIcon'
-import { demoCta, exploreCta, navItems } from './navigation'
+import { demoCta, exploreCta, navItems as siteNavItems, type HeaderCta, type NavItem } from './navigation'
 
 // Must match --breakpoint-desktop in styles/tokens.css: from here the full menu is shown instead of the burger.
 const DESKTOP_QUERY = '(min-width: 80rem)'
@@ -17,11 +17,26 @@ const DESKTOP_QUERY = '(min-width: 80rem)'
 const SCROLL_THRESHOLD = 6
 
 const linkBaseClasses = 'rounded-pill px-4 py-3 transition-colors'
-const linkCurrentClasses = 'bg-surface-subtle text-typography-primary ring-1 ring-inset ring-border-subtle'
+// The selected item is filled with the same color as a hovered one (grey in Light, lighter than the bar in Dark).
+const linkCurrentClasses = 'bg-surface-hover text-typography-primary'
 const linkDefaultClasses = 'text-typography-secondary hover:bg-surface-hover'
 
+export type HeaderProps = {
+  /** Menu items. Default: the menu of the site (`navigation.ts`). */
+  navItems?: readonly NavItem[]
+  /** `id` of the menu item of the current page or section: it is filled and gets `aria-current`. */
+  currentId?: string
+  /** Main button (a filled pill). Default: "Book a demo". */
+  primaryCta?: HeaderCta
+  /** Second button (outlined pill), desktop and the dropdown. Default: "Explore products". */
+  secondaryCta?: HeaderCta
+  /** Pinned to the top and hidden while scrolling down (default); `false` puts it in the flow like a normal block. */
+  isPinned?: boolean
+}
+
 /**
- * Site header. Figma block `header`.
+ * Site header, one component for all pages (Figma block `header`). Pages pass only what differs: which item is current,
+ * and, if needed, other menu items or buttons.
  * - desktop (>= 80rem): logo, menu, theme toggle, both CTAs (as in the design)
  * - tablet (>= 48rem): logo, primary CTA, burger; the rest is in the dropdown (derived layout)
  * - mobile: logo and burger; everything else is in the dropdown (derived layout)
@@ -29,7 +44,13 @@ const linkDefaultClasses = 'text-typography-secondary hover:bg-surface-hover'
  * The header is pinned to the top. It slides out of the screen when you scroll down and comes back as soon as you scroll up;
  * at the very top of the page it is always shown. It also stays while the menu is open or while the keyboard focus is inside it.
  */
-export function Header() {
+export function Header({
+  navItems = siteNavItems,
+  currentId,
+  primaryCta = demoCta,
+  secondaryCta = exploreCta,
+  isPinned = true,
+}: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const panelId = useId()
   const menuButtonRef = useRef<HTMLButtonElement>(null)
@@ -45,7 +66,7 @@ export function Header() {
     else if (delta > SCROLL_THRESHOLD) setIsScrolledAway(true)
     else if (delta < -SCROLL_THRESHOLD) setIsScrolledAway(false)
   })
-  const isHidden = isScrolledAway && !isMenuOpen && !hasFocus
+  const isHidden = isPinned && isScrolledAway && !isMenuOpen && !hasFocus
 
   // Leaving the burger layout closes the dropdown, so it does not reopen when the window shrinks again.
   useEffect(() => {
@@ -75,7 +96,7 @@ export function Header() {
       ref={headerRef}
       data-el="header"
       data-hidden={isHidden}
-      className="sticky top-0 z-50 border-b border-border-subtle bg-surface-subtle"
+      className={`border-b border-border-subtle bg-surface-subtle ${isPinned ? 'sticky top-0 z-50' : 'relative'}`}
       initial={false}
       animate={{ y: isHidden ? '-100%' : '0%' }}
       transition={{ duration: duration.reveal / 2, ease: easeOut }}
@@ -94,9 +115,9 @@ export function Header() {
               <a
                 key={item.id}
                 href={item.href}
-                aria-current={item.isCurrent ? 'true' : undefined}
+                aria-current={item.id === currentId ? 'true' : undefined}
                 data-el={`header__menu-item-${item.id}`}
-                className={`${linkBaseClasses} type-ui-sm ${item.isCurrent ? linkCurrentClasses : linkDefaultClasses}`}
+                className={`${linkBaseClasses} type-ui-sm ${item.id === currentId ? linkCurrentClasses : linkDefaultClasses}`}
               >
                 {item.label}
               </a>
@@ -109,16 +130,16 @@ export function Header() {
           <ThemeToggle data-el="header__theme-toggle" className="max-desktop:hidden" />
 
           <div data-el="header__buttons" className="hidden items-center gap-2 tablet:flex">
-            <ButtonLink href={demoCta.href} icon="export" data-el="header__cta-primary">
-              {demoCta.label}
+            <ButtonLink href={primaryCta.href} icon="export" data-el="header__cta-primary">
+              {primaryCta.label}
             </ButtonLink>
             <ButtonLink
-              href={exploreCta.href}
+              href={secondaryCta.href}
               variant="secondary"
               data-el="header__cta-secondary"
               className="max-desktop:hidden"
             >
-              {exploreCta.label}
+              {secondaryCta.label}
             </ButtonLink>
           </div>
 
@@ -151,8 +172,8 @@ export function Header() {
                   <a
                     href={item.href}
                     onClick={closeMenu}
-                    aria-current={item.isCurrent ? 'true' : undefined}
-                    className={`block ${linkBaseClasses} type-ui-md ${item.isCurrent ? linkCurrentClasses : linkDefaultClasses}`}
+                    aria-current={item.id === currentId ? 'true' : undefined}
+                    className={`block ${linkBaseClasses} type-ui-md ${item.id === currentId ? linkCurrentClasses : linkDefaultClasses}`}
                   >
                     {item.label}
                   </a>
@@ -163,11 +184,11 @@ export function Header() {
 
           <div className="flex flex-col gap-2 tablet:flex-row tablet:items-center">
             {/* On tablet the primary CTA is already in the bar. */}
-            <ButtonLink href={demoCta.href} icon="export" onClick={closeMenu} className="tablet:hidden">
-              {demoCta.label}
+            <ButtonLink href={primaryCta.href} icon="export" onClick={closeMenu} className="tablet:hidden">
+              {primaryCta.label}
             </ButtonLink>
-            <ButtonLink href={exploreCta.href} variant="secondary" onClick={closeMenu}>
-              {exploreCta.label}
+            <ButtonLink href={secondaryCta.href} variant="secondary" onClick={closeMenu}>
+              {secondaryCta.label}
             </ButtonLink>
             <ThemeToggle className="self-start tablet:ml-auto" />
           </div>

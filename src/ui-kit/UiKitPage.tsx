@@ -6,6 +6,7 @@ import { Badge } from '../components/ui/Badge'
 import { ButtonLink } from '../components/ui/ButtonLink'
 import { Container } from '../components/ui/Container'
 import { ColumnFade } from '../components/ui/ColumnFade'
+import { Header } from '../components/ui/Header'
 import { CornerDots } from '../components/ui/CornerDots'
 import { Icon } from '../components/ui/Icon'
 import { IconButton } from '../components/ui/IconButton'
@@ -220,6 +221,17 @@ export default function UiKitPage() {
           <div className="flex flex-wrap items-center gap-4">
             <Badge>New</Badge>
             <Badge icon="clock">Coming soon</Badge>
+          </div>
+        </Section>
+
+        <Section
+          id="header"
+          title="Header"
+          note="Header: one component for every page. The page passes which menu item is current (`currentId`, a grey fill like a hovered item) and, if needed, other items or buttons. In a page it is pinned to the top and hides while scrolling down; here `isPinned={false}` keeps it in the flow."
+        >
+          <div className="flex flex-col gap-6 overflow-hidden rounded-32 ring-1 ring-border-subtle">
+            <Header isPinned={false} currentId="products" />
+            <Header isPinned={false} currentId="pricing" />
           </div>
         </Section>
 

@@ -1,11 +1,11 @@
 import { lazy, Suspense } from 'react'
 import { Features } from './components/blocks/Features'
 import { Global } from './components/blocks/Global'
-import { Header } from './components/blocks/Header'
 import { Hero } from './components/blocks/Hero'
 import { Industries } from './components/blocks/Industries'
 import { Logos } from './components/blocks/Logos'
 import { NextSteps } from './components/blocks/NextSteps'
+import { Header } from './components/ui/Header'
 import { useSmoothScroll } from './lib/smoothScroll'
 
 // The living UI Kit is loaded only when /ui-kit is opened, so it does not weigh on the site itself.
@@ -25,7 +25,7 @@ export default function App() {
 
   return (
     <>
-      <Header />
+      <Header currentId="products" />
       <main>
         <Hero />
         <Logos />
