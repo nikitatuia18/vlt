@@ -16,7 +16,7 @@
 | Цвета (41 семантический, Light/Dark) | `--color-*` → `bg-surface-page`, `text-typography-primary`, `border-border-subtle`, `text-icon-brand` | раздел Colors |
 | Текстовые стили (18) | классы `type-ui-sm`, `type-heading-lg`… | раздел Typography |
 | Расстояния | шкала Tailwind, шаг 4 px | раздел Layout |
-| Радиус | `rounded-pill` (9999 px), `rounded-32`, `rounded-48` (из свойств узлов Figma) | раздел Layout |
+| Радиус | `rounded-pill` (9999 px), `rounded-32`, `rounded-40`, `rounded-48` (из свойств узлов Figma) | раздел Layout |
 | Колонка и отступы | `Container`, `--gutter` 16 / 32 / 80 px | раздел Layout |
 | Брейкпоинты | `tablet:` ≥ 768 px, `desktop:` ≥ 1280 px (`max-desktop:` — ниже 1280) | раздел Layout |
 
@@ -24,7 +24,9 @@
 | Компонент | Назначение | Свойства |
 |---|---|---|
 | `ButtonLink` | кнопка-ссылка «таблетка» (`<a>`) | `variant`: `primary` \| `secondary`; `size`: `md` (44 px, шапка) \| `lg` (56 px, секции); `icon`: `'export'`; остальное как у `<a>` |
-| `IconButton` | круглая кнопка 44 px под одну иконку 24 px | как у `<button>`; обязателен `aria-label` |
+| `IconButton` | круглая кнопка под одну иконку 24 px | `size`: `md` 44 px (шапка) \| `lg` 48 px; как у `<button>`; обязателен `aria-label` |
+| `IconLink` | то же, но ссылка (`<a>`), например стрелка в карточке | `size` как у `IconButton`; как у `<a>`; обязателен `aria-label` |
+| `Badge` | маленькая пилюля-метка, например «Coming soon» | `icon`: `'clock'`; как у `<span>` |
 | `ThemeToggle` | переключатель Light/Dark (солнце/луна) | как у `<button>`, кроме `children`/`onClick` |
 | `Icon` | одноцветный SVG из Figma цветом текста | `src`, `width`, `height` (размер SVG из Figma) |
 | `Container` | колонка контента: содержимое до 1440 px, боковой отступ (16 / 32 / 80) снаружи | как у `<div>` |
@@ -35,8 +37,10 @@
 ### Откуда что взялось
 - **Header** дал: `ButtonLink` (md), `IconButton`, `ThemeToggle`, `Icon`, `Container`, пилюли меню (пока внутри блока).
 - **Hero** дал: размер `lg` у кнопки, иконку export 24 px, `InteractiveDots`, радиусы 32 / 48.
+- **Features** дал: `Badge`, `IconLink`, `IconButton` размера `lg`, радиус 40.
 
 ### Пока внутри блоков (вынести, когда повторится)
+- Карточки `FeatureCard` / `SoonCard` (`Features`): белая карточка с круглой ссылкой и серая с бейджем.
 - Пилюля пункта меню (`Header`): состояния current / default / hover.
 - Бургер-иконка `MenuToggleIcon` (нарисована в коде, заменить иконкой Figma).
 - Вертикальные отступы секции (Hero 140 px на десктопе; значения других блоков сравним — тогда станет токеном).

@@ -1,10 +1,13 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
+import exportIcon from '../assets/icons/export.svg'
 import moonIcon from '../assets/icons/moon.svg'
 import sunIcon from '../assets/icons/sun.svg'
+import { Badge } from '../components/ui/Badge'
 import { ButtonLink } from '../components/ui/ButtonLink'
 import { Container } from '../components/ui/Container'
 import { Icon } from '../components/ui/Icon'
 import { IconButton } from '../components/ui/IconButton'
+import { IconLink } from '../components/ui/IconLink'
 import { InteractiveDots } from '../components/ui/InteractiveDots'
 import { ThemeToggle } from '../components/ui/ThemeToggle'
 import { useTheme } from '../lib/theme'
@@ -184,7 +187,7 @@ export default function UiKitPage() {
         <Section
           id="icon-buttons"
           title="Icon buttons and icons"
-          note="IconButton is a round 44 px button for one 24 px icon (always with aria-label). Icon draws any single-color Figma SVG in the current text color, so it follows the theme."
+          note="IconButton (a button) and IconLink (a link) are round and hold one 24 px icon: md is 44 px, lg is 48 px. Always give them an aria-label. Icon draws any single-color Figma SVG in the current text color, so it follows the theme."
         >
           <div className="flex flex-wrap items-center gap-6">
             <ThemeToggle />
@@ -200,6 +203,21 @@ export default function UiKitPage() {
             <span className="text-icon-secondary">
               <Icon src={moonIcon} width={20.8634} height={21.5021} />
             </span>
+            <IconButton size="lg" aria-label="Sun icon button, large">
+              <Icon src={sunIcon} width={24} height={24} />
+            </IconButton>
+            <IconLink href="#" size="lg" aria-label="Icon link, large" onClick={preventNavigation}>
+              <span className="grid size-6 place-items-center">
+                <Icon src={exportIcon} width={21.5} height={21.5} />
+              </span>
+            </IconLink>
+          </div>
+        </Section>
+
+        <Section id="badges" title="Badges" note="Badge: a small pill label with an optional icon, for example &quot;Coming soon&quot;.">
+          <div className="flex flex-wrap items-center gap-4">
+            <Badge>New</Badge>
+            <Badge icon="clock">Coming soon</Badge>
           </div>
         </Section>
 
@@ -256,6 +274,7 @@ export default function UiKitPage() {
               {[
                 { name: 'rounded-pill', note: 'buttons, menu items', className: 'rounded-pill' },
                 { name: 'rounded-32', note: 'hero__dash; hero__media below desktop', className: 'rounded-32' },
+                { name: 'rounded-40', note: 'features cards', className: 'rounded-40' },
                 { name: 'rounded-48', note: 'hero__media on desktop', className: 'rounded-48' },
               ].map(({ name, note, className }) => (
                 <li key={name} className="flex items-center gap-4">

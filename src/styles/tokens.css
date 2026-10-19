@@ -170,6 +170,7 @@
   /* Radius (derived from node properties in Figma: there are no radius variables). Named by px. */
   --radius-*: initial;
   --radius-32: 2rem; /* hero__dash */
+  --radius-40: 2.5rem; /* features cards */
   --radius-48: 3rem; /* hero__media */
   --radius-pill: 9999px; /* buttons, menu items, round icon buttons */
 

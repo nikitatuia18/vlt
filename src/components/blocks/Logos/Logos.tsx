@@ -4,9 +4,9 @@ import { LogoWave } from './LogoWave'
 
 /**
  * Seconds the wave needs to run one wavelength (861 px) from right to left. Gentle on purpose; to be tuned with the designer.
- * The reference site (antigravity.google) uses 7 seconds for its wavelength.
+ * The reference site (antigravity.google) uses 7 seconds; ours is slower (11), at the designer's request, for a smoother wave.
  */
-const WAVE_PERIOD_SECONDS = 7
+const WAVE_PERIOD_SECONDS = 11
 
 /**
  * How far (px) the strip drifts to the left while the section scrolls through the screen.
