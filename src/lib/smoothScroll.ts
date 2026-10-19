@@ -4,9 +4,9 @@ import { useEffect } from 'react'
 
 /**
  * How fast the page catches up with the wheel: the share of the remaining distance covered each frame.
- * 0.1 is the library default (rather floaty); 0.14 is a gentle smoothing that still feels direct. Tuned with the designer.
+ * 0.1 is the library default; 0.14 was the first try (too direct), 0.08 is a softer, longer glide. Tuned with the designer.
  */
-const SMOOTHNESS = 0.14
+const SMOOTHNESS = 0.08
 
 /**
  * Smooth (eased) wheel scrolling over the whole site. The scroll position stays the native one (`window.scrollY`),

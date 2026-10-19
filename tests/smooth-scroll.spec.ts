@@ -8,7 +8,7 @@ test('the wheel scrolls smoothly: the page does not jump at once but catches up 
   await page.waitForTimeout(60)
   const early = await page.evaluate(() => window.scrollY)
   expect(early).toBeLessThan(560) // still on its way
-  await page.waitForTimeout(1600)
+  await page.waitForTimeout(2800)
   const settled = await page.evaluate(() => window.scrollY)
   expect(settled).toBeGreaterThan(590)
   expect(settled).toBeLessThan(610)

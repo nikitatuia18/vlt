@@ -95,22 +95,31 @@ test('scrolling opens the items one after another, in the order of the list', as
 })
 
 for (const viewport of viewports) {
-  test(`the title does not move at all while scrolling (position and width) at ${viewport.name}`, async ({ page }) => {
+  test(`the title is the first thing of the sliding content: above the first item at the start, gone upwards later at ${viewport.name}`, async ({ page }) => {
     await page.setViewportSize({ width: viewport.width, height: viewport.height })
     await page.goto('/')
     await page.evaluate(() => document.fonts.ready)
     await scrollToProgress(page, 0.02)
-    const reference = await box(page, '[data-el="industries__title"]')
-    // Every item in turn becomes the open one (the widest, "Luxury goods and Automotive", used to push the title around).
-    for (let index = 0; index < ids.length; index++) {
+    const title = await box(page, '[data-el="industries__title"]')
+    const first = await box(page, `[data-el="industries__item-${ids[0]}"]`)
+    expect(title.y + title.height, 'above the first item').toBeLessThanOrEqual(first.y)
+    expect(title.y, 'on the screen').toBeGreaterThanOrEqual(0)
+    // The title is not pinned: it slides up with the content (on a tall screen it may still be visible for a while),
+    // it is always above the open item, and its width never changes.
+    let previousY = title.y
+    for (const index of [2, 4, ids.length - 1]) {
       await scrollToProgress(page, (index + 0.5) / ids.length)
       const current = await box(page, '[data-el="industries__title"]')
-      expect({ x: current.x, y: current.y, width: current.width, height: current.height }, ids[index]).toEqual({
-        x: reference.x,
-        y: reference.y,
-        width: reference.width,
-        height: reference.height,
-      })
+      const open = await box(page, `[data-el="industries__item-${ids[index]}"]`)
+      expect(current.y, `${ids[index]} moved up`).toBeLessThan(previousY - 20)
+      expect(current.y + current.height, `${ids[index]} above the open item`).toBeLessThanOrEqual(open.y)
+      expect(current.width, ids[index]).toBeCloseTo(title.width, 0)
+      previousY = current.y
+    }
+    // At the last item the title has left the screen on a normal one (not on a very tall one).
+    if (viewport.height <= 900) {
+      const last = await box(page, '[data-el="industries__title"]')
+      expect(last.y + last.height).toBeLessThan(0)
     }
   })
 
@@ -126,21 +135,26 @@ for (const viewport of viewports) {
   })
 }
 
-test('every one of the seven items is centered on the screen when it opens (1440 x 900), and the list follows smoothly', async ({ page }) => {
+test('every one of the seven items is centered on the screen when it opens (1440 x 900), and the others stay visible around it', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
   await page.goto('/')
   for (let index = 0; index < ids.length; index++) {
     await scrollToProgress(page, (index + 0.5) / ids.length)
     const open = (await item(page, ids[index]).boundingBox())!
     expect(Math.abs(open.y + open.height / 2 - 450), ids[index]).toBeLessThan(3)
-    // The soft fade of the list must not touch the open card (its edges stay sharp).
-    const region = await box(page, '[data-el="industries__list-region"]')
-    const fade = await page.locator('[data-el="industries__list-region"]').evaluate((el) => ({
-      top: parseFloat(el.style.getPropertyValue('--fade-top') || '0'),
-      bottom: parseFloat(el.style.getPropertyValue('--fade-bottom') || '0'),
-    }))
-    expect(region.y + fade.top, `${ids[index]} top fade`).toBeLessThanOrEqual(open.y + 1)
-    expect(region.y + region.height - fade.bottom, `${ids[index]} bottom fade`).toBeGreaterThanOrEqual(open.y + open.height - 1)
+    // Nothing is hidden or faded: the neighbours above and below the open one are fully opaque and not masked.
+    for (const neighbour of [index - 1, index + 1]) {
+      if (neighbour < 0 || neighbour >= ids.length) continue
+      const state = await item(page, ids[neighbour]).evaluate((el) => {
+        const chain: string[] = []
+        for (let node: HTMLElement | null = el; node; node = node.parentElement) {
+          const style = getComputedStyle(node)
+          chain.push(`${style.opacity}|${style.maskImage}`)
+        }
+        return chain
+      })
+      expect(state.every((entry) => entry === '1|none'), `${ids[neighbour]} next to ${ids[index]}`).toBe(true)
+    }
   }
   // Going back up keeps the centering too.
   await scrollToProgress(page, 0.5 / ids.length)
@@ -175,13 +189,14 @@ test('desktop frame (2560): the title is centered above the list at 64 px, items
   await page.setViewportSize({ width: 2560, height: 1200 })
   await page.goto('/')
   await page.evaluate(() => document.fonts.ready)
-  await scrollToProgress(page, 0.4)
+  await scrollToProgress(page, 0.02)
   const titleElement = page.locator('[data-el="industries__title"]')
   expect(await titleElement.evaluate((el) => getComputedStyle(el).fontSize)).toBe('64px')
   const title = await box(page, '[data-el="industries__title"]')
   expect(title.x + title.width / 2).toBeCloseTo(1280, 0) // centered on the screen
-  const region = await box(page, '[data-el="industries__list-region"]')
-  expect(title.y + title.height).toBeLessThanOrEqual(region.y)
+  const list = await box(page, '[data-el="industries__list"]')
+  expect(title.y + title.height).toBeLessThanOrEqual(list.y)
+  await scrollToProgress(page, 0.4)
   for (const id of ids) {
     const titleBox = (await page.locator(`[data-el="industries__item-${id}-title"]`).boundingBox())!
     expect(titleBox.height, id).toBeCloseTo(72, 0) // one line of 72
@@ -191,7 +206,7 @@ test('desktop frame (2560): the title is centered above the list at 64 px, items
 test('mobile: smaller type, nothing sticks out sideways', async ({ page }) => {
   await page.setViewportSize({ width: 393, height: 850 })
   await page.goto('/')
-  await scrollToProgress(page, 0.4)
+  await scrollToProgress(page, 0.02)
   expect(await page.locator('[data-el="industries__title"]').evaluate((el) => getComputedStyle(el).fontSize)).toBe('32px')
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)
   expect(overflow).toBe(0)
@@ -206,7 +221,7 @@ test('reduced motion: a plain static block with Startups open, no pinning, no sl
   expect(await page.locator('[data-el="industries__stage"]').evaluate((el) => getComputedStyle(el).position)).toBe('static')
   expect(await activeId(page)).toBe('startups')
   await expect(page.locator('[data-el="industries__item-startups-details"]')).toHaveAttribute('aria-hidden', 'false')
-  const transform = await page.locator('[data-el="industries__list"]').evaluate((el) => (el as HTMLElement).style.transform)
+  const transform = await page.locator('[data-el="industries__slider"]').evaluate((el) => (el as HTMLElement).style.transform)
   expect(transform).toBe('')
   // Scrolling changes nothing.
   await scrollToProgress(page, 0.8)
