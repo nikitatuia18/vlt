@@ -1,0 +1,230 @@
+import { useEffect, useRef, useState, type ReactNode } from 'react'
+import moonIcon from '../assets/icons/moon.svg'
+import sunIcon from '../assets/icons/sun.svg'
+import { ButtonLink } from '../components/ui/ButtonLink'
+import { Container } from '../components/ui/Container'
+import { Icon } from '../components/ui/Icon'
+import { IconButton } from '../components/ui/IconButton'
+import { ThemeToggle } from '../components/ui/ThemeToggle'
+import { useTheme } from '../lib/theme'
+import tokensCss from '../styles/tokens.css?raw'
+
+/*
+ * Living UI Kit, available at /ui-kit. It shows everything the design system contains,
+ * in the current theme (use the toggle at the top for Light/Dark).
+ * Colors are read from tokens.css, so a new color token appears here without editing this file.
+ * Text styles are listed below by hand because Tailwind only generates classes it sees written out in the source;
+ * tests/ui-kit.spec.ts fails if this list and typography.css drift apart.
+ */
+
+// Semantic colors: the Light block of tokens.css (`@theme static`).
+const themeBlock = tokensCss.split('@theme static {')[1]?.split('\n}')[0] ?? ''
+const colorTokens = [...themeBlock.matchAll(/--(color-[a-z0-9-]+):/g)].map((match) => match[1])
+const colorGroups = ['typography', 'icon', 'surface', 'border'].map((group) => ({
+  group,
+  tokens: colorTokens.filter((token) => token.startsWith(`color-${group}-`)),
+}))
+
+const textStyles = [
+  'type-display-2xl',
+  'type-display-xl',
+  'type-display-lg',
+  'type-display-sm',
+  'type-heading-xl',
+  'type-heading-lg',
+  'type-heading-md',
+  'type-heading-sm',
+  'type-body-lead',
+  'type-body-lead-medium',
+  'type-body-lg',
+  'type-body-md',
+  'type-body-sm',
+  'type-ui-lg',
+  'type-ui-md',
+  'type-ui-sm',
+  'type-ui-xs',
+  'type-ui-caps',
+] as const
+
+const spacingSteps = [1, 2, 3, 4, 6, 8, 10, 12, 15, 20, 35]
+
+function Section({ id, title, note, children }: { id: string; title: string; note?: string; children: ReactNode }) {
+  return (
+    <section id={id} data-el={`ui-kit__${id}`} className="flex flex-col gap-6 border-t border-border-subtle py-10">
+      <div className="flex flex-col gap-1">
+        <h2 className="type-heading-md text-typography-primary">{title}</h2>
+        {note && <p className="type-body-md max-w-3xl text-typography-secondary">{note}</p>}
+      </div>
+      {children}
+    </section>
+  )
+}
+
+function ColorSwatch({ token }: { token: string }) {
+  const { theme } = useTheme()
+  const swatchRef = useRef<HTMLDivElement>(null)
+  const [value, setValue] = useState('')
+
+  // The resolved value changes with the theme, so read it again on every switch.
+  useEffect(() => {
+    if (swatchRef.current) setValue(getComputedStyle(swatchRef.current).backgroundColor)
+  }, [theme])
+
+  return (
+    <li className="flex items-center gap-3">
+      <div className="size-12 shrink-0 rounded-pill bg-surface-page ring-1 ring-inset ring-border-medium">
+        <div ref={swatchRef} className="size-full rounded-pill" style={{ backgroundColor: `var(--${token})` }} />
+      </div>
+      <div className="min-w-0">
+        <p className="type-ui-sm truncate text-typography-primary">{token}</p>
+        <p className="type-body-sm truncate text-typography-secondary">{value}</p>
+      </div>
+    </li>
+  )
+}
+
+function TextStyleRow({ name }: { name: string }) {
+  const { theme } = useTheme()
+  const sampleRef = useRef<HTMLParagraphElement>(null)
+  const [metrics, setMetrics] = useState('')
+
+  useEffect(() => {
+    if (!sampleRef.current) return
+    const style = getComputedStyle(sampleRef.current)
+    setMetrics(`${style.fontSize} / ${style.lineHeight}, ${style.letterSpacing === 'normal' ? '0' : style.letterSpacing}`)
+  }, [theme])
+
+  return (
+    <li className="flex flex-col gap-1 border-b border-border-subtle pb-4 tablet:flex-row tablet:items-baseline tablet:gap-6">
+      <div className="shrink-0 tablet:w-56">
+        <p className="type-ui-sm text-typography-primary">{name}</p>
+        <p className="type-body-sm text-typography-secondary">{metrics}</p>
+      </div>
+      <p ref={sampleRef} className={`${name} min-w-0 text-typography-primary`}>
+        Banking for today
+      </p>
+    </li>
+  )
+}
+
+const preventNavigation = (event: { preventDefault: () => void }) => event.preventDefault()
+
+export default function UiKitPage() {
+  return (
+    <main className="py-10">
+      <Container>
+        <header className="flex items-start justify-between gap-4 pb-10">
+          <div className="flex flex-col gap-2">
+            <h1 className="type-heading-lg text-typography-primary">UI Kit</h1>
+            <p className="type-body-md max-w-3xl text-typography-secondary">
+              Everything the design system contains: tokens from Figma and the shared components. Switch the theme to check
+              both modes. Rules and the component list: docs/ui-kit.md.
+            </p>
+          </div>
+          <ThemeToggle />
+        </header>
+
+        <Section
+          id="colors"
+          title="Colors"
+          note="Semantic colors from Figma (Semantic -- Theme). Use these in components; the raw palette is not available as classes."
+        >
+          <div className="flex flex-col gap-8">
+            {colorGroups.map(({ group, tokens }) => (
+              <div key={group} className="flex flex-col gap-3">
+                <h3 className="type-ui-md text-typography-primary">{group}</h3>
+                <ul className="grid grid-cols-1 gap-x-6 gap-y-3 tablet:grid-cols-2 desktop:grid-cols-3">
+                  {tokens.map((token) => (
+                    <ColorSwatch key={token} token={token} />
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </Section>
+
+        <Section
+          id="typography"
+          title="Typography"
+          note="Text styles from Figma. Apply with one class, for example type-ui-sm. Display and heading use Manrope, body and ui use Inter."
+        >
+          <ul className="flex flex-col gap-4">
+            {textStyles.map((name) => (
+              <TextStyleRow key={name} name={name} />
+            ))}
+          </ul>
+        </Section>
+
+        <Section
+          id="buttons"
+          title="Buttons"
+          note="ButtonLink: two variants and two sizes (md 44 px in the header, lg 56 px in sections). Hover, active and focus states use the Figma tokens; try them with the mouse and the keyboard."
+        >
+          <div className="flex flex-col gap-6">
+            {(['md', 'lg'] as const).map((size) => (
+              <div key={size} className="flex flex-col gap-3">
+                <h3 className="type-ui-md text-typography-primary">size {size}</h3>
+                <div className="flex flex-wrap items-center gap-4">
+                  <ButtonLink href="#" size={size} icon="export" onClick={preventNavigation}>
+                    Primary with icon
+                  </ButtonLink>
+                  <ButtonLink href="#" size={size} onClick={preventNavigation}>
+                    Primary
+                  </ButtonLink>
+                  <ButtonLink href="#" size={size} variant="secondary" onClick={preventNavigation}>
+                    Secondary
+                  </ButtonLink>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Section>
+
+        <Section
+          id="icon-buttons"
+          title="Icon buttons and icons"
+          note="IconButton is a round 44 px button for one 24 px icon (always with aria-label). Icon draws any single-color Figma SVG in the current text color, so it follows the theme."
+        >
+          <div className="flex flex-wrap items-center gap-6">
+            <ThemeToggle />
+            <IconButton aria-label="Sun icon button">
+              <Icon src={sunIcon} width={24} height={24} />
+            </IconButton>
+            <IconButton aria-label="Moon icon button">
+              <Icon src={moonIcon} width={20.8634} height={21.5021} />
+            </IconButton>
+            <span className="text-icon-brand">
+              <Icon src={sunIcon} width={24} height={24} />
+            </span>
+            <span className="text-icon-secondary">
+              <Icon src={moonIcon} width={20.8634} height={21.5021} />
+            </span>
+          </div>
+        </Section>
+
+        <Section
+          id="layout"
+          title="Layout, spacing and radius"
+          note="Spacing is the 4 px Tailwind scale (every value in the design is a multiple of 4). The page column is up to 1440 px wide (Container) with side padding 16 / 32 / 80 px. Breakpoints: tablet from 768 px, desktop from 1280 px."
+        >
+          <div className="flex flex-col gap-6">
+            <ul className="flex flex-col gap-2">
+              {spacingSteps.map((step) => (
+                <li key={step} className="flex items-center gap-4">
+                  <span className="type-ui-sm w-24 shrink-0 text-typography-primary">
+                    {step} → {step * 4}px
+                  </span>
+                  <span className="h-3 rounded-pill bg-surface-brand-default" style={{ width: step * 4 }} />
+                </li>
+              ))}
+            </ul>
+            <div className="flex items-center gap-4">
+              <span className="type-ui-sm w-24 shrink-0 text-typography-primary">rounded-pill</span>
+              <span className="h-11 w-40 rounded-pill bg-surface-brand-light ring-1 ring-inset ring-border-brand" />
+            </div>
+          </div>
+        </Section>
+      </Container>
+    </main>
+  )
+}

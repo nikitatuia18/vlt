@@ -4,6 +4,9 @@
 @import "./tokens.css";
 @import "./typography.css";
 
+/* `dark:` variant follows the theme switch (data-theme="dark" on <html>), not the OS setting. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 @layer base {
   body {
     background-color: var(--color-surface-page);

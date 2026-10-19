@@ -1,7 +1,7 @@
 import { useEffect, useId, useRef, useState } from 'react'
-import exportIcon from '../../../assets/icons/export.svg'
 import logo from '../../../assets/brand/logo-velant-pay.svg'
 import { ButtonLink } from '../../ui/ButtonLink'
+import { Container } from '../../ui/Container'
 import { Icon } from '../../ui/Icon'
 import { IconButton } from '../../ui/IconButton'
 import { ThemeToggle } from '../../ui/ThemeToggle'
@@ -10,13 +10,6 @@ import { demoCta, exploreCta, navItems } from './navigation'
 
 // Must match --breakpoint-desktop in styles/tokens.css: from here the full menu is shown instead of the burger.
 const DESKTOP_QUERY = '(min-width: 80rem)'
-
-// The export icon is 18.17 px inside a 20 px slot in the design.
-const ctaIcon = (
-  <span className="grid size-5 place-items-center">
-    <Icon src={exportIcon} width={18.1671} height={18.167} />
-  </span>
-)
 
 const linkBaseClasses = 'rounded-pill px-4 py-3 transition-colors'
 const linkCurrentClasses = 'bg-surface-subtle text-typography-primary ring-1 ring-inset ring-border-subtle'
@@ -58,10 +51,7 @@ export function Header() {
 
   return (
     <header data-el="header" className="relative border-b border-border-subtle bg-surface-subtle">
-      <div
-        data-el="header__container"
-        className="mx-auto flex w-full max-w-page items-center justify-between px-(--gutter) py-4"
-      >
+      <Container data-el="header__container" className="flex items-center justify-between py-4">
         <div data-el="header__left" className="flex items-center gap-15">
           <a href="/" aria-label="Velant Pay, home" data-el="header__logo" className="block shrink-0 text-typography-primary">
             <Icon src={logo} width={97.4092} height={32} />
@@ -87,7 +77,7 @@ export function Header() {
           <ThemeToggle data-el="header__theme-toggle" className="max-desktop:hidden" />
 
           <div data-el="header__buttons" className="hidden items-center gap-2 tablet:flex">
-            <ButtonLink href={demoCta.href} icon={ctaIcon} data-el="header__cta-primary">
+            <ButtonLink href={demoCta.href} icon="export" data-el="header__cta-primary">
               {demoCta.label}
             </ButtonLink>
             <ButtonLink
@@ -112,7 +102,7 @@ export function Header() {
             <MenuToggleIcon isOpen={isMenuOpen} />
           </IconButton>
         </div>
-      </div>
+      </Container>
 
       {/* Dropdown for tablet and mobile; hidden on desktop where the full menu is in the bar. */}
       <div
@@ -121,7 +111,7 @@ export function Header() {
         data-el="header__menu-panel"
         className="absolute inset-x-0 top-full z-40 border-b border-border-subtle bg-surface-subtle desktop:hidden"
       >
-        <div className="mx-auto flex max-w-page flex-col gap-4 px-(--gutter) py-4">
+        <Container className="flex flex-col gap-4 py-4">
           <nav aria-label="Main">
             <ul className="flex flex-col gap-1">
               {navItems.map((item) => (
@@ -141,7 +131,7 @@ export function Header() {
 
           <div className="flex flex-col gap-2 tablet:flex-row tablet:items-center">
             {/* On tablet the primary CTA is already in the bar. */}
-            <ButtonLink href={demoCta.href} icon={ctaIcon} onClick={closeMenu} className="tablet:hidden">
+            <ButtonLink href={demoCta.href} icon="export" onClick={closeMenu} className="tablet:hidden">
               {demoCta.label}
             </ButtonLink>
             <ButtonLink href={exploreCta.href} variant="secondary" onClick={closeMenu}>
@@ -149,7 +139,7 @@ export function Header() {
             </ButtonLink>
             <ThemeToggle className="self-start tablet:ml-auto" />
           </div>
-        </div>
+        </Container>
       </div>
     </header>
   )
