@@ -4,7 +4,6 @@ import iconGlobal from '../../../assets/cta/icon-global.svg'
 import iconSecurity from '../../../assets/cta/icon-security.svg'
 import person from '../../../assets/cta/img-cta-person.webp'
 import { ButtonLink } from '../../ui/ButtonLink'
-import { ColumnFade } from '../../ui/ColumnFade'
 import { Container } from '../../ui/Container'
 import { CornerDots } from '../../ui/CornerDots'
 import { InteractiveDots } from '../../ui/InteractiveDots'
@@ -96,10 +95,8 @@ export function Cta() {
             </div>
           </div>
 
-          {/* The end of the block: dots on the corners at the line. The block below (the footer) is not built yet,
-              so the column lines go on and fade out for now. The top of the block continues the column of the FAQ. */}
+          {/* The end of the block: dots on the corners at the line; the column goes on in the footer below without a break. The top continues the column of the FAQ. */}
           <CornerDots edge="bottom" block="cta" />
-          <ColumnFade edge="bottom" block="cta" />
         </div>
       </Container>
     </section>

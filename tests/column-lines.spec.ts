@@ -9,7 +9,8 @@ const ends = [
   { block: 'next-steps', edge: 'top', corners: ['tl', 'tr'], fade: true },
   { block: 'next-steps', edge: 'bottom', corners: ['bl', 'br'], fade: false }, // the column goes on in the FAQ block
   { block: 'faq', edge: 'bottom', corners: ['bl', 'br'], fade: false }, // the column goes on in the cta block
-  { block: 'cta', edge: 'bottom', corners: ['bl', 'br'], fade: true },
+  { block: 'cta', edge: 'bottom', corners: ['bl', 'br'], fade: false }, // the column goes on in the footer
+  { block: 'footer', edge: 'bottom', corners: ['bl', 'br'], fade: false },
 ] as const
 
 const box = async (page: Page, selector: string) => (await page.locator(selector).boundingBox())!
@@ -55,7 +56,7 @@ for (const viewport of [{ width: 1440, height: 900 }, { width: 393, height: 850 
 test('the column lines of the block with products and of the steps are visible (like in industries)', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
   await page.goto('/')
-  for (const block of ['features', 'next-steps', 'industries', 'faq', 'cta']) {
+  for (const block of ['features', 'next-steps', 'industries', 'faq', 'cta', 'footer', 'footer-bottom']) {
     const shadow = await page.locator(`[data-el="${block}__container"]`).evaluate((el) => getComputedStyle(el).boxShadow)
     expect(shadow, block).not.toBe('none')
     expect(shadow, block).toContain('inset')

@@ -6,6 +6,7 @@ import { Badge } from '../components/ui/Badge'
 import { ButtonLink } from '../components/ui/ButtonLink'
 import { Container } from '../components/ui/Container'
 import { ColumnFade } from '../components/ui/ColumnFade'
+import { Footer } from '../components/ui/Footer'
 import { Header } from '../components/ui/Header'
 import { CornerDots } from '../components/ui/CornerDots'
 import { Icon } from '../components/ui/Icon'
@@ -243,6 +244,16 @@ export default function UiKitPage() {
           <div className="flex flex-col gap-6 overflow-hidden rounded-32 ring-1 ring-border-subtle">
             <Header isPinned={false} currentId="products" />
             <Header isPinned={false} currentId="pricing" />
+          </div>
+        </Section>
+
+        <Section
+          id="footer"
+          title="Footer"
+          note="Footer: one component for every page. The upper part has the logo, the description and five columns of links; the lower bar has the company, legal links and the copyright. Pages can pass their own columns, legal links and year."
+        >
+          <div className="overflow-hidden rounded-32 ring-1 ring-border-subtle">
+            <Footer />
           </div>
         </Section>
 

@@ -70,11 +70,27 @@ test('global in stacked layout: map above the text, no horizontal scroll', async
 
 test('global map is animated: cards and routes change over time', async ({ page }) => {
   await open(page, 1440, 900)
-  const opacity = (selector: string) => page.locator(selector).evaluate((el) => Number(getComputedStyle(el).opacity))
-  const first = await opacity('[data-el="global__pin-us"]')
-  await page.waitForTimeout(3500)
-  const later = await opacity('[data-el="global__pin-us"]')
-  expect(Math.abs(first - later)).toBeGreaterThan(0.05)
+  // Sample all cards every 300 ms for 4.5 s (the start of the loop depends on how fast the page loaded, so one pair of
+  // moments could fall in a pause of one card): at least one card must change a lot, and the cards are not all the same.
+  const samples = await page.evaluate(
+    () =>
+      new Promise<number[][]>((resolve) => {
+        const cards = Array.from(document.querySelectorAll('[data-el^="global__pin-"]:not([data-el$="-label"]):not([data-el$="-desc"])'))
+        const found: number[][] = []
+        const timer = setInterval(() => {
+          found.push(cards.map((card) => Number(getComputedStyle(card).opacity)))
+          if (found.length >= 15) {
+            clearInterval(timer)
+            resolve(found)
+          }
+        }, 300)
+      }),
+  )
+  const spans = samples[0].map((_, card) => {
+    const values = samples.map((sample) => sample[card])
+    return Math.max(...values) - Math.min(...values)
+  })
+  expect(Math.max(...spans)).toBeGreaterThan(0.5)
 })
 
 test('a card grows while it appears, and a route drawn from its far end keeps dash length and offset in step', async ({ page }) => {

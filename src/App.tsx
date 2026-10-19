@@ -7,6 +7,7 @@ import { Hero } from './components/blocks/Hero'
 import { Industries } from './components/blocks/Industries'
 import { Logos } from './components/blocks/Logos'
 import { NextSteps } from './components/blocks/NextSteps'
+import { Footer } from './components/ui/Footer'
 import { Header } from './components/ui/Header'
 import { useSmoothScroll } from './lib/smoothScroll'
 
@@ -38,6 +39,7 @@ export default function App() {
         <Faq />
         <Cta />
       </main>
+      <Footer />
     </>
   )
 }
