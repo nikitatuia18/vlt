@@ -1,4 +1,5 @@
-import { motion, useReducedMotion } from 'motion/react'
+import { animate, motion, useMotionValue, useReducedMotion, useTransform } from 'motion/react'
+import { useEffect } from 'react'
 import mapOutline from '../../../assets/global/map-outline.svg'
 import { pins, type Pin } from './pins'
 import { routeGeometry, type RouteGeometry } from './routes.data'
@@ -15,8 +16,23 @@ type RouteProps = { geometry: RouteGeometry; timeline: RouteTimeline; reduced: b
  */
 function Route({ geometry, timeline, reduced }: RouteProps) {
   const { id, src, left, top, width, height, centerline } = geometry
-  const { opacity, dash } = timeline
+  const { opacity, draw } = timeline
   const maskId = `global-route-mask-${id}`
+
+  // How much of the line is drawn (0 to 1). The dash length and its offset are both derived from this one value,
+  // so a line that grows from its far end stays in step (animating the two separately lost the offset).
+  const progress = useMotionValue(reduced ? 1 : 0)
+  const dasharray = useTransform(progress, (value) => `${value} 1`)
+  const dashoffset = useTransform(progress, (value) => (draw?.reverse ? value - 1 : 0))
+  useEffect(() => {
+    if (!draw) return
+    if (reduced) {
+      progress.set(1)
+      return
+    }
+    const controls = animate(progress, draw.values, { duration: DURATION, times: draw.times, ease: draw.ease, repeat: Infinity })
+    return () => controls.stop()
+  }, [draw, progress, reduced])
 
   return (
     <motion.svg
@@ -35,29 +51,18 @@ function Route({ geometry, timeline, reduced }: RouteProps) {
           : { duration: DURATION, times: opacity.times, ease: opacity.ease, repeat: Infinity }
       }
     >
-      {dash ? (
+      {draw ? (
         <>
           <mask id={maskId} maskUnits="userSpaceOnUse" x={-30} y={-30} width={width + 60} height={height + 60}>
+            {/* Flat ends: a round cap would leave a dot at the start while the line is not drawn yet. */}
             <motion.path
               ref={normalizePath}
               d={centerline}
               fill="none"
               stroke="white"
               strokeWidth={30}
-              strokeLinecap="round"
               strokeLinejoin="round"
-              initial={false}
-              animate={
-                reduced
-                  ? { strokeDasharray: '1 1', strokeDashoffset: 0 }
-                  : { strokeDasharray: dash.dasharray, strokeDashoffset: dash.offset ?? 0 }
-              }
-              transition={
-                reduced
-                  ? { duration: 0 }
-                  : { duration: DURATION, times: dash.times, ease: dash.ease, repeat: Infinity }
-              }
-              style={{ strokeDashoffset: dash.initialOffset }}
+              style={{ strokeDasharray: dasharray, strokeDashoffset: dashoffset }}
             />
           </mask>
           <image href={src} width={width} height={height} mask={`url(#${maskId})`} />
@@ -75,26 +80,39 @@ function Route({ geometry, timeline, reduced }: RouteProps) {
  * Font note: the design uses Urbanist for the code, which is not in the font set; the closest styles are used (ui-md, body-sm).
  */
 function PinCard({ pin, reduced }: { pin: Pin; reduced: boolean }) {
-  const track = pinTimelines[pin.id]
+  const { opacity, scale } = pinTimelines[pin.id]
+  const loop = { duration: DURATION, repeat: Infinity }
   return (
-    <motion.div
-      data-el={`global__pin-${pin.id}`}
-      className="absolute flex origin-top-left scale-[calc(var(--p)/var(--s))] items-center justify-center gap-3 rounded-pill bg-surface-subtle p-2 ring-1 ring-inset ring-border-subtle desktop:p-4"
+    // The outer layer only places the card and adapts it to the screen; the inner one appears (fades in and grows out of the flag).
+    <div
+      className="absolute origin-top-left scale-[calc(var(--p)/var(--s))]"
       style={{ left: pin.left, top: pin.top }}
-      initial={false}
-      animate={{ opacity: reduced ? 1 : track.values }}
-      transition={reduced ? { duration: 0 } : { duration: DURATION, times: track.times, ease: track.ease, repeat: Infinity }}
     >
-      <img src={pin.flag} alt="" width={44} height={44} className="size-11 shrink-0" />
-      <div className="hidden flex-col items-start justify-center pr-2 text-center whitespace-nowrap desktop:flex">
-        <span data-el={`global__pin-${pin.id}-label`} className="type-ui-md text-typography-primary">
-          {pin.code}
-        </span>
-        <span data-el={`global__pin-${pin.id}-desc`} className="type-body-sm text-typography-secondary">
-          {pin.rails}
-        </span>
-      </div>
-    </motion.div>
+      <motion.div
+        data-el={`global__pin-${pin.id}`}
+        className="flex origin-[38px_38px] items-center justify-center gap-3 rounded-pill bg-surface-subtle p-2 ring-1 ring-inset ring-border-subtle max-desktop:origin-[30px_30px] desktop:p-4"
+        initial={false}
+        animate={reduced ? { opacity: 1, scale: 1 } : { opacity: opacity.values, scale: scale.values }}
+        transition={
+          reduced
+            ? { duration: 0 }
+            : {
+                opacity: { ...loop, times: opacity.times, ease: opacity.ease },
+                scale: { ...loop, times: scale.times, ease: scale.ease },
+              }
+        }
+      >
+        <img src={pin.flag} alt="" width={44} height={44} className="size-11 shrink-0" />
+        <div className="hidden flex-col items-start justify-center pr-2 text-center whitespace-nowrap desktop:flex">
+          <span data-el={`global__pin-${pin.id}-label`} className="type-ui-md text-typography-primary">
+            {pin.code}
+          </span>
+          <span data-el={`global__pin-${pin.id}-desc`} className="type-body-sm text-typography-secondary">
+            {pin.rails}
+          </span>
+        </div>
+      </motion.div>
+    </div>
   )
 }
 

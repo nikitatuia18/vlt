@@ -76,6 +76,27 @@ test('global map is animated: cards and routes change over time', async ({ page 
   expect(Math.abs(first - later)).toBeGreaterThan(0.05)
 })
 
+test('a card grows while it appears, and a route drawn from its far end keeps dash length and offset in step', async ({ page }) => {
+  await open(page, 1440, 900)
+  await page.waitForFunction(
+    () => Number(getComputedStyle(document.querySelector('[data-el="global__pin-us"]')!).opacity) > 0.02,
+    undefined,
+    { polling: 16, timeout: 30000 },
+  )
+  // The USD card has just started to appear: it is still smaller than its final size.
+  const scale = await page.locator('[data-el="global__pin-us"]').evaluate((el) => new DOMMatrix(getComputedStyle(el).transform).a)
+  expect(scale).toBeLessThan(0.95)
+  // Route 2 grows from its far end: the offset is always (length - 1), so the drawn part ends at the end of the path.
+  await page.waitForTimeout(700)
+  const route = await page.locator('[data-el="global__route-2"] mask path').evaluate((el) => {
+    const style = getComputedStyle(el)
+    return { dash: parseFloat(style.strokeDasharray), offset: parseFloat(style.strokeDashoffset) }
+  })
+  expect(route.dash).toBeGreaterThan(0)
+  expect(route.dash).toBeLessThan(1)
+  expect(route.offset).toBeCloseTo(route.dash - 1, 1)
+})
+
 test.describe('reduced motion', () => {
   test.use({ reducedMotion: 'reduce' })
   test('everything stands still in the final state: all cards and routes visible', async ({ page }) => {
