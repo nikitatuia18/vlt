@@ -96,6 +96,8 @@ test('theme toggle switches the Dark Theme tokens on and off', async ({ page }) 
   expect(await background()).toBe('rgb(14, 14, 14)') // surface/page, Dark = neutral/950
   const headerBackground = await page.evaluate(() => getComputedStyle(document.querySelector('[data-el="header"]')!).backgroundColor)
   expect(headerBackground).toBe('rgb(24, 24, 24)') // surface/subtle, Dark = neutral/900
+  // The pointer stays over the toggle after the click, which would show its hover color: move it away.
+  await page.mouse.move(700, 600)
   // Buttons animate their colors (transition-colors): wait until they settle before taking the screenshot.
   await expect(toggle).toHaveCSS('background-color', 'rgb(24, 24, 24)')
   await page.locator('[data-el="header"]').screenshot({ path: 'tests/artifacts/header-desktop-1440-dark.png' })
