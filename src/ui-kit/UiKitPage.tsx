@@ -5,6 +5,7 @@ import { ButtonLink } from '../components/ui/ButtonLink'
 import { Container } from '../components/ui/Container'
 import { Icon } from '../components/ui/Icon'
 import { IconButton } from '../components/ui/IconButton'
+import { InteractiveDots } from '../components/ui/InteractiveDots'
 import { ThemeToggle } from '../components/ui/ThemeToggle'
 import { useTheme } from '../lib/theme'
 import tokensCss from '../styles/tokens.css?raw'
@@ -203,6 +204,39 @@ export default function UiKitPage() {
         </Section>
 
         <Section
+          id="backgrounds"
+          title="Interactive background"
+          note="InteractiveDots: a dot grid that the pointer pushes away, so the background feels alive. Move the pointer over the panel. Drop it into any positioned, overflow-hidden parent; it is transparent, so the page color and the theme show through."
+        >
+          <div className="flex flex-col gap-4">
+            <div
+              data-el="ui-kit__dots-demo"
+              className="relative h-72 overflow-hidden rounded-32 bg-surface-page ring-1 ring-inset ring-border-medium"
+            >
+              <InteractiveDots />
+            </div>
+            <dl className="type-body-sm grid grid-cols-1 gap-x-8 gap-y-1 text-typography-secondary tablet:grid-cols-2">
+              <div>
+                <dt className="type-ui-sm text-typography-primary">Usage</dt>
+                <dd>{'<div className="relative overflow-hidden"><InteractiveDots /></div>'}</dd>
+              </div>
+              <div>
+                <dt className="type-ui-sm text-typography-primary">Defaults (approved prototype)</dt>
+                <dd>spacing 40, dotSize 1, radius 150, force 1, ease 0.1</dd>
+              </div>
+              <div>
+                <dt className="type-ui-sm text-typography-primary">Color</dt>
+                <dd>surface-dots (Figma theme/surface/dots): neutral/400 in Light, neutral/600 in Dark</dd>
+              </div>
+              <div>
+                <dt className="type-ui-sm text-typography-primary">Behavior</dt>
+                <dd>pointer on the whole window, touch ignored, stops when idle or off screen, still with reduced motion</dd>
+              </div>
+            </dl>
+          </div>
+        </Section>
+
+        <Section
           id="layout"
           title="Layout, spacing and radius"
           note="Spacing is the 4 px Tailwind scale (every value in the design is a multiple of 4). The page column is up to 1440 px wide (Container) with side padding 16 / 32 / 80 px. Breakpoints: tablet from 768 px, desktop from 1280 px."
@@ -218,10 +252,21 @@ export default function UiKitPage() {
                 </li>
               ))}
             </ul>
-            <div className="flex items-center gap-4">
-              <span className="type-ui-sm w-24 shrink-0 text-typography-primary">rounded-pill</span>
-              <span className="h-11 w-40 rounded-pill bg-surface-brand-light ring-1 ring-inset ring-border-brand" />
-            </div>
+            <ul className="flex flex-col gap-3">
+              {[
+                { name: 'rounded-pill', note: 'buttons, menu items', className: 'rounded-pill' },
+                { name: 'rounded-32', note: 'hero__dash; hero__media below desktop', className: 'rounded-32' },
+                { name: 'rounded-48', note: 'hero__media on desktop', className: 'rounded-48' },
+              ].map(({ name, note, className }) => (
+                <li key={name} className="flex items-center gap-4">
+                  <span className="type-ui-sm w-24 shrink-0 text-typography-primary">{name}</span>
+                  <span
+                    className={`h-16 w-40 shrink-0 bg-surface-brand-light ring-1 ring-inset ring-border-brand ${className}`}
+                  />
+                  <span className="type-body-sm text-typography-secondary">{note}</span>
+                </li>
+              ))}
+            </ul>
           </div>
         </Section>
       </Container>

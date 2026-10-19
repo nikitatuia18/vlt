@@ -37,12 +37,13 @@
 | surface/brand-light: brand/50 / brand/900 | `--color-surface-brand-light` |
 | surface/Success, Success-hover, Success-secondary | `--color-surface-success`, `-success-hover`, `-success-secondary` |
 | surface/static-w, static-b | `--color-surface-static-w`, `-static-b` |
+| surface/dots: neutral/400 / neutral/600 (создана нами) | `--color-surface-dots` |
 | surface/«0 white», «16 white», «0 black», «16 black» | `--color-surface-white-0`, `-white-16`, `-black-0`, `-black-16` |
 | surface/«0 **barand**», «16 **barand**» | `--color-surface-brand-0`, `-brand-16` (опечатка исправлена) |
 | borders & dividers/subtle, medium, strong, very strong, alpha-0 (neutral/900 @6/12/18/24/0 %; в Dark neutral/0) | `--color-border-subtle`, `-medium`, `-strong`, `-very-strong`, `-alpha-0` |
 | borders & dividers/brand, brand-light | `--color-border-brand`, `-brand-light` |
 
-Всего семантических цветов: 41 переменная Figma минус служебная `current_theme` (строка режима) = 40; в CSS — 40 токенов + `transparent`, `current`.
+Всего семантических цветов: 42 переменные Figma (из них `theme/surface/dots` создана нами, см. раздел 7) минус служебная `current_theme` (строка режима) = 41; в CSS — 41 токен + `transparent`, `current`.
 
 **Не перенесено (и почему):**
 - `theme/icons/text/*` и `Content/primary` — эти переменные приходят в кадры из другой библиотеки, в файле их нет; дублируют `theme/icon/*`. Подключим, если блоку понадобятся.
@@ -62,8 +63,8 @@
 | Что | Значение | Откуда |
 |---|---|---|
 | Расстояния | шкала Tailwind, шаг 4 px (`p-3` = 12 px, `gap-15` = 60 px) | все значения макета кратны 4 (10, 12, 16, 24, 60, 160); отдельные токены не нужны |
-| Радиус | `rounded-pill` = 9999 px | в макете (Header) только «таблетки»; остальные радиусы добавим вместе с блоками |
-| Колонка контента | `max-w-page` = 90rem (1440 px) | десктопный кадр, `header__container` |
+| Радиус | `rounded-pill` = 9999 px, `rounded-32` = 32 px, `rounded-48` = 48 px | из свойств узлов Figma (переменных радиуса нет): кнопки и пункты меню; `hero__dash`; `hero__media`. Палитра радиусов Tailwind по умолчанию отключена |
+| Колонка контента | `--container-page` = 90rem (1440 px); `Container`: содержимое до 1440 px, боковой отступ снаружи | десктопный кадр: колонка 1440 внутри отступа 160 при ширине 2560 |
 | Боковой отступ | `px-(--gutter)`: 1rem / 2rem (от 768) / 5rem (от 1280) | вывод: в кадре 160 px при ширине 2560 и колонке 1440, на реальных экранах колонка центрируется |
 | Брейкпоинты | `tablet` = 48rem (768), `desktop` = 80rem (1280) | `docs/responsive.md` |
 
@@ -80,12 +81,12 @@
 ## 6. Пересинхронизация
 Токены читаются **всем набором**, а не только использованными в кадре: `get_variable_defs` возвращает лишь переменные, привязанные к узлу, и пропускает режимы. Полный список — через `use_figma` (чтение): `figma.variables.getLocalVariableCollectionsAsync()`, `getLocalVariablesAsync()`, `getLocalTextStylesAsync()`. Значения Dark и алиасы с прозрачностью (`color` + `opacity`) разворачиваются в `color-mix(...)`.
 
-## 7. Не из Figma (исключения)
-Значения, которых нет в переменных Figma. Каждое — единичное исключение: в код не размножается, ждёт переменной в Figma.
+## 7. Не из Figma
+**Исключений сейчас нет.**
 
-| CSS | Значение | Где используется | Что сделать |
-|---|---|---|---|
-| `--dots-color` (Light) | `#8f8f8f` из утверждённого прототипа интерактивного фона | `InteractiveDots` (Hero) | завести переменную в Figma (предложение: `theme/surface/dots`, Light `#8f8f8f`), затем синк токенов |
-| `--dots-color` (Dark) | `var(--color-typography-tertiary)` — в макете тёмного варианта нет | то же | решение дизайнера |
+Создано нами в Figma (с согласия пользователя):
+| Переменная | Значения | Зачем |
+|---|---|---|
+| `theme/surface/dots` (Semantic -- Theme, область: заливки) | Light → `neutral/400` (#a3a3a3), Dark → `neutral/600` (#525252) | цвет точек интерактивного фона Hero: заметны, но не громче контента. В прототипе был `#8f8f8f`; ближайший токен по значению — `neutral/400` |
 
-Правило: если пользователь даёт значение, для которого нет токена, оно **не вшивается молча** в компонент: сначала ищем ближайший токен, иначе — одна переменная в `tokens.css` с пометкой «EXCEPTION», строка в этой таблице и предложение завести переменную в Figma.
+Правило для будущих случаев: если пользователь даёт значение без токена и есть близкий токен — выбираю его сам и сообщаю одной строкой. Если подходящего нет — в `tokens.css` одна переменная с пометкой «EXCEPTION», строка в этом разделе и предложение завести переменную в Figma.

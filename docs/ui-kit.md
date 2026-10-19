@@ -13,10 +13,10 @@
 ## 2. Токены
 | Что | Где | В витрине |
 |---|---|---|
-| Цвета (40 семантических, Light/Dark) | `--color-*` → `bg-surface-page`, `text-typography-primary`, `border-border-subtle`, `text-icon-brand` | раздел Colors |
+| Цвета (41 семантический, Light/Dark) | `--color-*` → `bg-surface-page`, `text-typography-primary`, `border-border-subtle`, `text-icon-brand` | раздел Colors |
 | Текстовые стили (18) | классы `type-ui-sm`, `type-heading-lg`… | раздел Typography |
 | Расстояния | шкала Tailwind, шаг 4 px | раздел Layout |
-| Радиус | `rounded-pill` (9999 px) | раздел Layout |
+| Радиус | `rounded-pill` (9999 px), `rounded-32`, `rounded-48` (из свойств узлов Figma) | раздел Layout |
 | Колонка и отступы | `Container`, `--gutter` 16 / 32 / 80 px | раздел Layout |
 | Брейкпоинты | `tablet:` ≥ 768 px, `desktop:` ≥ 1280 px (`max-desktop:` — ниже 1280) | раздел Layout |
 
@@ -27,19 +27,19 @@
 | `IconButton` | круглая кнопка 44 px под одну иконку 24 px | как у `<button>`; обязателен `aria-label` |
 | `ThemeToggle` | переключатель Light/Dark (солнце/луна) | как у `<button>`, кроме `children`/`onClick` |
 | `Icon` | одноцветный SVG из Figma цветом текста | `src`, `width`, `height` (размер SVG из Figma) |
-| `Container` | колонка контента ≤ 1440 px с боковым отступом | как у `<div>` |
+| `Container` | колонка контента: содержимое до 1440 px, боковой отступ (16 / 32 / 80) снаружи | как у `<div>` |
+| `InteractiveDots` | «живой» фон: точки отталкиваются курсором (<canvas>, прозрачный) | `spacing` 40, `dotSize` 1, `radius` 150, `force` 1, `ease` 0.1 (значения утверждённого прототипа); `className` |
 
 Служебное: `src/lib/theme.ts` — хук `useTheme` (тема живёт в `data-theme` на `<html>`).
 
 ### Откуда что взялось
 - **Header** дал: `ButtonLink` (md), `IconButton`, `ThemeToggle`, `Icon`, `Container`, пилюли меню (пока внутри блока).
-- **Hero** дал: размер `lg` у кнопки, иконку export 24 px, `Container` с вертикальными отступами секции.
+- **Hero** дал: размер `lg` у кнопки, иконку export 24 px, `InteractiveDots`, радиусы 32 / 48.
 
 ### Пока внутри блоков (вынести, когда повторится)
 - Пилюля пункта меню (`Header`): состояния current / default / hover.
 - Бургер-иконка `MenuToggleIcon` (нарисована в коде, заменить иконкой Figma).
 - Вертикальные отступы секции (Hero 140 px на десктопе; значения других блоков сравним — тогда станет токеном).
-- `InteractiveDots` (Hero): интерактивный фон из точек; вынесется, если такой фон понадобится в другой секции. Единственное исключение вне токенов — `--dots-color` (см. `tokens-map.md`, раздел 7).
 
 ## 4. Как добавить компонент
 1. Проверить витрину: нет ли похожего.
@@ -52,3 +52,24 @@
 - `Button` на `<button>` (для форм, меню), когда понадобится.
 - Бейдж, карточка, поле ввода — по мере появления в блоках.
 - Storybook вместо самодельной витрины — если компонентов станет много или нужна публикация для дизайнеров.
+
+## 6. Интерактивный фон `InteractiveDots` — коротко
+**Что это.** Сетка точек (шаг 40 px, точка r = 1), которая отталкивается от курсора и плавно возвращается: фон выглядит живым. Показан в витрине `/ui-kit`, раздел «Interactive background».
+
+**Как взять.**
+```tsx
+<section className="relative overflow-hidden">
+  <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+    <InteractiveDots />
+  </div>
+  {/* контент поверх, с relative */}
+</section>
+```
+Родитель должен быть `relative` с `overflow-hidden`; холст занимает его целиком.
+
+**Как устроен.**
+- Цвет точек — токен `surface-dots` (Figma `theme/surface/dots`: Light `neutral/400`, Dark `neutral/600`); фон холста прозрачный, поэтому тема работает сама.
+- Курсор отслеживается по всему окну, касания игнорируются; клики холст не перехватывает (`pointer-events-none` на обёртке).
+- Физика из прототипа: точка в радиусе 150 отталкивается силой, пропорциональной близости, и возвращается со скоростью 0,1 за кадр.
+- Цикл анимации идёт, только пока точки движутся и холст виден; при `prefers-reduced-motion` точки статичны.
+- Чёткий на retina (учтён `devicePixelRatio`).

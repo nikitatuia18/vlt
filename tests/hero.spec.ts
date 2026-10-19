@@ -88,7 +88,7 @@ const pixelAtFirstDot = (page: Page) =>
   })
 const alphaAtFirstDot = async (page: Page) => (await pixelAtFirstDot(page)).a
 
-test('background: the canvas fills the hero and draws the dot grid in the prototype color', async ({ page }) => {
+test('background: the canvas fills the hero and draws the dot grid in the surface-dots color', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
   await page.goto('/')
   const hero = await page.locator('[data-el="hero"]').boundingBox()
@@ -97,7 +97,7 @@ test('background: the canvas fills the hero and draws the dot grid in the protot
   expect(box?.height).toBeCloseTo(hero!.height, 0)
   await expect.poll(() => alphaAtFirstDot(page)).toBeGreaterThan(100)
   const { r, g, b } = await pixelAtFirstDot(page)
-  for (const channel of [r, g, b]) expect(Math.abs(channel - 0x8f)).toBeLessThanOrEqual(2) // #8f8f8f
+  for (const channel of [r, g, b]) expect(Math.abs(channel - 0xa3)).toBeLessThanOrEqual(2) // surface-dots Light = neutral/400 #a3a3a3
 })
 
 test('background: the pointer pushes dots away and they return when it leaves', async ({ page }) => {
@@ -143,8 +143,8 @@ test('background: dot color follows the theme', async ({ page }) => {
   await page.mouse.move(700, 800)
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
   await expect(page.locator('[data-el="header__theme-toggle"]').first()).toHaveCSS('background-color', 'rgb(24, 24, 24)')
-  // Dark: --dots-color = typography-tertiary (white at 34%), so the dot is light, not #8f8f8f.
-  await expect.poll(async () => (await pixelAtFirstDot(page)).r).toBeGreaterThan(200)
+  // Dark: surface-dots = neutral/600 #525252, a much darker dot than the Light one (#a3a3a3).
+  await expect.poll(async () => Math.abs((await pixelAtFirstDot(page)).r - 0x52)).toBeLessThanOrEqual(3)
   await page.screenshot({ path: 'tests/artifacts/hero-desktop-1440-dark.png' })
 })
 
@@ -156,4 +156,40 @@ test('background: the canvas does not catch clicks (buttons under the pointer wo
     return document.elementFromPoint(button.x + 8, button.y + 8)?.closest('[data-el]')?.getAttribute('data-el')
   })
   expect(hit).toBe('hero__cta-primary')
+})
+
+// --- Hero Media (placeholder card) ---
+test('hero media at the width of the desktop frame: 1440 x 800, radius 48, white card; whole hero is 1608 px', async ({ page }) => {
+  await page.setViewportSize({ width: 2560, height: 1000 })
+  await page.goto('/')
+  await page.evaluate(() => document.fonts.ready)
+  const media = page.locator('[data-el="hero__media"]')
+  const box = await media.boundingBox()
+  expect(box?.width).toBeCloseTo(1440, 0)
+  expect(box?.height).toBeCloseTo(800, 0)
+  const style = await media.evaluate((el) => {
+    const cs = getComputedStyle(el)
+    return { radius: cs.borderTopLeftRadius, background: cs.backgroundColor, overflow: cs.overflow }
+  })
+  expect(style.radius).toBe('48px')
+  expect(style.background).toBe('rgb(255, 255, 255)') // surface-subtle
+  expect(style.overflow).toBe('hidden')
+  // 80 px between the buttons and the card; hero = 140 + 448 + 80 + 800 + 140.
+  const actions = await page.locator('[data-el="hero__actions"]').boundingBox()
+  expect(box!.y - (actions!.y + actions!.height)).toBeCloseTo(80, 0)
+  const hero = await page.locator('[data-el="hero"]').boundingBox()
+  expect(hero?.height).toBeCloseTo(1608, 0)
+})
+
+test('hero media keeps the 1440 : 800 proportion and is empty at every width', async ({ page }) => {
+  for (const width of [393, 768, 1024, 1280, 1440]) {
+    await page.setViewportSize({ width, height: 900 })
+    await page.goto('/')
+    const media = page.locator('[data-el="hero__media"]')
+    const box = await media.boundingBox()
+    expect(box!.width / box!.height).toBeCloseTo(1440 / 800, 2)
+    await expect(media).toBeEmpty()
+    const radius = await media.evaluate((el) => getComputedStyle(el).borderTopLeftRadius)
+    expect(radius).toBe(width >= 1280 ? '48px' : '32px')
+  }
 })

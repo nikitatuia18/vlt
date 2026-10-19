@@ -1,18 +1,18 @@
 import { ButtonLink } from '../../ui/ButtonLink'
 import { Container } from '../../ui/Container'
-import { InteractiveDots } from './InteractiveDots'
+import { InteractiveDots } from '../../ui/InteractiveDots'
 
 /**
  * First screen. Figma block `hero`.
- * The dashboard mockup (`hero__dash`) is intentionally not built yet: it will come with its animation.
- * Its place is the empty `hero__media` slot at the bottom.
+ * `hero__media` is the white rounded card from the design. The dashboard mockup (`hero__dash`) is intentionally
+ * not built yet: it will come with its animation, so the card is an empty placeholder for now.
  *
  * Sizes marked "derived" are not in the desktop frame; check them against the mobile frame later.
  */
 export function Hero() {
   return (
     <section data-el="hero" aria-labelledby="hero-title" className="relative overflow-hidden">
-      {/* Background: the static picture `img-hero-bg` of the design is replaced by the interactive dot grid. */}
+      {/* Background: the static picture `img-hero-bg` of the design is replaced by the interactive dot grid (UI Kit). */}
       <div data-el="hero__bg" aria-hidden="true" className="pointer-events-none absolute inset-0">
         <InteractiveDots />
       </div>
@@ -63,8 +63,15 @@ export function Hero() {
           </div>
         </div>
 
-        {/* Slot for the dashboard mockup (Figma `hero__media` / `hero__dash`): skipped on purpose, added later with animation. */}
-        <div data-el="hero__media" />
+        {/*
+          Hero Media: 1440 x 800 card, radius 48, fill surface-subtle, 1 px inside border border-subtle, clips its content.
+          The proportion 1440 : 800 is kept at every width, so the whole composition scales with the column.
+          Gap above (80 on desktop) and radius 32 below desktop are derived. Nothing goes inside until the mockup comes.
+        */}
+        <div
+          data-el="hero__media"
+          className="mt-12 aspect-[1440/800] w-full overflow-hidden rounded-32 bg-surface-subtle ring-1 ring-inset ring-border-subtle tablet:mt-16 desktop:mt-20 desktop:rounded-48"
+        />
       </Container>
     </section>
   )

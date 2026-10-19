@@ -17,7 +17,7 @@ test('UI Kit lists every text style and every semantic color from the CSS', asyn
   const themeBlock = tokensCss.split('@theme static {')[1].split('\n}')[0]
   const cssColors = [...themeBlock.matchAll(/--(color-(?:typography|icon|surface|border)-[a-z0-9-]+):/g)].length
   await expect(page.locator('[data-el="ui-kit__colors"] ul li')).toHaveCount(cssColors)
-  expect(cssColors).toBe(40)
+  expect(cssColors).toBe(41) // 40 + surface-dots
 })
 
 test('UI Kit: text styles are really applied (font size from the computed style)', async ({ page }) => {
@@ -35,6 +35,18 @@ test('UI Kit: colors follow the theme', async ({ page }) => {
   await expect(swatch).toContainText('rgb(251, 251, 251)')
   await page.locator('main').getByRole('button', { name: 'Switch color theme' }).first().click()
   await expect(swatch).toContainText('rgb(14, 14, 14)')
+})
+
+test('UI Kit: the interactive background demo draws dots and reacts to the pointer', async ({ page }) => {
+  await page.goto('/ui-kit')
+  const demo = page.locator('[data-el="ui-kit__dots-demo"]')
+  await demo.scrollIntoViewIfNeeded()
+  const alphaAtFirstDot = () =>
+    demo.locator('canvas').evaluate((element) => (element as HTMLCanvasElement).getContext('2d')!.getImageData(20, 20, 1, 1).data[3])
+  await expect.poll(alphaAtFirstDot).toBeGreaterThan(100)
+  const box = await demo.boundingBox()
+  await page.mouse.move(box!.x + 60, box!.y + 20)
+  await expect.poll(alphaAtFirstDot).toBeLessThan(10)
 })
 
 test('UI Kit screenshots, no sideways scroll', async ({ page }) => {

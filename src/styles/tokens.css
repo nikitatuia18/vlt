@@ -111,6 +111,7 @@
   --color-surface-success-secondary: color-mix(in srgb, var(--primitive-green-500) 8%, transparent);
   --color-surface-static-w: var(--primitive-neutral-0);
   --color-surface-static-b: var(--primitive-neutral-900);
+  --color-surface-dots: var(--primitive-neutral-400);
   --color-surface-white-0: color-mix(in srgb, var(--primitive-neutral-0) 0%, transparent);
   --color-surface-white-16: color-mix(in srgb, var(--primitive-neutral-0) 16%, transparent);
   --color-surface-black-0: color-mix(in srgb, var(--primitive-neutral-950) 0%, transparent);
@@ -166,8 +167,11 @@
   --type-letter-spacing-neg-100: -0.09375rem;
   --type-letter-spacing-neg-150: -0.15625rem;
 
-  /* Radius (derived: the design uses only a full pill so far) */
-  --radius-pill: 9999px;
+  /* Radius (derived from node properties in Figma: there are no radius variables). Named by px. */
+  --radius-*: initial;
+  --radius-32: 2rem; /* hero__dash */
+  --radius-48: 3rem; /* hero__media */
+  --radius-pill: 9999px; /* buttons, menu items, round icon buttons */
 
   /* Layout (derived): content column of the page, 1440 px in the desktop frame */
   --container-page: 90rem;
@@ -193,6 +197,7 @@
   --color-surface-hover: var(--primitive-neutral-800);
   --color-surface-inverse: var(--primitive-neutral-0);
   --color-surface-brand-light: var(--primitive-brand-900);
+  --color-surface-dots: var(--primitive-neutral-600);
   --color-surface-brand-16: color-mix(in srgb, var(--primitive-brand-400) 16%, transparent);
   --color-surface-success: var(--primitive-green-400);
   --color-surface-success-hover: var(--primitive-green-500);
@@ -209,21 +214,6 @@
   --color-border-very-strong: color-mix(in srgb, var(--primitive-neutral-0) 24%, transparent);
   --color-border-brand: var(--primitive-brand-300);
   --color-border-brand-light: var(--primitive-brand-900);
-}
-
-/*
- * EXCEPTION: not a Figma variable.
- * Color of the interactive dots in the hero background. Light is the value of the approved prototype (#8f8f8f),
- * which matches no semantic token. Dark has no design: the closest semantic token is used.
- * To remove the exception: add a variable (proposed name theme/surface/dots) to Figma, then sync the tokens.
- * Used as: text-(--dots-color). Listed in docs/tokens-map.md, section "Not from Figma".
- */
-:root {
-  --dots-color: #8f8f8f;
-}
-
-:root[data-theme="dark"] {
-  --dots-color: var(--color-typography-tertiary);
 }
 
 /*

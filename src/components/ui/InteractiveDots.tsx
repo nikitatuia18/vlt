@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { useTheme } from '../../../lib/theme'
+import { useTheme } from '../../lib/theme'
 
 type InteractiveDotsProps = {
   /** Distance between dots, px. */
@@ -22,12 +22,13 @@ const REST_EPSILON = 0.01
 const OFFSCREEN = -1000
 
 /**
- * Dot grid that the pointer pushes away. Figma layer `img-hero-bg` (a static picture in the design).
+ * Dot grid that the pointer pushes away: a "living" background.
  * Defaults are the values of the approved prototype: spacing 40, dot 1, radius 150, force 1, ease 0.1.
  *
- * - Fills its parent (the parent must be positioned). It is transparent: the page color shows through, so the theme works by itself.
- * - Dot color is the CSS variable `--dots-color` (styles/tokens.css), read from the element so it follows the theme.
- * - The pointer is tracked on the whole window (the canvas sits behind the content), touch is ignored.
+ * - Fills its parent (the parent must be positioned and should clip: overflow-hidden).
+ * - Transparent: the page color shows through, so Light/Dark works by itself.
+ * - Dot color is the semantic color `surface-dots` (Figma: theme/surface/dots), read from the element so it follows the theme.
+ * - The pointer is tracked on the whole window (the canvas can sit behind content), touch is ignored.
  * - The animation runs only while something moves and the canvas is on screen; with `prefers-reduced-motion` the dots stay still.
  */
 export function InteractiveDots({
@@ -190,11 +191,5 @@ export function InteractiveDots({
     }
   }, [theme, spacing, dotSize, radius, force, ease])
 
-  return (
-    <canvas
-      ref={canvasRef}
-      aria-hidden="true"
-      className={`block size-full text-(--dots-color) ${className}`}
-    />
-  )
+  return <canvas ref={canvasRef} aria-hidden="true" className={`block size-full text-surface-dots ${className}`} />
 }
