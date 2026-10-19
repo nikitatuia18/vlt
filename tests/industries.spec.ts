@@ -113,46 +113,39 @@ for (const viewport of viewports) {
     }
   })
 
-  test(`the list starts right under the title (gap ${viewport.gap} px), no big empty space, at ${viewport.name}`, async ({ page }) => {
+  test(`the open item stands exactly in the middle of the screen, the first and the last one included, at ${viewport.name}`, async ({ page }) => {
     await page.setViewportSize({ width: viewport.width, height: viewport.height })
     await page.goto('/')
     await page.evaluate(() => document.fonts.ready)
-    await scrollToProgress(page, 0.01) // the first item is open
-    const title = await box(page, '[data-el="industries__title"]')
-    const region = await box(page, '[data-el="industries__list-region"]')
-    expect(region.y - (title.y + title.height)).toBeCloseTo(viewport.gap, 0)
-    // A list that does not fit starts at the very top of its area: no empty band between it and the title.
-    // A list that fits is centered as a whole, so it has only half of the free space above it (never a big gap).
-    const first = (await item(page, ids[0]).boundingBox())!
-    const list = await box(page, '[data-el="industries__list"]')
-    const freeSpace = Math.max(0, region.height - list.height)
-    expect(Math.abs(first.y - region.y - freeSpace / 2)).toBeLessThan(2)
-    expect(first.y - region.y).toBeLessThan(40)
+    for (const index of [0, 3, ids.length - 1]) {
+      await scrollToProgress(page, (index + 0.5) / ids.length)
+      const open = (await item(page, ids[index]).boundingBox())!
+      expect(Math.abs(open.y + open.height / 2 - viewport.height / 2), ids[index]).toBeLessThan(3)
+    }
   })
 }
 
-test('the list slides: at the start it begins under the title, in the middle the open item is centered, at the end it rests on the bottom', async ({ page }) => {
+test('every one of the seven items is centered on the screen when it opens (1440 x 900), and the list follows smoothly', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
   await page.goto('/')
-  const region = async () => box(page, '[data-el="industries__list-region"]')
-  const list = async () => box(page, '[data-el="industries__list"]')
-  // The list is taller than its area here, so it has to slide.
-  await scrollToProgress(page, 0.01)
-  expect((await list()).height).toBeGreaterThan((await region()).height)
-
-  for (const [progress, id] of [[0.5, 'luxury-automotive'], [0.64, 'real-estate']] as const) {
-    await scrollToProgress(page, progress)
-    const area = await region()
-    const open = (await item(page, id).boundingBox())!
-    expect(Math.abs(open.y + open.height / 2 - (area.y + area.height / 2)), `centered ${id}`).toBeLessThan(3)
+  for (let index = 0; index < ids.length; index++) {
+    await scrollToProgress(page, (index + 0.5) / ids.length)
+    const open = (await item(page, ids[index]).boundingBox())!
+    expect(Math.abs(open.y + open.height / 2 - 450), ids[index]).toBeLessThan(3)
+    // The soft fade of the list must not touch the open card (its edges stay sharp).
+    const region = await box(page, '[data-el="industries__list-region"]')
+    const fade = await page.locator('[data-el="industries__list-region"]').evaluate((el) => ({
+      top: parseFloat(el.style.getPropertyValue('--fade-top') || '0'),
+      bottom: parseFloat(el.style.getPropertyValue('--fade-bottom') || '0'),
+    }))
+    expect(region.y + fade.top, `${ids[index]} top fade`).toBeLessThanOrEqual(open.y + 1)
+    expect(region.y + region.height - fade.bottom, `${ids[index]} bottom fade`).toBeGreaterThanOrEqual(open.y + open.height - 1)
   }
-
-  await scrollToProgress(page, 0.99)
-  const area = await region()
-  const slid = await list()
-  expect(Math.abs(slid.y + slid.height - (area.y + area.height))).toBeLessThan(3) // the bottom of the list on the bottom of the area
+  // Going back up keeps the centering too.
+  await scrollToProgress(page, 0.5 / ids.length)
+  const first = (await item(page, ids[0]).boundingBox())!
+  expect(Math.abs(first.y + first.height / 2 - 450)).toBeLessThan(3)
 })
-
 test('the open item is a white card (radius 32, padding 60 x 40) and the description unfolds; closed items are grey and folded', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
   await page.goto('/')

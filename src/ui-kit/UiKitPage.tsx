@@ -5,6 +5,7 @@ import sunIcon from '../assets/icons/sun.svg'
 import { Badge } from '../components/ui/Badge'
 import { ButtonLink } from '../components/ui/ButtonLink'
 import { Container } from '../components/ui/Container'
+import { CornerDots } from '../components/ui/CornerDots'
 import { Icon } from '../components/ui/Icon'
 import { IconButton } from '../components/ui/IconButton'
 import { IconLink } from '../components/ui/IconLink'
@@ -286,6 +287,21 @@ export default function UiKitPage() {
                 </li>
               ))}
             </ul>
+            <div className="flex flex-col gap-3">
+              <h3 className="type-ui-md text-typography-primary">CornerDots</h3>
+              <p className="type-body-sm text-typography-secondary">
+                Two dots on the corners of a block, exactly where the column lines meet a horizontal line. The parent must be positioned.
+              </p>
+              {/* The horizontal line is outside the column (like the section border under the column in a block). */}
+              <div className="border-b border-border-subtle">
+                <div
+                  data-el="ui-kit__corner-dots-demo"
+                  className="relative h-24 shadow-[inset_1px_0_0_var(--color-border-subtle),inset_-1px_0_0_var(--color-border-subtle)]"
+                >
+                  <CornerDots edge="bottom" block="ui-kit" />
+                </div>
+              </div>
+            </div>
           </div>
         </Section>
       </Container>

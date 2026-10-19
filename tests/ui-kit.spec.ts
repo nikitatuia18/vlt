@@ -49,6 +49,19 @@ test('UI Kit: the interactive background demo draws dots and reacts to the point
   await expect.poll(alphaAtFirstDot).toBeLessThan(10)
 })
 
+test('UI Kit: corner dots sit on the corners of the demo box', async ({ page }) => {
+  await page.goto('/ui-kit')
+  const demo = (await page.locator('[data-el="ui-kit__corner-dots-demo"]').boundingBox())!
+  const left = (await page.locator('[data-el="ui-kit__deco-corner-bl"]').boundingBox())!
+  const right = (await page.locator('[data-el="ui-kit__deco-corner-br"]').boundingBox())!
+  expect(left.width).toBeCloseTo(5, 1)
+  expect(left.height).toBeCloseTo(5, 1)
+  // Bottom border of the box is its last pixel row, the column lines are its first and last pixel columns.
+  expect(left.y + left.height / 2).toBeCloseTo(demo.y + demo.height + 0.5, 0)
+  expect(left.x + left.width / 2).toBeCloseTo(demo.x + 0.5, 0)
+  expect(right.x + right.width / 2).toBeCloseTo(demo.x + demo.width - 0.5, 0)
+})
+
 test('UI Kit screenshots, no sideways scroll', async ({ page }) => {
   for (const [name, width] of [['mobile-393', 393], ['desktop-1440', 1440]] as const) {
     await page.setViewportSize({ width, height: 900 })

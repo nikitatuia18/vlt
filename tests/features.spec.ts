@@ -170,6 +170,26 @@ test('responsive grid: 3 columns on desktop, 2 on tablet (crypto spans both), 1 
   }
 })
 
+test('corner dots sit exactly on the corners: centered on the bottom border line and on the column lines', async ({ page }) => {
+  for (const width of [1440, 2560]) {
+    await page.setViewportSize({ width, height: 1000 })
+    await page.goto('/')
+    const container = await box(page, '[data-el="features__container"]')
+    const whole = (await section(page).boundingBox())!
+    const left = await box(page, '[data-el="features__deco-corner-bl"]')
+    const right = await box(page, '[data-el="features__deco-corner-br"]')
+    for (const dot of [left, right]) {
+      expect(dot.width).toBeCloseTo(5, 1)
+      expect(dot.height).toBeCloseTo(5, 1) // not a line-high box: it used to be 24 px high with the dot on its baseline
+      // Vertical: the middle of the dot is on the 1 px border line at the bottom of the section.
+      expect(dot.y + dot.height / 2).toBeCloseTo(whole.y + whole.height - 0.5, 0)
+    }
+    // Horizontal: on the 1 px column lines (the inner pixel of the left and right edges of the column).
+    expect(left.x + left.width / 2).toBeCloseTo(container.x + 0.5, 0)
+    expect(right.x + right.width / 2).toBeCloseTo(container.x + container.width - 0.5, 0)
+  }
+})
+
 test('the section follows the logos strip', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
   await page.goto('/')

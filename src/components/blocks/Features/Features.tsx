@@ -1,6 +1,5 @@
-import cornerDot from '../../../assets/decor/corner-dot.svg'
 import { Container } from '../../ui/Container'
-import { Icon } from '../../ui/Icon'
+import { CornerDots } from '../../ui/CornerDots'
 import { InteractiveDots } from '../../ui/InteractiveDots'
 import { mainCards, soonCards } from './cards'
 import { FeatureCard, SoonCard } from './FeatureCard'
@@ -62,13 +61,8 @@ export function Features() {
             </div>
           </div>
 
-          {/* Decorative 5 px dots on the bottom corners of the column, as in the design. */}
-          <span data-el="features__deco-corner-bl" aria-hidden="true" className="absolute -bottom-[3px] -left-[3px] text-icon-primary">
-            <Icon src={cornerDot} width={5} height={5} />
-          </span>
-          <span data-el="features__deco-corner-br" aria-hidden="true" className="absolute -right-[3px] -bottom-[3px] text-icon-primary">
-            <Icon src={cornerDot} width={5} height={5} />
-          </span>
+          {/* Decorative dots on the bottom corners of the column, as in the design (UI Kit component). */}
+          <CornerDots edge="bottom" block="features" />
         </div>
       </Container>
     </section>
