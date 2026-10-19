@@ -1,6 +1,7 @@
 import cornerDot from '../../../assets/decor/corner-dot.svg'
 import { Container } from '../../ui/Container'
 import { Icon } from '../../ui/Icon'
+import { InteractiveDots } from '../../ui/InteractiveDots'
 import { mainCards, soonCards } from './cards'
 import { FeatureCard, SoonCard } from './FeatureCard'
 
@@ -49,6 +50,9 @@ export function Features() {
                 // The first card spans two columns. The crypto text is a fixed 400 px wide in the design.
                 className={index === 0 ? 'tablet:col-span-2' : ''}
                 textClassName={index === 0 ? 'w-full desktop:w-100' : 'w-full'}
+                // The background of the crypto card is the same dot grid as in the hero (the static picture `features__card-crypto-bg`
+                // of the design is replaced by the UI Kit component). The tesseract (`img-tesseract`) will be added to this slot later.
+                illustration={index === 0 ? <InteractiveDots /> : undefined}
               />
             ))}
             <div data-el="features__col-soon" className="flex flex-col justify-center gap-6 self-stretch">

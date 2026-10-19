@@ -37,7 +37,7 @@
 ### Откуда что взялось
 - **Header** дал: `ButtonLink` (md), `IconButton`, `ThemeToggle`, `Icon`, `Container`, пилюли меню (пока внутри блока).
 - **Hero** дал: размер `lg` у кнопки, иконку export 24 px, `InteractiveDots`, радиусы 32 / 48.
-- **Features** дал: `Badge`, `IconLink`, `IconButton` размера `lg`, радиус 40.
+- **InteractiveDots** теперь в двух местах: фон Hero и фон карточки Crypto Processing (Features), поэтому он в UI Kit.`n- **Features** дал: `Badge`, `IconLink`, `IconButton` размера `lg`, радиус 40.
 
 ### Пока внутри блоков (вынести, когда повторится)
 - Карточки `FeatureCard` / `SoonCard` (`Features`): белая карточка с круглой ссылкой и серая с бейджем.

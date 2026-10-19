@@ -2,6 +2,7 @@ import { lazy, Suspense } from 'react'
 import { Features } from './components/blocks/Features'
 import { Header } from './components/blocks/Header'
 import { Hero } from './components/blocks/Hero'
+import { Industries } from './components/blocks/Industries'
 import { Logos } from './components/blocks/Logos'
 
 // The living UI Kit is loaded only when /ui-kit is opened, so it does not weigh on the site itself.
@@ -24,6 +25,7 @@ export default function App() {
         <Hero />
         <Logos />
         <Features />
+        <Industries />
       </main>
     </>
   )

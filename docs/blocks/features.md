@@ -1,7 +1,7 @@
 # Блок features
 
 Figma: кадр `page-home--desktop` → слой `features` (`1110:8798`). Компонент: [../../src/components/blocks/Features/](../../src/components/blocks/Features/). Тесты: [../../tests/features.spec.ts](../../tests/features.spec.ts).
-Статус: блок собран **без иллюстраций и анимаций внутри карточек** (по решению пользователя): карточки держат размер макета и имеют слот под иллюстрацию.
+Статус: блок собран **без иллюстраций и анимаций внутри карточек** (по решению пользователя): карточки держат размер макета и имеют слот под иллюстрацию. Исключение: фон карточки Crypto Processing — наш интерактивный точечный фон (см. ниже).
 
 ## Что в блоке
 Заголовок: «Accept. Move. Hold. Pay out.» + «Everything you need to move money.» Сетка карточек: Crypto Processing (на две колонки), Invoicing, Crypto on- and off-ramp, Mass Payouts и колонка из двух серых карточек Banking и Wallet с бейджем «Coming soon». У четырёх белых карточек внизу слева круглая ссылка-стрелка («Learn more»), у серых — бейдж вместо ссылки. Внизу колонки две декоративные точки 5 px.
@@ -36,7 +36,7 @@ Figma: кадр `page-home--desktop` → слой `features` (`1110:8798`). Ко
 `FeatureCard` принимает `illustration` (React-узел). Он кладётся на всю карточку (`absolute inset-0`, не ловит клики, обрезается по радиусу карточки), позади текста; пока не передан — ничего не рисуется. Что и где лежит в макете:
 | Карточка | Слой (nodeId) |
 |---|---|
-| Crypto Processing | фон `features__card-crypto-bg` (`1110:8805`, PNG 1796 × 1050) и `img-tesseract` (`1213:723`, PNG 509 × 509, `mix-blend: darken`) |
+| Crypto Processing | **фон сделан:** вместо статичной картинки `features__card-crypto-bg` (`1110:8805`, точечная сетка) в слот поставлен `InteractiveDots` из UI Kit на всю карточку (точки отталкиваются от курсора, цвет `surface-dots`, обрезается радиусом карточки). Осталось добавить в тот же слот `img-tesseract` (`1213:723`, PNG 509 × 509, `mix-blend: darken`, слева 421, сверху 40) |
 | Invoicing | `features__invoicing-illustration` (`1110:8815`): карточка счёта, лоадер, галочка |
 | Crypto on- and off-ramp | `features__ramp-counter` (`1110:8853`): счётчик «0.0%» с прокруткой цифр |
 | Mass Payouts | `features__payouts-illustration` (`1110:8871`): схема выплат, 3 способа и 3 аватара |

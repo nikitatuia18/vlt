@@ -123,10 +123,29 @@ test('round "Learn more" links: 48 px circles with an accessible name; coming-so
   }
 })
 
-test('no illustrations yet: the cards contain only text, a link icon and badges', async ({ page }) => {
+test('only the crypto card has a background so far: the interactive dots; the other illustrations are not built yet', async ({ page }) => {
   await page.goto('/')
-  await expect(section(page).locator('img')).toHaveCount(0)
-  await expect(section(page).locator('[data-el$="-illustration"]')).toHaveCount(0)
+  await expect(section(page).locator('img')).toHaveCount(0) // no pictures: the static PNG of the design is replaced
+  const illustrations = section(page).locator('[data-el$="-illustration"]')
+  await expect(illustrations).toHaveCount(1)
+  await expect(page.locator('[data-el="features__card-crypto"] [data-el="features__crypto-illustration"] canvas')).toHaveCount(1)
+})
+
+test('crypto card: the dot grid fills the card, is clipped by its radius and reacts to the pointer', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto('/')
+  const dots = page.locator('[data-el="features__crypto-illustration"] canvas')
+  await dots.scrollIntoViewIfNeeded()
+  const cardBox = (await card(page, 'crypto').boundingBox())!
+  const canvasBox = (await dots.boundingBox())!
+  expect(canvasBox.width).toBeCloseTo(cardBox.width, 0)
+  expect(canvasBox.height).toBeCloseTo(cardBox.height, 0)
+  const alphaAtFirstDot = () =>
+    dots.evaluate((element) => (element as HTMLCanvasElement).getContext('2d')!.getImageData(20, 20, 1, 1).data[3])
+  await expect.poll(alphaAtFirstDot).toBeGreaterThan(100)
+  // The pointer 40 px to the right of the first dot pushes it away.
+  await page.mouse.move(canvasBox.x + 60, canvasBox.y + 20)
+  await expect.poll(alphaAtFirstDot).toBeLessThan(10)
 })
 
 test('responsive grid: 3 columns on desktop, 2 on tablet (crypto spans both), 1 on mobile', async ({ page }) => {
