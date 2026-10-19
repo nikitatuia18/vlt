@@ -212,6 +212,21 @@
 }
 
 /*
+ * EXCEPTION: not a Figma variable.
+ * Color of the interactive dots in the hero background. Light is the value of the approved prototype (#8f8f8f),
+ * which matches no semantic token. Dark has no design: the closest semantic token is used.
+ * To remove the exception: add a variable (proposed name theme/surface/dots) to Figma, then sync the tokens.
+ * Used as: text-(--dots-color). Listed in docs/tokens-map.md, section "Not from Figma".
+ */
+:root {
+  --dots-color: #8f8f8f;
+}
+
+:root[data-theme="dark"] {
+  --dots-color: var(--color-typography-tertiary);
+}
+
+/*
  * Page side padding (derived, not a Figma variable).
  * Desktop frame: 160 px on a 2560 px canvas with a 1440 px content column,
  * so on real screens the column is centered and this padding only matters below 1760 px.

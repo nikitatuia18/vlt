@@ -1,6 +1,6 @@
-import heroBackground from '../../../assets/hero/hero-bg-dots.png'
 import { ButtonLink } from '../../ui/ButtonLink'
 import { Container } from '../../ui/Container'
+import { InteractiveDots } from './InteractiveDots'
 
 /**
  * First screen. Figma block `hero`.
@@ -12,18 +12,9 @@ import { Container } from '../../ui/Container'
 export function Hero() {
   return (
     <section data-el="hero" aria-labelledby="hero-title" className="relative overflow-hidden">
-      {/*
-        Dot-grid background. The PNG is opaque light gray: in the dark theme it is inverted and blended so it only adds the dots.
-        The dots fade out over the last 80 px: in the design the edge of the picture is hidden behind the dashboard mockup,
-        and without a fade the blended picture would leave a visible seam at the bottom of the section in the dark theme.
-      */}
-      <div data-el="hero__bg" aria-hidden="true" className="absolute inset-0">
-        <img
-          data-el="img-hero-bg"
-          src={heroBackground}
-          alt=""
-          className="size-full object-cover object-top [mask-image:linear-gradient(to_bottom,#000_calc(100%-5rem),transparent)] dark:mix-blend-screen dark:invert"
-        />
+      {/* Background: the static picture `img-hero-bg` of the design is replaced by the interactive dot grid. */}
+      <div data-el="hero__bg" aria-hidden="true" className="pointer-events-none absolute inset-0">
+        <InteractiveDots />
       </div>
 
       <Container data-el="hero__content" className="relative py-12 tablet:py-20 desktop:py-35">

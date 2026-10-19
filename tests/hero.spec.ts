@@ -77,14 +77,83 @@ test('mobile: buttons stacked and as wide as the text column (393 - 2 × 16)', a
   expect(secondary!.y).toBeGreaterThan(primary!.y + primary!.height) // stacked
 })
 
-test('dark theme: the hero background blends in instead of showing a light rectangle', async ({ page }) => {
+// --- Interactive dot background (canvas) ---
+// The first dot of the grid sits at (spacing / 2, spacing / 2) = (20, 20) of the canvas, radius 1 px.
+type Page = import('@playwright/test').Page
+const canvas = (page: Page) => page.locator('[data-el="hero__bg"] canvas')
+const pixelAtFirstDot = (page: Page) =>
+  canvas(page).evaluate((element) => {
+    const [r, g, b, a] = (element as HTMLCanvasElement).getContext('2d')!.getImageData(20, 20, 1, 1).data
+    return { r, g, b, a }
+  })
+const alphaAtFirstDot = async (page: Page) => (await pixelAtFirstDot(page)).a
+
+test('background: the canvas fills the hero and draws the dot grid in the prototype color', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
   await page.goto('/')
+  const hero = await page.locator('[data-el="hero"]').boundingBox()
+  const box = await canvas(page).boundingBox()
+  expect(box?.width).toBeCloseTo(hero!.width, 0)
+  expect(box?.height).toBeCloseTo(hero!.height, 0)
+  await expect.poll(() => alphaAtFirstDot(page)).toBeGreaterThan(100)
+  const { r, g, b } = await pixelAtFirstDot(page)
+  for (const channel of [r, g, b]) expect(Math.abs(channel - 0x8f)).toBeLessThanOrEqual(2) // #8f8f8f
+})
+
+test('background: the pointer pushes dots away and they return when it leaves', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto('/')
+  const hero = await page.locator('[data-el="hero"]').boundingBox()
+  await expect.poll(() => alphaAtFirstDot(page)).toBeGreaterThan(100)
+
+  // Pointer 40 px to the right of the first dot: the dot is pushed away from it.
+  await page.mouse.move(hero!.x + 60, hero!.y + 20)
+  await expect.poll(() => alphaAtFirstDot(page)).toBeLessThan(10)
+
+  await page.evaluate(() => document.documentElement.dispatchEvent(new PointerEvent('pointerleave')))
+  await expect.poll(() => alphaAtFirstDot(page), { timeout: 8000 }).toBeGreaterThan(100)
+})
+
+test('background: screenshot with the pointer over the middle of the hero', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto('/')
+  const hero = await page.locator('[data-el="hero"]').boundingBox()
+  await expect.poll(() => alphaAtFirstDot(page)).toBeGreaterThan(100)
+  await page.mouse.move(hero!.x + 300, hero!.y + 250, { steps: 8 })
+  await page.waitForTimeout(900) // let the dots settle around the pointer
+  await page.screenshot({ path: 'tests/artifacts/hero-dots-pushed.png' })
+})
+
+test('background: with reduced motion the dots stay still', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto('/')
+  const hero = await page.locator('[data-el="hero"]').boundingBox()
+  await expect.poll(() => alphaAtFirstDot(page)).toBeGreaterThan(100)
+  await page.mouse.move(hero!.x + 60, hero!.y + 20)
+  await page.waitForTimeout(600)
+  expect(await alphaAtFirstDot(page)).toBeGreaterThan(100)
+})
+
+test('background: dot color follows the theme', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto('/')
+  await expect.poll(() => alphaAtFirstDot(page)).toBeGreaterThan(100)
   await page.locator('[data-el="header"] [data-el="header__theme-toggle"]').click()
   await page.mouse.move(700, 800)
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
   await expect(page.locator('[data-el="header__theme-toggle"]').first()).toHaveCSS('background-color', 'rgb(24, 24, 24)')
-  const blend = await page.locator('[data-el="img-hero-bg"]').evaluate((el) => getComputedStyle(el).mixBlendMode)
-  expect(blend).toBe('screen')
+  // Dark: --dots-color = typography-tertiary (white at 34%), so the dot is light, not #8f8f8f.
+  await expect.poll(async () => (await pixelAtFirstDot(page)).r).toBeGreaterThan(200)
   await page.screenshot({ path: 'tests/artifacts/hero-desktop-1440-dark.png' })
+})
+
+test('background: the canvas does not catch clicks (buttons under the pointer work)', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto('/')
+  const hit = await page.evaluate(() => {
+    const button = document.querySelector('[data-el="hero__cta-primary"]')!.getBoundingClientRect()
+    return document.elementFromPoint(button.x + 8, button.y + 8)?.closest('[data-el]')?.getAttribute('data-el')
+  })
+  expect(hit).toBe('hero__cta-primary')
 })
