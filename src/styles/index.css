@@ -1,4 +1,14 @@
+@import "@fontsource-variable/inter";
+@import "@fontsource-variable/manrope";
 @import "tailwindcss";
-/* Генерируется из Figma variables / text styles (этап 2): */
-/* @import "./tokens.css"; */
-/* @import "./typography.css"; */
+@import "./tokens.css";
+@import "./typography.css";
+
+@layer base {
+  body {
+    background-color: var(--color-surface-page);
+    color: var(--color-typography-primary);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+}

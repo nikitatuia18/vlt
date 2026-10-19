@@ -1,0 +1,154 @@
+/*
+ * Text styles. Source: Figma text styles (18); the class name is the Figma style name with "/" → "-".
+ * Usage: className="type-ui-sm". Values come from the primitives in tokens.css.
+ * display / heading use --font-display (Manrope Medium); body / ui use --font-sans (Inter).
+ */
+
+/* display */
+@utility type-display-2xl {
+  font-family: var(--font-display);
+  font-weight: var(--type-weight-medium);
+  font-size: var(--type-size-1000);
+  line-height: var(--type-line-height-1000);
+  letter-spacing: var(--type-letter-spacing-neg-100);
+}
+
+@utility type-display-xl {
+  font-family: var(--font-display);
+  font-weight: var(--type-weight-medium);
+  font-size: var(--type-size-900);
+  line-height: var(--type-line-height-900);
+  letter-spacing: var(--type-letter-spacing-neg-100);
+}
+
+@utility type-display-lg {
+  font-family: var(--font-display);
+  font-weight: var(--type-weight-medium);
+  font-size: var(--type-size-800);
+  line-height: var(--type-line-height-800);
+  letter-spacing: var(--type-letter-spacing-neg-50);
+}
+
+@utility type-display-sm {
+  font-family: var(--font-display);
+  font-weight: var(--type-weight-medium);
+  font-size: var(--type-size-700);
+  line-height: var(--type-line-height-700);
+  letter-spacing: var(--type-letter-spacing-neg-50);
+}
+
+/* heading */
+@utility type-heading-xl {
+  font-family: var(--font-display);
+  font-weight: var(--type-weight-medium);
+  font-size: var(--type-size-600);
+  line-height: var(--type-line-height-600);
+  letter-spacing: var(--type-letter-spacing-neg-50);
+}
+
+@utility type-heading-lg {
+  font-family: var(--font-display);
+  font-weight: var(--type-weight-medium);
+  font-size: var(--type-size-500);
+  line-height: var(--type-line-height-500);
+  letter-spacing: var(--type-letter-spacing-none);
+}
+
+@utility type-heading-md {
+  font-family: var(--font-display);
+  font-weight: var(--type-weight-medium);
+  font-size: var(--type-size-400);
+  line-height: var(--type-line-height-400);
+  letter-spacing: var(--type-letter-spacing-none);
+}
+
+@utility type-heading-sm {
+  font-family: var(--font-display);
+  font-weight: var(--type-weight-medium);
+  font-size: var(--type-size-300);
+  line-height: var(--type-line-height-300);
+  letter-spacing: var(--type-letter-spacing-none);
+}
+
+/* body */
+@utility type-body-lead {
+  font-family: var(--font-sans);
+  font-weight: var(--type-weight-regular);
+  font-size: var(--type-size-300);
+  line-height: var(--type-line-height-300);
+  letter-spacing: var(--type-letter-spacing-none);
+}
+
+@utility type-body-lead-medium {
+  font-family: var(--font-sans);
+  font-weight: var(--type-weight-medium);
+  font-size: var(--type-size-300);
+  line-height: var(--type-line-height-300);
+  letter-spacing: var(--type-letter-spacing-none);
+}
+
+@utility type-body-lg {
+  font-family: var(--font-sans);
+  font-weight: var(--type-weight-regular);
+  font-size: var(--type-size-250);
+  line-height: var(--type-line-height-250);
+  letter-spacing: var(--type-letter-spacing-none);
+}
+
+@utility type-body-md {
+  font-family: var(--font-sans);
+  font-weight: var(--type-weight-regular);
+  font-size: var(--type-size-200);
+  line-height: var(--type-line-height-200);
+  letter-spacing: var(--type-letter-spacing-none);
+}
+
+@utility type-body-sm {
+  font-family: var(--font-sans);
+  font-weight: var(--type-weight-regular);
+  font-size: var(--type-size-150);
+  line-height: var(--type-line-height-100);
+  letter-spacing: var(--type-letter-spacing-none);
+}
+
+/* ui: buttons, navigation, labels */
+@utility type-ui-lg {
+  font-family: var(--font-sans);
+  font-weight: var(--type-weight-medium);
+  font-size: var(--type-size-250);
+  line-height: var(--type-line-height-250);
+  letter-spacing: var(--type-letter-spacing-none);
+}
+
+@utility type-ui-md {
+  font-family: var(--font-sans);
+  font-weight: var(--type-weight-medium);
+  font-size: var(--type-size-200);
+  line-height: var(--type-line-height-200);
+  letter-spacing: var(--type-letter-spacing-none);
+}
+
+@utility type-ui-sm {
+  font-family: var(--font-sans);
+  font-weight: var(--type-weight-medium);
+  font-size: var(--type-size-150);
+  line-height: var(--type-line-height-100);
+  letter-spacing: var(--type-letter-spacing-none);
+}
+
+@utility type-ui-xs {
+  font-family: var(--font-sans);
+  font-weight: var(--type-weight-medium);
+  font-size: var(--type-size-50);
+  line-height: var(--type-line-height-50);
+  letter-spacing: var(--type-letter-spacing-none);
+}
+
+@utility type-ui-caps {
+  font-family: var(--font-sans);
+  font-weight: var(--type-weight-medium);
+  font-size: var(--type-size-50);
+  line-height: var(--type-line-height-50);
+  letter-spacing: var(--type-letter-spacing-pos-50);
+  text-transform: uppercase;
+}

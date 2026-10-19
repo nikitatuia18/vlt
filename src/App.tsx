@@ -1,8 +1,11 @@
-// Страница собирается из блоков (src/components/blocks/*) по порядку из Figma.
+import { Header } from './components/blocks/Header'
+
+// The page is assembled from blocks (src/components/blocks/*) in the order of the Figma frame.
 export default function App() {
   return (
-    <main>
-      <p>Velant Pay — каркас готов. Блоки добавим после этапов 1–2.</p>
-    </main>
+    <>
+      <Header />
+      <main />
+    </>
   )
 }

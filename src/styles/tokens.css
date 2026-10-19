@@ -1,0 +1,234 @@
+/*
+ * Design tokens.
+ * Source: Figma Variables, file tF23PDdcgeTKK5hsmDZIKg (collections "Primitives -- Colors",
+ * "Semantic -- Theme" with modes Light/Dark, "Primitives -- Typography").
+ * Figma name → CSS name: docs/tokens-map.md. Breakpoints, radius and layout are derived, not from Figma.
+ *
+ * Layers:
+ *   1. --primitive-*  raw palette. Plain CSS variables WITHOUT Tailwind utilities on purpose:
+ *                     components must use the semantic colors below, never the raw palette.
+ *   2. --color-*      semantic colors (Light by default). They become Tailwind utilities:
+ *                     bg-surface-page, text-typography-primary, border-border-subtle, ...
+ *   3. [data-theme="dark"] overrides only the semantic colors whose Dark value differs.
+ */
+
+/* 1. Primitives (Figma: Primitives -- Colors) */
+:root {
+  --primitive-brand-50: #fef0eb;
+  --primitive-brand-100: #fcdacf;
+  --primitive-brand-200: #f7b6a1;
+  --primitive-brand-300: #f08c6a;
+  --primitive-brand-400: #ea5d2e;
+  --primitive-brand-500: #b63b12;
+  --primitive-brand-600: #9c300d;
+  --primitive-brand-700: #7d2508;
+  --primitive-brand-800: #581904;
+  --primitive-brand-900: #370f01;
+  --primitive-brand-950: #1e0801;
+
+  --primitive-neutral-0: #ffffff;
+  --primitive-neutral-50: #fbfbfb;
+  --primitive-neutral-100: #f3f3f3;
+  --primitive-neutral-200: #e2e2e2;
+  --primitive-neutral-300: #d1d1d1;
+  --primitive-neutral-400: #a3a3a3;
+  --primitive-neutral-500: #737373;
+  --primitive-neutral-600: #525252;
+  --primitive-neutral-700: #404040;
+  --primitive-neutral-800: #262626;
+  --primitive-neutral-900: #181818;
+  --primitive-neutral-950: #0e0e0e;
+
+  --primitive-green-50: #f0fdf4;
+  --primitive-green-100: #dcfce7;
+  --primitive-green-200: #bbf7d0;
+  --primitive-green-300: #86efac;
+  --primitive-green-400: #4ade80;
+  --primitive-green-500: #16a34a;
+  --primitive-green-600: #15803d;
+  --primitive-green-700: #166534;
+  --primitive-green-800: #14532d;
+  --primitive-green-900: #0f3e21;
+  --primitive-green-950: #052210;
+
+  --primitive-red-50: #fef2f2;
+  --primitive-red-100: #fee2e2;
+  --primitive-red-200: #fecaca;
+  --primitive-red-300: #fca5a5;
+  --primitive-red-400: #f87171;
+  --primitive-red-500: #dc2626;
+  --primitive-red-600: #b91c1c;
+  --primitive-red-700: #991b1b;
+  --primitive-red-800: #7f1d1d;
+  --primitive-red-900: #611414;
+  --primitive-red-950: #3b0a0a;
+}
+
+/* 2. Semantic colors, Light theme (Figma: Semantic -- Theme / Light Theme) */
+@theme static {
+  --color-*: initial;
+  --breakpoint-*: initial;
+
+  /* Breakpoints (derived, docs/responsive.md): base = mobile */
+  --breakpoint-tablet: 48rem;
+  --breakpoint-desktop: 80rem;
+
+  /* Utility colors (no Figma variable) */
+  --color-transparent: transparent;
+  --color-current: currentColor;
+
+  /* Text: theme/typography/* */
+  --color-typography-primary: var(--primitive-neutral-900);
+  --color-typography-secondary: color-mix(in srgb, var(--primitive-neutral-900) 64%, transparent);
+  --color-typography-tertiary: color-mix(in srgb, var(--primitive-neutral-900) 34%, transparent);
+  --color-typography-inverse: var(--primitive-neutral-0);
+  --color-typography-brand: var(--primitive-brand-500);
+  --color-typography-success: var(--primitive-green-500);
+  --color-typography-static-w: var(--primitive-neutral-0);
+  --color-typography-static-w-secondary: color-mix(in srgb, var(--primitive-neutral-0) 64%, transparent);
+  --color-typography-static-b: var(--primitive-neutral-900);
+
+  /* Icons: theme/icon/* */
+  --color-icon-primary: var(--primitive-neutral-900);
+  --color-icon-secondary: color-mix(in srgb, var(--primitive-neutral-900) 64%, transparent);
+  --color-icon-brand: var(--primitive-brand-500);
+  --color-icon-static-w: var(--primitive-neutral-0);
+  --color-icon-static-b: var(--primitive-neutral-900);
+
+  /* Surfaces: theme/surface/* */
+  --color-surface-page: var(--primitive-neutral-50);
+  --color-surface-subtle: var(--primitive-neutral-0);
+  --color-surface-hover: var(--primitive-neutral-100);
+  --color-surface-inverse: var(--primitive-neutral-900);
+  --color-surface-brand-default: var(--primitive-brand-500);
+  --color-surface-brand-hover: var(--primitive-brand-600);
+  --color-surface-brand-active: var(--primitive-brand-700);
+  --color-surface-brand-light: var(--primitive-brand-50);
+  --color-surface-brand-0: color-mix(in srgb, var(--primitive-brand-500) 0%, transparent);
+  --color-surface-brand-16: color-mix(in srgb, var(--primitive-brand-500) 16%, transparent);
+  --color-surface-success: var(--primitive-green-500);
+  --color-surface-success-hover: var(--primitive-green-600);
+  --color-surface-success-secondary: color-mix(in srgb, var(--primitive-green-500) 8%, transparent);
+  --color-surface-static-w: var(--primitive-neutral-0);
+  --color-surface-static-b: var(--primitive-neutral-900);
+  --color-surface-white-0: color-mix(in srgb, var(--primitive-neutral-0) 0%, transparent);
+  --color-surface-white-16: color-mix(in srgb, var(--primitive-neutral-0) 16%, transparent);
+  --color-surface-black-0: color-mix(in srgb, var(--primitive-neutral-950) 0%, transparent);
+  --color-surface-black-16: color-mix(in srgb, var(--primitive-neutral-950) 16%, transparent);
+
+  /* Borders and dividers: theme/borders & dividers/* */
+  --color-border-alpha-0: color-mix(in srgb, var(--primitive-neutral-900) 0%, transparent);
+  --color-border-subtle: color-mix(in srgb, var(--primitive-neutral-900) 6%, transparent);
+  --color-border-medium: color-mix(in srgb, var(--primitive-neutral-900) 12%, transparent);
+  --color-border-strong: color-mix(in srgb, var(--primitive-neutral-900) 18%, transparent);
+  --color-border-very-strong: color-mix(in srgb, var(--primitive-neutral-900) 24%, transparent);
+  --color-border-brand: var(--primitive-brand-400);
+  --color-border-brand-light: var(--primitive-brand-50);
+
+  /* Fonts. Figma calls Manrope "font-family-serif", but it is a sans-serif display face, so the CSS name is "display" */
+  --font-sans: "Inter Variable", "Inter", system-ui, sans-serif;
+  --font-display: "Manrope Variable", "Manrope", system-ui, sans-serif;
+
+  /* Type primitives (Figma: Primitives -- Typography); px → rem at 16px */
+  --type-weight-regular: 400;
+  --type-weight-medium: 500;
+  --type-weight-semibold: 600;
+
+  --type-size-50: 0.75rem;
+  --type-size-150: 0.875rem;
+  --type-size-200: 1rem;
+  --type-size-250: 1.125rem;
+  --type-size-300: 1.25rem;
+  --type-size-400: 1.5rem;
+  --type-size-500: 2rem;
+  --type-size-600: 2.5rem;
+  --type-size-700: 4rem;
+  --type-size-800: 4.5rem;
+  --type-size-900: 5rem;
+  --type-size-1000: 6rem;
+
+  --type-line-height-50: 1rem;
+  --type-line-height-100: 1.25rem;
+  --type-line-height-200: 1.5rem;
+  --type-line-height-250: 1.625rem;
+  --type-line-height-300: 1.75rem;
+  --type-line-height-400: 2rem;
+  --type-line-height-500: 2.5rem;
+  --type-line-height-600: 3rem;
+  --type-line-height-700: 4.5rem;
+  --type-line-height-800: 5rem;
+  --type-line-height-900: 5.5rem;
+  --type-line-height-1000: 6.5rem;
+
+  --type-letter-spacing-none: 0;
+  --type-letter-spacing-pos-50: 0.0625rem;
+  --type-letter-spacing-neg-50: -0.0625rem;
+  --type-letter-spacing-neg-100: -0.09375rem;
+  --type-letter-spacing-neg-150: -0.15625rem;
+
+  /* Radius (derived: the design uses only a full pill so far) */
+  --radius-pill: 9999px;
+
+  /* Layout (derived): content column of the page, 1440 px in the desktop frame */
+  --container-page: 90rem;
+}
+
+/* 3. Dark theme (Figma: Semantic -- Theme / Dark Theme). Only values that differ from Light. */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --color-typography-primary: var(--primitive-neutral-0);
+  --color-typography-secondary: color-mix(in srgb, var(--primitive-neutral-0) 64%, transparent);
+  --color-typography-tertiary: color-mix(in srgb, var(--primitive-neutral-0) 34%, transparent);
+  --color-typography-inverse: var(--primitive-neutral-950);
+  --color-typography-brand: var(--primitive-brand-400);
+  --color-typography-success: var(--primitive-green-400);
+
+  --color-icon-primary: var(--primitive-neutral-0);
+  --color-icon-secondary: color-mix(in srgb, var(--primitive-neutral-0) 64%, transparent);
+  --color-icon-brand: var(--primitive-brand-400);
+
+  --color-surface-page: var(--primitive-neutral-950);
+  --color-surface-subtle: var(--primitive-neutral-900);
+  --color-surface-hover: var(--primitive-neutral-800);
+  --color-surface-inverse: var(--primitive-neutral-0);
+  --color-surface-brand-light: var(--primitive-brand-900);
+  --color-surface-brand-16: color-mix(in srgb, var(--primitive-brand-400) 16%, transparent);
+  --color-surface-success: var(--primitive-green-400);
+  --color-surface-success-hover: var(--primitive-green-500);
+  --color-surface-success-secondary: color-mix(in srgb, var(--primitive-green-400) 8%, transparent);
+  --color-surface-white-0: color-mix(in srgb, var(--primitive-neutral-950) 0%, transparent);
+  --color-surface-white-16: color-mix(in srgb, var(--primitive-neutral-900) 16%, transparent);
+  --color-surface-black-0: color-mix(in srgb, var(--primitive-neutral-0) 0%, transparent);
+  --color-surface-black-16: color-mix(in srgb, var(--primitive-neutral-0) 16%, transparent);
+
+  --color-border-alpha-0: color-mix(in srgb, var(--primitive-neutral-0) 0%, transparent);
+  --color-border-subtle: color-mix(in srgb, var(--primitive-neutral-0) 6%, transparent);
+  --color-border-medium: color-mix(in srgb, var(--primitive-neutral-0) 12%, transparent);
+  --color-border-strong: color-mix(in srgb, var(--primitive-neutral-0) 18%, transparent);
+  --color-border-very-strong: color-mix(in srgb, var(--primitive-neutral-0) 24%, transparent);
+  --color-border-brand: var(--primitive-brand-300);
+  --color-border-brand-light: var(--primitive-brand-900);
+}
+
+/*
+ * Page side padding (derived, not a Figma variable).
+ * Desktop frame: 160 px on a 2560 px canvas with a 1440 px content column,
+ * so on real screens the column is centered and this padding only matters below 1760 px.
+ * Used as: px-(--gutter).
+ */
+:root {
+  --gutter: 1rem;
+}
+
+@media (min-width: 48rem) {
+  :root {
+    --gutter: 2rem;
+  }
+}
+
+@media (min-width: 80rem) {
+  :root {
+    --gutter: 5rem;
+  }
+}
