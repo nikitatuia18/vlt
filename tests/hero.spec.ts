@@ -93,8 +93,10 @@ test('background: the canvas fills the hero and draws the dot grid in the surfac
   await page.goto('/')
   const hero = await page.locator('[data-el="hero"]').boundingBox()
   const box = await canvas(page).boundingBox()
+  // The background frame is 79.17 % of the section high and starts 4.85 % above it (design: 1273 px, -78 px, section 1608 px).
   expect(box?.width).toBeCloseTo(hero!.width, 0)
-  expect(box?.height).toBeCloseTo(hero!.height, 0)
+  expect(box?.height).toBeCloseTo(hero!.height * 0.7917, 0)
+  expect(box!.y).toBeCloseTo(hero!.y - hero!.height * 0.0485, 0)
   await expect.poll(() => alphaAtFirstDot(page)).toBeGreaterThan(100)
   const { r, g, b } = await pixelAtFirstDot(page)
   for (const channel of [r, g, b]) expect(Math.abs(channel - 0xa3)).toBeLessThanOrEqual(2) // surface-dots Light = neutral/400 #a3a3a3
@@ -103,11 +105,11 @@ test('background: the canvas fills the hero and draws the dot grid in the surfac
 test('background: the pointer pushes dots away and they return when it leaves', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
   await page.goto('/')
-  const hero = await page.locator('[data-el="hero"]').boundingBox()
+  const box = await canvas(page).boundingBox()
   await expect.poll(() => alphaAtFirstDot(page)).toBeGreaterThan(100)
 
-  // Pointer 40 px to the right of the first dot: the dot is pushed away from it.
-  await page.mouse.move(hero!.x + 60, hero!.y + 20)
+  // Pointer 40 px to the right of the first dot (canvas coordinates 20, 20): the dot is pushed away from it.
+  await page.mouse.move(box!.x + 60, box!.y + 20)
   await expect.poll(() => alphaAtFirstDot(page)).toBeLessThan(10)
 
   await page.evaluate(() => document.documentElement.dispatchEvent(new PointerEvent('pointerleave')))
@@ -128,9 +130,9 @@ test('background: with reduced motion the dots stay still', async ({ page }) => 
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.setViewportSize({ width: 1440, height: 900 })
   await page.goto('/')
-  const hero = await page.locator('[data-el="hero"]').boundingBox()
+  const box = await canvas(page).boundingBox()
   await expect.poll(() => alphaAtFirstDot(page)).toBeGreaterThan(100)
-  await page.mouse.move(hero!.x + 60, hero!.y + 20)
+  await page.mouse.move(box!.x + 60, box!.y + 20)
   await page.waitForTimeout(600)
   expect(await alphaAtFirstDot(page)).toBeGreaterThan(100)
 })
@@ -192,4 +194,65 @@ test('hero media keeps the 1440 : 800 proportion and is empty at every width', a
     const radius = await media.evaluate((el) => getComputedStyle(el).borderTopLeftRadius)
     expect(radius).toBe(width >= 1280 ? '48px' : '32px')
   }
+})
+
+// --- Fade: a gradient in the page color over the dots ---
+test('background fade: frame 1273 px high, 78 px above the section, at the width of the desktop frame', async ({ page }) => {
+  await page.setViewportSize({ width: 2560, height: 1000 })
+  await page.goto('/')
+  const hero = await page.locator('[data-el="hero"]').boundingBox()
+  const bg = await page.locator('[data-el="hero__bg"]').boundingBox()
+  expect(bg?.height).toBeCloseTo(1273, 0)
+  expect(hero!.y - bg!.y).toBeCloseTo(78, 0)
+  // The fade covers exactly the dots and is a gradient in the page color.
+  const fade = await page.locator('[data-el="hero__bg-fade"]').boundingBox()
+  expect(fade?.height).toBeCloseTo(1273, 0)
+  const image = await page.locator('[data-el="hero__bg-fade"]').evaluate((el) => getComputedStyle(el).backgroundImage)
+  // Direction is "to bottom" by default and is not written out. Starts fully transparent, ends in the page color.
+  expect(image).toContain('linear-gradient')
+  expect(image).toContain('/ 0) 0%')
+  expect(image).toContain('rgb(251, 251, 251) 100%')
+})
+
+// Reads the real pixels of a page area: screenshot → canvas → darkest channel value.
+const darkestPixel = async (page: Page, clip: { x: number; y: number; width: number; height: number }) => {
+  const png = await page.screenshot({ clip, fullPage: true })
+  return page.evaluate(async (base64) => {
+    const image = new Image()
+    image.src = `data:image/png;base64,${base64}`
+    await image.decode()
+    const surface = document.createElement('canvas')
+    surface.width = image.width
+    surface.height = image.height
+    const context = surface.getContext('2d')!
+    context.drawImage(image, 0, 0)
+    const data = context.getImageData(0, 0, image.width, image.height).data
+    let darkest = 255
+    for (let i = 0; i < data.length; i += 4) darkest = Math.min(darkest, data[i], data[i + 1], data[i + 2])
+    return darkest
+  }, png.toString('base64'))
+}
+
+test('background fade: dots are visible near the top and gone at the bottom edge of the frame', async ({ page }) => {
+  await page.setViewportSize({ width: 2560, height: 1000 })
+  await page.goto('/')
+  await expect.poll(() => alphaAtFirstDot(page)).toBeGreaterThan(100)
+  const hero = await page.locator('[data-el="hero"]').boundingBox()
+  // Top: a dot row 22..102 px below the section top; bottom: last dot row of the frame (1182 px).
+  const top = await darkestPixel(page, { x: 0, y: hero!.y + 95, width: 300, height: 14 })
+  const bottom = await darkestPixel(page, { x: 0, y: hero!.y + 1176, width: 300, height: 14 })
+  expect(top).toBeLessThan(200) // dots visible (#a3a3a3 = 163, slightly faded)
+  expect(bottom).toBeGreaterThanOrEqual(247) // page color #fbfbfb = 251, dots fully faded
+})
+
+test('background fade: in the dark theme it fades into the dark page color', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto('/')
+  await page.locator('[data-el="header"] [data-el="header__theme-toggle"]').click()
+  await page.mouse.move(700, 800)
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
+  const fadeEnd = await page.locator('[data-el="hero__bg-fade"]').evaluate((el) => getComputedStyle(el).backgroundImage)
+  // The gradient end is the page color of the dark theme (#0e0e0e = rgb(14, 14, 14)), not the light one.
+  expect(fadeEnd).toContain('14, 14, 14')
+  expect(fadeEnd).not.toContain('251, 251, 251')
 })

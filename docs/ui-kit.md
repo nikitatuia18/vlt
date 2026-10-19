@@ -67,6 +67,15 @@
 ```
 Родитель должен быть `relative` с `overflow-hidden`; холст занимает его целиком.
 
+**Затухание книзу (как в Hero).** Поверх точек кладётся градиент в цвет страницы: сверху прозрачный, снизу сплошной.
+```tsx
+<div aria-hidden="true" className="pointer-events-none absolute inset-0">
+  <InteractiveDots />
+  <div className="absolute inset-0 bg-linear-to-b from-surface-page/0 to-surface-page" />
+</div>
+```
+Градиент берёт токен `surface-page`, поэтому работает в обеих темах. Высоту обёртки задавайте по макету секции (в Hero — 79,17 % высоты секции, обёртка выше секции на 4,85 %).
+
 **Как устроен.**
 - Цвет точек — токен `surface-dots` (Figma `theme/surface/dots`: Light `neutral/400`, Dark `neutral/600`); фон холста прозрачный, поэтому тема работает сама.
 - Курсор отслеживается по всему окну, касания игнорируются; клики холст не перехватывает (`pointer-events-none` на обёртке).

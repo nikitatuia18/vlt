@@ -12,9 +12,15 @@ import { InteractiveDots } from '../../ui/InteractiveDots'
 export function Hero() {
   return (
     <section data-el="hero" aria-labelledby="hero-title" className="relative overflow-hidden">
-      {/* Background: the static picture `img-hero-bg` of the design is replaced by the interactive dot grid (UI Kit). */}
-      <div data-el="hero__bg" aria-hidden="true" className="pointer-events-none absolute inset-0">
+      {/*
+        Background: the static picture `img-hero-bg` of the design is replaced by the interactive dot grid (UI Kit).
+        As in the design, a gradient in the page color lies over the dots: fully transparent at the top, solid at the bottom,
+        so the dots fade out. Geometry from the design (frame 1273 px high, starting 78 px above the section, section 1608 px)
+        in percent of the section height, so it scales with the section: top -4.85 %, height 79.17 %. Below it the page is plain.
+      */}
+      <div data-el="hero__bg" aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-[-4.85%] h-[79.17%]">
         <InteractiveDots />
+        <div data-el="hero__bg-fade" className="absolute inset-0 bg-linear-to-b from-surface-page/0 to-surface-page" />
       </div>
 
       <Container data-el="hero__content" className="relative py-12 tablet:py-20 desktop:py-35">
