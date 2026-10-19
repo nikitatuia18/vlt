@@ -10,6 +10,9 @@ const normalizePath = (element: SVGPathElement | null) => element?.setAttribute(
 
 type RouteProps = { geometry: RouteGeometry; timeline: RouteTimeline; reduced: boolean }
 
+/** Color of the lines: a token, a bit stronger than the 24 % of the design so that they do not melt into the background. */
+const ROUTE_COLOR = 'fill-typography-tertiary'
+
 /**
  * One dashed route. The picture from Figma is a flat outline, so the draw-on of the original stroke is done with a mask:
  * the centerline of the route, drawn with a growing dash, reveals the picture.
@@ -17,15 +20,15 @@ type RouteProps = { geometry: RouteGeometry; timeline: RouteTimeline; reduced: b
 function Route({ geometry, timeline, reduced }: RouteProps) {
   const { id, src, left, top, width, height, centerline } = geometry
   const { opacity, draw } = timeline
-  const maskId = `global-route-mask-${id}`
+  const shapeId = `global-route-shape-${id}`
+  const drawId = `global-route-draw-${id}`
 
   // How much of the line is drawn (0 to 1). The dash length and its offset are both derived from this one value,
   // so a line that grows from its far end stays in step (animating the two separately lost the offset).
   const progress = useMotionValue(reduced ? 1 : 0)
   const dasharray = useTransform(progress, (value) => `${value} 1`)
-  const dashoffset = useTransform(progress, (value) => (draw?.reverse ? value - 1 : 0))
+  const dashoffset = useTransform(progress, (value) => (draw.reverse ? value - 1 : 0))
   useEffect(() => {
-    if (!draw) return
     if (reduced) {
       progress.set(1)
       return
@@ -41,7 +44,7 @@ function Route({ geometry, timeline, reduced }: RouteProps) {
       width={width}
       height={height}
       viewBox={`0 0 ${width} ${height}`}
-      className="absolute overflow-visible dark:invert"
+      className="absolute overflow-visible"
       style={{ left, top }}
       initial={false}
       animate={{ opacity: reduced ? 1 : opacity.values }}
@@ -51,25 +54,25 @@ function Route({ geometry, timeline, reduced }: RouteProps) {
           : { duration: DURATION, times: opacity.times, ease: opacity.ease, repeat: Infinity }
       }
     >
-      {draw ? (
-        <>
-          <mask id={maskId} maskUnits="userSpaceOnUse" x={-30} y={-30} width={width + 60} height={height + 60}>
-            {/* Flat ends: a round cap would leave a dot at the start while the line is not drawn yet. */}
-            <motion.path
-              ref={normalizePath}
-              d={centerline}
-              fill="none"
-              stroke="white"
-              strokeWidth={30}
-              strokeLinejoin="round"
-              style={{ strokeDasharray: dasharray, strokeDashoffset: dashoffset }}
-            />
-          </mask>
-          <image href={src} width={width} height={height} mask={`url(#${maskId})`} />
-        </>
-      ) : (
+      {/* The picture only gives the shape (its alpha); the color comes from a token, so the line follows the theme. */}
+      <mask id={shapeId} maskUnits="userSpaceOnUse" x={0} y={0} width={width} height={height} style={{ maskType: 'alpha' }}>
         <image href={src} width={width} height={height} />
-      )}
+      </mask>
+      <mask id={drawId} maskUnits="userSpaceOnUse" x={-30} y={-30} width={width + 60} height={height + 60}>
+        {/* Flat ends: a round cap would leave a dot at the start while the line is not drawn yet. */}
+        <motion.path
+          ref={normalizePath}
+          d={centerline}
+          fill="none"
+          stroke="white"
+          strokeWidth={30}
+          strokeLinejoin="round"
+          style={{ strokeDasharray: dasharray, strokeDashoffset: dashoffset }}
+        />
+      </mask>
+      <g mask={`url(#${drawId})`}>
+        <rect width={width} height={height} className={ROUTE_COLOR} mask={`url(#${shapeId})`} />
+      </g>
     </motion.svg>
   )
 }

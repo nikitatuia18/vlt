@@ -1,4 +1,5 @@
 ﻿import { expect, test, type Page } from '@playwright/test'
+import { FRAMES, pinTimelines, routeSource, routeTimelines } from '../src/components/blocks/Global/timeline'
 
 const viewports = [
   { name: 'mobile-393', width: 393, height: 850 },
@@ -95,6 +96,23 @@ test('a card grows while it appears, and a route drawn from its far end keeps da
   expect(route.dash).toBeGreaterThan(0)
   expect(route.dash).toBeLessThan(1)
   expect(route.offset).toBeCloseTo(route.dash - 1, 1)
+})
+
+test('a line never outlives the card it flies out of, and starts only after the card has begun to appear', () => {
+  const frame = (fraction: number) => fraction * FRAMES
+  for (const id of routeIds) {
+    const route = routeTimelines[id]
+    const card = pinTimelines[routeSource[id]]
+    const cardShown = frame(card.opacity.times[1])
+    const cardGone = frame(card.opacity.times[4])
+    const drawStart = frame(route.draw.times[1])
+    const lineGone = frame(route.opacity.times[2])
+    expect(drawStart, `route ${id} starts drawing`).toBeGreaterThanOrEqual(cardShown)
+    // The line may fade out up to 6 frames (0.1 s) after the card.
+    expect(lineGone, `route ${id} fades out`).toBeLessThanOrEqual(cardGone + 6)
+    // Nothing is left on the map at the end of the loop.
+    expect(route.opacity.values.at(-1)).toBe(0)
+  }
 })
 
 test.describe('reduced motion', () => {

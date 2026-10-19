@@ -24,7 +24,7 @@ export type Track = { values: number[]; times: number[]; ease: Ease[] }
 /** Draw-on of a route: how much of the line is drawn (0 to 1); `reverse` draws it from the other end of the path. */
 export type DrawTrack = Track & { reverse: boolean }
 
-export type RouteTimeline = { opacity: Track; draw?: DrawTrack }
+export type RouteTimeline = { opacity: Track; draw: DrawTrack }
 export type PinTimeline = { opacity: Track; scale: Track }
 
 /** A route is visible until `hold`, fades out until `gone`. */
@@ -42,20 +42,26 @@ const draw = (from: number, to: number, reverse: boolean): DrawTrack => ({
   reverse,
 })
 
-/** Routes 5, 6 and 7 are not drawn: they are there from the start and fade out at the end. */
-const standing: RouteTimeline = { opacity: routeOpacity(830.94, 900) }
-
+/**
+ * Every line flies out of the card of its country (`source`) towards another country that has no card at that moment,
+ * and fades out together with the card. `reverse` is true when the card sits at the end of the path (the line is drawn from there).
+ * Routes 5, 6 and 7 start at 723 frames (the 12th second), after the 11.18 s that Figma Motion reports,
+ * so their drawing is missing from the Figma data; it is the same as for the other lines (the same 108 frames, 723.18 to 830.94).
+ */
 export const routeTimelines: Record<number, RouteTimeline> = {
-  1: { opacity: routeOpacity(415.44, 443.82), draw: draw(305.9, 413.9, false) },
-  2: { opacity: routeOpacity(276.48, 306.3), draw: draw(167.7, 275.7, true) },
-  3: { opacity: routeOpacity(140.4, 168.72, [soft, soft, 'linear']), draw: draw(30.2, 138.2, false) },
-  4: { opacity: routeOpacity(693.42, 721.74), draw: draw(582.2, 693.42, true) },
-  5: standing,
-  6: standing,
-  7: standing,
-  8: { opacity: routeOpacity(551.58, 582.78), draw: draw(444.1, 552.1, true) },
-  9: { opacity: routeOpacity(277.92, 310.56), draw: draw(167.7, 275.7, true) },
+  1: { opacity: routeOpacity(415.44, 443.82), draw: draw(305.9, 413.9, false) }, // CA → EU
+  2: { opacity: routeOpacity(276.48, 306.3), draw: draw(167.7, 275.7, true) }, // GE → BR
+  3: { opacity: routeOpacity(140.4, 168.72, [soft, soft, 'linear']), draw: draw(30.2, 138.2, false) }, // BR → EU
+  4: { opacity: routeOpacity(693.42, 721.74), draw: draw(582.2, 693.42, true) }, // IN → US
+  5: { opacity: routeOpacity(830.94, 900), draw: draw(723.18, 830.94, false) }, // AR → IN
+  6: { opacity: routeOpacity(830.94, 900), draw: draw(723.18, 830.94, false) }, // CL → US
+  7: { opacity: routeOpacity(830.94, 900), draw: draw(723.18, 830.94, false) }, // EU → CA
+  8: { opacity: routeOpacity(551.58, 582.78), draw: draw(444.1, 552.1, true) }, // KG → AR
+  9: { opacity: routeOpacity(277.92, 310.56), draw: draw(167.7, 275.7, true) }, // US → CL
 }
+
+/** The card each route flies out of. A line must never outlive its card. */
+export const routeSource: Record<number, string> = { 1: 'ca', 2: 'ge', 3: 'br', 4: 'in', 5: 'ar', 6: 'cl', 7: 'eu', 8: 'kg', 9: 'us' }
 
 /** The card starts at this share of its size and grows to the full size while it fades in (not in Figma: added on request). */
 export const PIN_SCALE_FROM = 0.2
