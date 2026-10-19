@@ -3,7 +3,7 @@
   "viewport": "desktop",
   "rootNodeId": "1110:9039",
   "source": "get_metadata(1110:9039) + get_screenshot(1110:9039), по одному вызову; имена по docs/naming-spec.md",
-  "status": "draft",
+  "status": "applied", "appliedAt": "2026-10-19",
   "rename": [
     ["1110:9039", "Next Steps Section", "next-steps"],
     ["1110:9040", "Steps Content", "next-steps__container"],

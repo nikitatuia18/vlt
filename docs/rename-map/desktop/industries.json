@@ -3,7 +3,7 @@
   "viewport": "desktop",
   "rootNodeId": "1110:8922",
   "source": "get_metadata(1110:8922) + get_screenshot(1110:8922), по одному вызову; имена по docs/naming-spec.md",
-  "status": "draft",
+  "status": "applied", "appliedAt": "2026-10-19",
   "rename": [
     ["1110:8922", "Industry Scenarios Section", "industries"],
     ["1110:8923", "Content Layout", "industries__container"],

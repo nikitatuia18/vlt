@@ -3,7 +3,7 @@
   "viewport": "desktop",
   "rootNodeId": "1110:9106",
   "source": "get_metadata(1110:9106), один вызов; имена по docs/naming-spec.md; смысл бейджей (Pay in / Payroll, Multi-currency, Instant KYB) — из docs/audit-report.md, скриншот не снимался",
-  "status": "draft",
+  "status": "applied", "appliedAt": "2026-10-19",
   "rename": [
     ["1110:9106", "Payment Flow Hero", "cta"],
     ["1110:9107", "Hero Content", "cta__container"],

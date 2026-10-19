@@ -3,7 +3,7 @@
   "viewport": "desktop",
   "rootNodeId": "1110:9185",
   "source": "get_metadata(1110:9185), один вызов + один get_screenshot(1110:9186) для текстов; имена по docs/naming-spec.md",
-  "status": "draft",
+  "status": "applied", "appliedAt": "2026-10-19",
   "rename": [
     ["1110:9185", "Navigation Bar", "footer-bottom"],
     ["1110:9186", "Links Container", "footer-bottom__container"],

@@ -3,7 +3,7 @@
   "viewport": "desktop",
   "rootNodeId": "1110:8486",
   "source": "get_metadata(1110:8486), один вызов; имена по docs/naming-spec.md",
-  "status": "draft",
+  "status": "applied", "appliedAt": "2026-10-19",
   "rename": [
     ["1110:8486", "Hero Section", "hero"],
     ["1110:8487", "Hero Image Container", "hero__bg"],

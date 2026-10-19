@@ -3,7 +3,7 @@
   "viewport": "desktop",
   "rootNodeId": "1110:9195",
   "source": "get_metadata(1110:9195) + скриншот; пункты меню и кнопки сверены по изображению",
-  "status": "draft",
+  "status": "applied", "appliedAt": "2026-10-19",
   "rename": [
     ["1110:9195", "Nav Bar", "header"],
     ["1110:9196", "Nav Container", "header__container"],

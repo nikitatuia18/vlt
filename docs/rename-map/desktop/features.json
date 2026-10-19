@@ -3,7 +3,7 @@
   "viewport": "desktop",
   "rootNodeId": "1110:8798",
   "source": "get_metadata(1110:8798), один вызов; имена по docs/naming-spec.md; без скриншота, слаги карточек взяты из аудита",
-  "status": "draft",
+  "status": "applied", "appliedAt": "2026-10-19",
   "rename": [
     ["1110:8798", "Features Section", "features"],
     ["1110:8799", "Features Grid", "features__container"],

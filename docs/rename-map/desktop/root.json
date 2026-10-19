@@ -3,7 +3,7 @@
   "viewport": "desktop",
   "rootNodeId": "1110:8484",
   "source": "БЕЗ вызовов Figma. Старые имена эллипсов (Ellipse 207…214) и их y взяты из docs/audit-report.md, раздел «Таблица: корень и обёртка», а НЕ из свежих метаданных; порядок id↔имя 683→207 … 690→214 следует из диапазонов в том разделе. Имена по docs/naming-spec.md",
-  "status": "draft",
+  "status": "applied", "appliedAt": "2026-10-19",
   "rename": [
     ["1110:8484", "desctop / home page", "page-home--desktop"],
     ["1110:8485", "Frame 2087330976", "page-home__body"],

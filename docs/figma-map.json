@@ -1,4 +1,29 @@
 {
-  "fileKey": null,
-  "blocks": []
+  "fileKey": "tF23PDdcgeTKK5hsmDZIKg",
+  "viewports": {
+    "desktop": {
+      "frameNodeId": "1110:8484",
+      "frameName": "page-home--desktop",
+      "backupNodeId": "1320:653",
+      "layerNames": "applied 2026-10-19"
+    },
+    "mobile": {
+      "frameNodeId": "1143:3916",
+      "frameName": "mobile / home page",
+      "layerNames": "pending"
+    }
+  },
+  "blocks": [
+    { "name": "header",        "component": "Header",       "desktopNodeId": "1110:9195", "mobileNodeId": null },
+    { "name": "hero",          "component": "Hero",         "desktopNodeId": "1110:8486", "mobileNodeId": null },
+    { "name": "logos",         "component": "Logos",        "desktopNodeId": "1110:8691", "mobileNodeId": null },
+    { "name": "features",      "component": "Features",     "desktopNodeId": "1110:8798", "mobileNodeId": null },
+    { "name": "industries",    "component": "Industries",   "desktopNodeId": "1110:8922", "mobileNodeId": null },
+    { "name": "global",        "component": "Global",       "desktopNodeId": "1110:8942", "mobileNodeId": null },
+    { "name": "next-steps",    "component": "NextSteps",    "desktopNodeId": "1110:9039", "mobileNodeId": null },
+    { "name": "faq",           "component": "Faq",          "desktopNodeId": "1110:9062", "mobileNodeId": null },
+    { "name": "cta",           "component": "Cta",          "desktopNodeId": "1110:9106", "mobileNodeId": null },
+    { "name": "footer",        "component": "Footer",       "desktopNodeId": "1110:9133", "mobileNodeId": null },
+    { "name": "footer-bottom", "component": "FooterBottom", "desktopNodeId": "1110:9185", "mobileNodeId": null }
+  ]
 }

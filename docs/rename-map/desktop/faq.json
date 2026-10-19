@@ -3,7 +3,7 @@
   "viewport": "desktop",
   "rootNodeId": "1110:9062",
   "source": "get_metadata(1110:9062) + get_screenshot(1110:9062), по одному вызову; имена по docs/naming-spec.md",
-  "status": "draft",
+  "status": "applied", "appliedAt": "2026-10-19",
   "rename": [
     ["1110:9062", "FAQ Section", "faq"],
     ["1110:9063", "FAQ Content", "faq__container"],
