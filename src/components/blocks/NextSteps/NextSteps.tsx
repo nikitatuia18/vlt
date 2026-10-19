@@ -92,12 +92,11 @@ export function NextSteps() {
             ))}
           </ol>
 
-          {/* The block stands between blocks without column lines: dots on its corners at both lines, and the column
-              lines go on above and below it and fade out (to be revisited when the FAQ block below gets its own column). */}
+          {/* Dots on its corners at both lines. Above it is the block global without column lines, so the lines go on
+              upwards and fade out; below it the column goes on in the FAQ block without a break. */}
           <CornerDots edge="top" block="next-steps" />
           <CornerDots edge="bottom" block="next-steps" />
           <ColumnFade edge="top" block="next-steps" />
-          <ColumnFade edge="bottom" block="next-steps" />
         </div>
       </Container>
     </section>

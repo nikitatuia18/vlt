@@ -1,4 +1,5 @@
 import { lazy, Suspense } from 'react'
+import { Faq } from './components/blocks/Faq'
 import { Features } from './components/blocks/Features'
 import { Global } from './components/blocks/Global'
 import { Hero } from './components/blocks/Hero'
@@ -33,6 +34,7 @@ export default function App() {
         <Industries />
         <Global />
         <NextSteps />
+        <Faq />
       </main>
     </>
   )

@@ -1,0 +1,92 @@
+import collapseIcon from '../../../assets/faq/icon-collapse-button.svg'
+import expandIcon from '../../../assets/faq/icon-expand-button.svg'
+import { Icon } from '../../ui/Icon'
+import type { FaqItemData } from './items'
+
+type FaqItemProps = {
+  item: FaqItemData
+  isOpen: boolean
+  onToggle: () => void
+  /** The last item has no line under it. */
+  isLast: boolean
+}
+
+/**
+ * One question. Figma `faq__item-{id}` (`--open` / `--closed`).
+ * The whole line with the question is one button (the design draws only the round toggle, but the question is the natural
+ * target); the round toggle shows plus or minus. The answer unfolds under it: the row grows from 0 to its height while the text
+ * keeps its width (max 560 px), so it never re-wraps and does not jump; it fades in a little later.
+ */
+export function FaqItem({ item, isOpen, onToggle, isLast }: FaqItemProps) {
+  const { id, question, lead, answer } = item
+  const panelId = `faq-panel-${id}`
+
+  return (
+    <li
+      data-el={`faq__item-${id}`}
+      data-open={isOpen}
+      className={`py-6 tablet:py-8 ${isLast ? '' : 'border-b border-border-subtle'}`}
+    >
+      <h3>
+        <button
+          type="button"
+          id={`faq-heading-${id}`}
+          data-el={`faq__item-${id}-head`}
+          aria-expanded={isOpen}
+          aria-controls={panelId}
+          onClick={onToggle}
+          className="group flex w-full items-start justify-between gap-6 rounded-32 text-left focus-visible:outline-2 focus-visible:outline-offset-8 focus-visible:outline-typography-brand"
+        >
+          <span
+            data-el={`faq__item-${id}-question`}
+            className="type-heading-sm max-w-140 text-typography-primary tablet:type-heading-md desktop:type-heading-lg"
+          >
+            {question}
+          </span>
+          {/* Looks like the round icon button of the UI Kit; it is the same shape, but a plain box, because a button cannot hold a button. */}
+          <span
+            data-el={`faq__item-${id}-toggle`}
+            aria-hidden="true"
+            className="relative inline-flex size-11 shrink-0 items-center justify-center rounded-pill bg-surface-subtle text-icon-primary ring-1 ring-border-subtle ring-inset transition-colors group-hover:bg-surface-hover"
+          >
+            {/* Both icons lie on top of each other and cross-fade (the plus also turns), so the change is a smooth one. */}
+            <Icon
+              src={expandIcon}
+              width={24}
+              height={24}
+              className={`absolute transition-[opacity,transform] duration-500 ease-out ${isOpen ? 'rotate-90 opacity-0' : 'rotate-0 opacity-100'}`}
+            />
+            <Icon
+              src={collapseIcon}
+              width={24}
+              height={24}
+              className={`absolute transition-[opacity,transform] duration-500 ease-out ${isOpen ? 'rotate-0 opacity-100' : '-rotate-90 opacity-0'}`}
+            />
+          </span>
+        </button>
+      </h3>
+
+      {/* Folded to nothing while closed (grid row 0fr to 1fr), but in the page for screen readers and search. */}
+      <div
+        id={panelId}
+        role="region"
+        aria-labelledby={`faq-heading-${id}`}
+        aria-hidden={!isOpen}
+        inert={!isOpen}
+        className={`grid transition-[grid-template-rows] duration-700 ease-out ${isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}
+      >
+        <div className="min-h-0 overflow-hidden">
+          <p
+            data-el={`faq__item-${id}-answer`}
+            className={`type-body-md max-w-140 pt-4 text-typography-secondary transition-opacity ease-out tablet:type-body-lead ${
+              isOpen ? 'opacity-100 delay-200 duration-500' : 'opacity-0 duration-200'
+            }`}
+          >
+            {lead ? <span className="text-typography-primary">{lead} </span> : null}
+            {answer}
+          </p>
+        </div>
+      </div>
+    </li>
+  )
+}

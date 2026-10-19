@@ -7,7 +7,8 @@ const ends = [
   { block: 'features', edge: 'bottom', corners: ['bl', 'br'], fade: false },
   { block: 'industries', edge: 'bottom', corners: ['bl', 'br'], fade: true },
   { block: 'next-steps', edge: 'top', corners: ['tl', 'tr'], fade: true },
-  { block: 'next-steps', edge: 'bottom', corners: ['bl', 'br'], fade: true },
+  { block: 'next-steps', edge: 'bottom', corners: ['bl', 'br'], fade: false }, // the column goes on in the FAQ block
+  { block: 'faq', edge: 'bottom', corners: ['bl', 'br'], fade: true },
 ] as const
 
 const box = async (page: Page, selector: string) => (await page.locator(selector).boundingBox())!
