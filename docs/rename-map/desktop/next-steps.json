@@ -1,0 +1,33 @@
+{
+  "block": "next-steps",
+  "viewport": "desktop",
+  "rootNodeId": "1110:9039",
+  "source": "get_metadata(1110:9039) + get_screenshot(1110:9039), по одному вызову; имена по docs/naming-spec.md",
+  "status": "draft",
+  "rename": [
+    ["1110:9039", "Next Steps Section", "next-steps"],
+    ["1110:9040", "Steps Content", "next-steps__container"],
+    ["1110:9041", "Text Block Container", "next-steps__header"],
+    ["1110:9042", "Heading", "next-steps__title"],
+    ["1110:9043", "Heading", "next-steps__desc"],
+    ["1110:9044", "Steps Cards", "next-steps__cards"],
+    ["1110:9045", "Step Card", "next-steps__card-book-demo--active", "активная (развёрнутая) карточка шага 01 «Book a demo»"],
+    ["1110:9046", "Heading", "next-steps__card-book-demo-number"],
+    ["1110:9047", "Step Details", "next-steps__card-book-demo-details"],
+    ["1110:9048", "Step Text", "next-steps__card-book-demo-text"],
+    ["1110:9049", "Heading", "next-steps__card-book-demo-title"],
+    ["1110:9050", "Heading", "next-steps__card-book-demo-desc"],
+    ["1110:9051", "Progress Indicator", "next-steps__card-book-demo-progress"],
+    ["1110:9052", "Progress Bar", "next-steps__card-book-demo-progress-bar"],
+    ["1237:653", "01-book-a-demo_black-2x 1", "img-step-book-demo", "картинка шага (точки на линии); имя файла заменено"],
+    ["1110:9053", "Step Card", "next-steps__card-pass-kyb--closed", "свёрнутая карточка шага 02 «Pass kyb»; для свёрнутых использован суффикс --closed"],
+    ["1110:9054", "Heading", "next-steps__card-pass-kyb-number"],
+    ["1110:9055", "Heading", "next-steps__card-pass-kyb-title"],
+    ["1110:9056", "Step Card", "next-steps__card-start-process--closed", "свёрнутая карточка шага 03 «Start the process»"],
+    ["1110:9057", "Heading", "next-steps__card-start-process-number"],
+    ["1110:9058", "Heading", "next-steps__card-start-process-title"],
+    ["1110:9059", "Step Card", "next-steps__card-go-live--closed", "свёрнутая карточка шага 04 «Go live»"],
+    ["1110:9060", "Heading", "next-steps__card-go-live-number"],
+    ["1110:9061", "Heading", "next-steps__card-go-live-title"]
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "block": "faq",
+  "viewport": "desktop",
+  "rootNodeId": "1110:9062",
+  "source": "get_metadata(1110:9062) + get_screenshot(1110:9062), по одному вызову; имена по docs/naming-spec.md",
+  "status": "draft",
+  "rename": [
+    ["1110:9062", "FAQ Section", "faq"],
+    ["1110:9063", "FAQ Content", "faq__container"],
+    ["1110:9064", "Heading", "faq__title"],
+    ["1110:9065", "FAQ List", "faq__list"],
+
+    ["1110:9066", "FAQ Item", "faq__item-safety--open", "раскрытый пункт «How do you keep funds safe?»"],
+    ["1110:9067", "FAQ Header", "faq__item-safety-head"],
+    ["1110:9068", "Heading", "faq__item-safety-question"],
+    ["1110:9069", "Left Button Container", "faq__item-safety-toggle"],
+    ["1110:9070", "Left Button", "faq__item-safety-toggle-inner", "скрытый слой, остаётся"],
+    ["1110:9071", "Left Button Text", "faq__item-safety-toggle-label", "скрытый родитель, остаётся"],
+    ["1110:9072", "Collapse Button", "icon-collapse-button", "? инстанс кнопки-иконки, не из Vuesax; имя берётся из компонента, состояние зашито в варианте/имени (Collapse/Expand)"],
+    ["1110:9073", "Subheading", "faq__item-safety-answer"],
+
+    ["1110:9074", "FAQ Item", "faq__item-licence--closed", "свёрнутый пункт «What licence do you have?»"],
+    ["1110:9075", "FAQ Header", "faq__item-licence-head"],
+    ["1110:9076", "Heading", "faq__item-licence-question"],
+    ["1110:9077", "Left Button Container", "faq__item-licence-toggle"],
+    ["1110:9078", "Left Button", "faq__item-licence-toggle-inner", "скрытый слой, остаётся"],
+    ["1110:9079", "Left Button Text", "faq__item-licence-toggle-label", "скрытый родитель, остаётся"],
+    ["1110:9080", "Expand Button", "icon-expand-button", "? см. icon-collapse-button"],
+    ["1110:9081", "Subheading", "faq__item-licence-answer", "скрытый слой (ответ свёрнутого пункта), остаётся"],
+
+    ["1110:9082", "FAQ Item", "faq__item-timeline--closed", "свёрнутый пункт «What is the estimated time for integration?»"],
+    ["1110:9083", "FAQ Header", "faq__item-timeline-head"],
+    ["1110:9084", "Heading", "faq__item-timeline-question"],
+    ["1110:9085", "Left Button Container", "faq__item-timeline-toggle"],
+    ["1110:9086", "Left Button", "faq__item-timeline-toggle-inner", "скрытый слой, остаётся"],
+    ["1110:9087", "Left Button Text", "faq__item-timeline-toggle-label", "скрытый родитель, остаётся"],
+    ["1110:9088", "Expand Button", "icon-expand-button", "? см. icon-collapse-button"],
+    ["1110:9089", "Subheading", "faq__item-timeline-answer", "скрытый слой (ответ свёрнутого пункта), остаётся"],
+
+    ["1110:9090", "FAQ Item", "faq__item-support--closed", "свёрнутый пункт «Do you provide integration and customer support?»"],
+    ["1110:9091", "FAQ Header", "faq__item-support-head"],
+    ["1110:9092", "Heading", "faq__item-support-question"],
+    ["1110:9093", "Left Button Container", "faq__item-support-toggle"],
+    ["1110:9094", "Left Button", "faq__item-support-toggle-inner", "скрытый слой, остаётся"],
+    ["1110:9095", "Left Button Text", "faq__item-support-toggle-label", "скрытый родитель, остаётся"],
+    ["1110:9096", "Expand Button", "icon-expand-button", "? см. icon-collapse-button"],
+    ["1110:9097", "Subheading", "faq__item-support-answer", "скрытый слой (ответ свёрнутого пункта), остаётся"],
+
+    ["1110:9098", "FAQ Item", "faq__item-custom-method--closed", "свёрнутый пункт «I need a custom payment method / new currency…»"],
+    ["1110:9099", "FAQ Header", "faq__item-custom-method-head"],
+    ["1110:9100", "Heading", "faq__item-custom-method-question"],
+    ["1110:9101", "Left Button Container", "faq__item-custom-method-toggle"],
+    ["1110:9102", "Left Button", "faq__item-custom-method-toggle-inner", "скрытый слой, остаётся"],
+    ["1110:9103", "Left Button Text", "faq__item-custom-method-toggle-label", "скрытый родитель, остаётся"],
+    ["1110:9104", "Expand Button", "icon-expand-button", "? см. icon-collapse-button"],
+    ["1110:9105", "Subheading", "faq__item-custom-method-answer", "скрытый слой (ответ свёрнутого пункта), остаётся"]
+  ]
+}

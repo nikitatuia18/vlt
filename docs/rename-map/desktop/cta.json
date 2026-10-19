@@ -1,0 +1,40 @@
+{
+  "block": "cta",
+  "viewport": "desktop",
+  "rootNodeId": "1110:9106",
+  "source": "get_metadata(1110:9106), один вызов; имена по docs/naming-spec.md; смысл бейджей (Pay in / Payroll, Multi-currency, Instant KYB) — из docs/audit-report.md, скриншот не снимался",
+  "status": "draft",
+  "rename": [
+    ["1110:9106", "Payment Flow Hero", "cta"],
+    ["1110:9107", "Hero Content", "cta__container"],
+    ["1110:9108", "Hero Banner", "cta__banner"],
+    ["1110:9109", "Mask group", "cta__bg"],
+    ["1110:9110", "Background Shape", "cta__bg-shape"],
+    ["1110:9111", "Background Image", "img-cta-bg"],
+    ["1110:9112", "Content Area", "cta__content"],
+    ["1110:9113", "Text Content", "cta__text-wrap"],
+    ["1110:9114", "Heading", "cta__title"],
+    ["1110:9115", "Subheading", "cta__subtitle"],
+    ["1110:9116", "Left Button Container", "cta__cta-primary"],
+    ["1110:9117", "Left Button", "cta__cta-primary-inner"],
+    ["1110:9118", "Left Button Text", "cta__cta-primary-label"],
+    ["1114:1073", "vuesax/linear/export", "icon-export"],
+
+    ["1110:9120", "Right Button Container", "cta__badge-payments", "? плавающий бейдж с иконкой card; текст «Pay in / Payroll» взят из audit-report.md, слаг по смыслу (платежи) — сверить со скриншотом"],
+    ["1110:9121", "card", "icon-card"],
+    ["1110:9122", "Feature Label", "cta__badge-payments-text"],
+    ["1110:9123", "Right Button Text", "cta__badge-payments-label"],
+
+    ["1110:9124", "remove-bg_-0 (1) 2", "img-cta-person", "имя файла картинки; фото человека"],
+
+    ["1110:9125", "Right Button Container", "cta__badge-multi-currency", "бейдж с иконкой global (Multi-currency)"],
+    ["1110:9126", "global", "icon-global"],
+    ["1110:9127", "Feature Label", "cta__badge-multi-currency-text"],
+    ["1110:9128", "Right Button Text", "cta__badge-multi-currency-label"],
+
+    ["1110:9129", "Right Button Container", "cta__badge-kyb", "бейдж с иконкой security (Instant KYB)"],
+    ["1110:9130", "security", "icon-security"],
+    ["1110:9131", "Feature Label", "cta__badge-kyb-text"],
+    ["1110:9132", "Right Button Text", "cta__badge-kyb-label"]
+  ]
+}

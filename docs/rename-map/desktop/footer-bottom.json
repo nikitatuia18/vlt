@@ -1,0 +1,19 @@
+{
+  "block": "footer-bottom",
+  "viewport": "desktop",
+  "rootNodeId": "1110:9185",
+  "source": "get_metadata(1110:9185), один вызов + один get_screenshot(1110:9186) для текстов; имена по docs/naming-spec.md",
+  "status": "draft",
+  "rename": [
+    ["1110:9185", "Navigation Bar", "footer-bottom"],
+    ["1110:9186", "Links Container", "footer-bottom__container"],
+    ["1110:9187", "About Links Group", "footer-bottom__company"],
+    ["1110:9188", "About Link", "footer-bottom__company-name", "текст «Velant Payments Inc.»"],
+    ["1110:9189", "About Link", "footer-bottom__company-license", "текст «Canadian Money Services Business»; `license` не из списка текстовых ролей, это слаг по смыслу"],
+    ["1110:9190", "Policy Links Group", "footer-bottom__legal"],
+    ["1110:9191", "About Link", "footer-bottom__link-terms", "текст «Terms»"],
+    ["1110:9192", "About Link", "footer-bottom__link-privacy", "текст «Privacy»"],
+    ["1110:9193", "About Link", "footer-bottom__link-aml-policy", "текст «AML Policy»"],
+    ["1110:9194", "About Link", "footer-bottom__copyright", "текст «© 2026 Velant Payments Inc.»"]
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "block": "industries",
+  "viewport": "desktop",
+  "rootNodeId": "1110:8922",
+  "source": "get_metadata(1110:8922) + get_screenshot(1110:8922), по одному вызову; имена по docs/naming-spec.md",
+  "status": "draft",
+  "rename": [
+    ["1110:8922", "Industry Scenarios Section", "industries"],
+    ["1110:8923", "Content Layout", "industries__container"],
+    ["1110:8924", "Text Block Container", "industries__header"],
+    ["1110:8925", "Heading", "industries__title"],
+    ["1110:8926", "Industry Scenarios", "industries__list"],
+    ["1110:8927", "Heading", "industries__item-industry-first", "? серый пункт «Industry-first scenarios» выглядит как вводная строка списка, а не как индустрия; если это подзаголовок списка, роль другая (например industries__list-caption)"],
+    ["1110:8928", "Heading", "industries__item-ecommerce", "пункт «E-comersce» (опечатка в тексте макета), слаг по смыслу"],
+    ["1110:8929", "Scenario Card", "industries__item-startups--active", "активный пункт «Startups», развёрнутый в карточку"],
+    ["1110:8930", "Scenario Card Content", "industries__item-startups-inner", "лишняя обёртка"],
+    ["1110:8931", "Scenario Details", "industries__item-startups-text"],
+    ["1110:8932", "Heading", "industries__item-startups-title"],
+    ["1110:8933", "Heading", "industries__item-startups-desc"],
+    ["1114:1052", "Left Button Container", "industries__cta-primary", "кнопка «Book a demo»"],
+    ["1114:1053", "Left Button", "industries__cta-primary-inner"],
+    ["1114:1054", "Left Button Text", "industries__cta-primary-label"],
+    ["1114:1055", "vuesax/linear/export", "icon-export"],
+    ["1110:8938", "Heading", "industries__item-luxury-automotive", "пункт «Luxury goods and Automotive»"],
+    ["1110:8939", "Heading", "industries__item-real-estate"],
+    ["1110:8940", "Heading", "industries__item-export-import"],
+    ["1110:8941", "Heading", "industries__item-operations-payroll"]
+  ]
+}

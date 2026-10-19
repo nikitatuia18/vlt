@@ -1,0 +1,19 @@
+{
+  "block": "page-home",
+  "viewport": "desktop",
+  "rootNodeId": "1110:8484",
+  "source": "БЕЗ вызовов Figma. Старые имена эллипсов (Ellipse 207…214) и их y взяты из docs/audit-report.md, раздел «Таблица: корень и обёртка», а НЕ из свежих метаданных; порядок id↔имя 683→207 … 690→214 следует из диапазонов в том разделе. Имена по docs/naming-spec.md",
+  "status": "draft",
+  "rename": [
+    ["1110:8484", "desctop / home page", "page-home--desktop"],
+    ["1110:8485", "Frame 2087330976", "page-home__body"],
+    ["1266:683", "Ellipse 207", "faq__deco-corner-tl", "? старое имя из audit-report.md (y=7301, верх границы faq); привязка к faq и сторона tl (левая из пары 683/684) не проверены по метаданным"],
+    ["1266:684", "Ellipse 208", "faq__deco-corner-tr", "? старое имя из audit-report.md (y=7301); сторона tr не проверена по x"],
+    ["1266:685", "Ellipse 209", "faq__deco-corner-bl", "? старое имя из audit-report.md (y=8346); стык faq/cta, по audit-report — нижняя граница faq, альтернатива cta__deco-corner-tl"],
+    ["1266:686", "Ellipse 210", "faq__deco-corner-br", "? старое имя из audit-report.md (y=8346); стык faq/cta, альтернатива cta__deco-corner-tr"],
+    ["1266:687", "Ellipse 211", "cta__deco-corner-bl", "? старое имя из audit-report.md (y=9121); стык cta/footer, альтернатива footer__deco-corner-tl"],
+    ["1266:688", "Ellipse 212", "cta__deco-corner-br", "? старое имя из audit-report.md (y=9121); стык cta/footer, альтернатива footer__deco-corner-tr"],
+    ["1266:689", "Ellipse 213", "footer__deco-corner-bl", "? старое имя из audit-report.md (y=9586); стык footer/footer-bottom, альтернатива footer-bottom__deco-corner-tl"],
+    ["1266:690", "Ellipse 214", "footer__deco-corner-br", "? старое имя из audit-report.md (y=9586); стык footer/footer-bottom, альтернатива footer-bottom__deco-corner-tr"]
+  ]
+}
