@@ -6,7 +6,7 @@ import { useFontsReady, useRevealOn } from './useReveal'
 /*
  * Appearance of the page (docs/reveal.motion.md). A few ready-made ways to appear, used by all blocks, so the whole site moves
  * in one character:
- *   RevealLines  the lines of a heading rise from under a mask, one after another
+ *   RevealLines  the lines of a heading rise from under a mask, one after another; with by="word" every word does, with a small step
  *   Reveal       one element: variant "up" (text, buttons), "card", "fade", "rise", "pop", "line-x" / "line-y"
  *   CountUp      a figure counts up from zero
  * Everything plays once, when the element comes into view (or when `when` says so, or at once after the fonts are loaded: `atLoad`).
@@ -154,6 +154,10 @@ export function Reveal({ variant = 'up', as = 'div', delay = 0, when, atLoad, at
 type RevealLinesProps = Trigger & {
   lines: readonly string[]
   as?: 'h1' | 'h2' | 'h3' | 'p'
+  /** `line` (default): a line rises as a whole. `word`: every word rises from its own mask, one after another (a phrase "unrolls"). */
+  by?: 'line' | 'word'
+  /** Seconds between neighbours (lines or words); the default comes from `appear`. */
+  step?: number
   className?: string
   id?: string
   delay?: number
@@ -165,14 +169,23 @@ const lineVariants: Variants = {
   shown: (delay: number) => ({ y: '0%', transition: { duration: appear.line.duration, ease: easeOut, delay } }),
 }
 
+const wordVariants: Variants = {
+  hidden: { y: '110%' },
+  shown: (delay: number) => ({ y: '0%', transition: { duration: appear.word.duration, ease: easeOut, delay } }),
+}
+
 /**
  * A heading whose lines rise from under a mask, one after another. The lines are given as an array (the page breaks them
  * with `<br />` anyway); the heading reads and copies as one text.
+ * With `by="word"` the words rise one after another instead (each from its own mask): the phrase unrolls. The words wrap as the text
+ * wraps, so it also suits a paragraph; the lines of the array are still separate blocks.
  */
-export function RevealLines({ lines, as = 'h2', className, delay = 0, when, atLoad, ...rest }: RevealLinesProps) {
+export function RevealLines({ lines, as = 'h2', by = 'line', step, className, delay = 0, when, atLoad, ...rest }: RevealLinesProps) {
   const on = useRevealOn()
   const trigger = useTriggerProps({ when, atLoad })
   const Element = motionTags[as] as typeof motion.div
+
+  const gap = step ?? (by === 'word' ? appear.word.step : appear.line.step)
 
   if (!on) {
     return createElement(
@@ -187,13 +200,38 @@ export function RevealLines({ lines, as = 'h2', className, delay = 0, when, atLo
     )
   }
 
+  if (by === 'word') {
+    // The words are counted over all lines, so the whole phrase runs on in one beat.
+    let counted = 0
+    return (
+      <Element className={className} {...rest} {...trigger}>
+        {lines.map((line, lineIndex) => (
+          <span key={line} className="block">
+            {line.split(' ').map((word, wordIndex) => (
+              <span key={`${word}-${wordIndex}`}>
+                {wordIndex > 0 ? ' ' : null}
+                {/* Every word has its own mask (a little taller below and wider at the sides, so the tails of g, y are not cut). */}
+                <span className="-mx-[0.06em] -mb-[0.16em] inline-block overflow-hidden px-[0.06em] pb-[0.16em] align-top">
+                  <motion.span className="inline-block" variants={wordVariants} custom={delay + counted++ * gap}>
+                    {word}
+                  </motion.span>
+                </span>
+              </span>
+            ))}
+            {lineIndex < lines.length - 1 ? ' ' : null}
+          </span>
+        ))}
+      </Element>
+    )
+  }
+
   return (
     <Element className={className} {...rest} {...trigger}>
       {lines.map((line, index) => (
         // The mask: a little taller below and wider at the sides, so that the tails of g, y and the side bearings are not cut;
         // the negative margins give it back, so the layout is the same as without the mask.
         <span key={line} className="-mx-[0.06em] -mb-[0.16em] block overflow-hidden px-[0.06em] pb-[0.16em]">
-          <motion.span className="block" variants={lineVariants} custom={delay + index * appear.line.step}>
+          <motion.span className="block" variants={lineVariants} custom={delay + index * gap}>
             {line}
           </motion.span>
           {index < lines.length - 1 ? ' ' : null}

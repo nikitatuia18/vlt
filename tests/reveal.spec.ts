@@ -71,6 +71,35 @@ test('below the fold: waits until it comes into view, plays once, does not hide 
   expect(await opacityOf(page, '[data-el="features__card-crypto"]')).toBe(1)
 })
 
+test('next steps: the title and the text unroll word by word, each word from its own mask, and end up in place', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto('/')
+  await page.waitForTimeout(500)
+  const shifts = (selector: string) =>
+    page.locator(selector).evaluate((heading) =>
+      [...heading.querySelectorAll('.overflow-hidden > span')].map((word) => new DOMMatrix(getComputedStyle(word).transform).m42),
+    )
+  // Before it comes into view every word is under its mask.
+  const hidden = await shifts('[data-el="next-steps__title"]')
+  expect(hidden.length).toBe(5) // What are our next steps?
+  expect(Math.min(...hidden)).toBeGreaterThan(10)
+
+  await scrollToSection(page, 'next-steps', 0)
+  await page.waitForTimeout(450)
+  // In the middle of the run the first words are further up than the last ones: they follow one another.
+  const middle = await shifts('[data-el="next-steps__title"]')
+  expect(middle[0]).toBeLessThan(middle.at(-1)!)
+  await page.waitForTimeout(2600)
+  for (const selector of ['[data-el="next-steps__title"]', '[data-el="next-steps__desc"]']) {
+    const done = await shifts(selector)
+    expect(done.length, selector).toBeGreaterThan(4)
+    for (const shift of done) expect(shift, selector).toBeCloseTo(0, 1)
+  }
+  // Still one readable heading and one paragraph.
+  await expect(page.locator('[data-el="next-steps__title"]')).toHaveText('What are our next steps?')
+  await expect(page.locator('[data-el="next-steps__desc"]')).toHaveText('From initial consultation to your first live transaction in 4 transparent steps.')
+})
+
 test('global: the text waits for the globe, then the figures count up', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
   await page.goto('/')

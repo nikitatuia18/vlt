@@ -75,6 +75,14 @@ export function AppearanceSections() {
           <Tile name="lines" usage="RevealLines: headings. Every line rises from under a mask, one after another. Give the lines as an array.">
             <RevealLines as="h3" lines={['Everything you need', 'to move money.']} className="type-heading-md text-center text-typography-primary" />
           </Tile>
+          <Tile name="words" usage='RevealLines by="word": every word rises from its own mask, one after another (step 0.07 s); the phrase unrolls. Wraps like text, so it suits a paragraph too (step={0.04}).'>
+            <RevealLines
+              as="h3"
+              by="word"
+              lines={['What are our next steps?']}
+              className="type-heading-md max-w-64 text-center text-typography-primary"
+            />
+          </Tile>
           <Tile name="up" usage='Reveal variant="up" (default): texts, buttons. Rises and clears up from a light blur. Neighbours: delay 0.1 each.'>
             <div className="flex flex-col items-center gap-3">
               <Reveal as="p" className="type-body-md text-center text-typography-secondary">
