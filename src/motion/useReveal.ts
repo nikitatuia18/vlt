@@ -12,6 +12,10 @@ const flagOff = (() => {
   }
 })()
 
+/** For code outside React: may the page animate at all (not switched off, no request for less motion)? */
+export const motionAllowed = () =>
+  REVEAL_ENABLED && !flagOff && !(typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches)
+
 /** True while the appearance animations play: not switched off, and the visitor has not asked for less motion. */
 export function useRevealOn() {
   const reduced = useReducedMotion()

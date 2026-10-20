@@ -1,5 +1,6 @@
 import { useAnimationFrame, useMotionValueEvent, useReducedMotion, useScroll } from 'motion/react'
 import { useRef, useState } from 'react'
+import { useForcedTheme } from '../../../lib/theme'
 import { RevealLines } from '../../../motion/reveal'
 import { ColumnFade } from '../../ui/ColumnFade'
 import { GlowBackdrop, type GlowHue } from '../../ui/GlowBackdrop'
@@ -52,6 +53,8 @@ export function Industries() {
   const shownIndex = reducedMotion ? designActiveIndex : activeIndex
   // The open item sets the scene: some items turn the whole block dark and light a colored glow behind the card.
   const glow = industries[shownIndex]?.glow
+  // The dark scenes darken the whole site (the header, the page), and the theme toggle is locked meanwhile.
+  useForcedTheme(glow ? 'dark' : null)
 
   // Keep the open item in the middle of the screen: the content slides inside the stage (the stage cuts it at the screen edges).
   useAnimationFrame((_, delta) => {
@@ -78,8 +81,6 @@ export function Industries() {
   return (
     <section
       data-el="industries"
-      // A dark scene is the same dark theme as the site's (the tokens flip inside this element), the change is a soft one.
-      data-theme={glow ? 'dark' : undefined}
       data-glow={glow}
       aria-labelledby="industries-title"
       className="relative border-b border-border-subtle bg-surface-page transition-[background-color,border-color] duration-700 ease-out"

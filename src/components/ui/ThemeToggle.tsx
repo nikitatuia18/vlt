@@ -7,14 +7,19 @@ import { IconButton } from './IconButton'
 
 /** Light/dark switch. Shows the icon of the current theme: sun for light, moon for dark. */
 export function ThemeToggle(props: Omit<ComponentProps<'button'>, 'children' | 'onClick'>) {
-  const { theme, setTheme } = useTheme()
+  const { theme, locked, setTheme } = useTheme()
   const isDark = theme === 'dark'
 
   return (
     <IconButton
-      aria-label="Switch color theme"
+      aria-label={locked ? 'Dark theme in this scene' : 'Switch color theme'}
+      title={locked ? 'Dark theme in this scene' : undefined}
       {...props}
       aria-pressed={isDark}
+      // A scene of a block holds the theme (see useForcedTheme): the button shows the moon and cannot be pressed meanwhile.
+      disabled={locked}
+      aria-disabled={locked}
+      className={`${props.className ?? ''} disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-surface-subtle`}
       onClick={() => setTheme(isDark ? 'light' : 'dark')}
     >
       {/* Both icons live in a 24 px slot; the moon glyph is 20.9 x 21.5 px in the design. */}

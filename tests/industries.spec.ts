@@ -268,7 +268,8 @@ for (const [index, id] of ids.entries()) {
     expect(await activeId(page)).toBe(id)
 
     const hue = scenes[id]
-    const root = section(page)
+    // The whole site is dark in a dark scene (the theme of <html>), not only the block.
+    const root = page.locator('html')
     if (hue) await expect(root).toHaveAttribute('data-theme', 'dark')
     else await expect(root).not.toHaveAttribute('data-theme', 'dark')
 
@@ -297,6 +298,40 @@ for (const [index, id] of ids.entries()) {
   })
 }
 
+const toggle = (page: Page) => page.locator('[data-el="header"] [data-el="header__theme-toggle"]')
+
+test('a dark scene locks the theme toggle (the moon, not pressable) and the site goes back to the choice of the visitor afterwards', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto('/')
+  await page.evaluate(() => document.fonts.ready)
+  await expect(toggle(page)).toBeEnabled()
+  await scrollToProgress(page, 0.4) // Startups: a dark scene
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
+  await expect(toggle(page)).toBeDisabled()
+  await expect(toggle(page)).toHaveAttribute('aria-pressed', 'true')
+  await toggle(page).click({ force: true, trial: false }).catch(() => undefined)
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
+  await scrollToProgress(page, 0.95) // Operations: light again
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light')
+  await expect(toggle(page)).toBeEnabled()
+})
+
+test('if the visitor chose the dark theme, the light items stay dark and the toggle works again', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto('/')
+  await page.evaluate(() => document.fonts.ready)
+  await toggle(page).click()
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
+  await scrollToProgress(page, 0.4)
+  await expect(toggle(page)).toBeDisabled()
+  await scrollToProgress(page, 0.95)
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
+  await expect(toggle(page)).toBeEnabled()
+  // (The header has slid away while scrolling down: press the button in the page, not with the mouse.)
+  await toggle(page).evaluate((button) => (button as HTMLButtonElement).click())
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light')
+})
+
 test('the scene follows the item both ways: dark, light again, dark again', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
   await page.goto('/')
@@ -304,9 +339,9 @@ test('the scene follows the item both ways: dark, light again, dark again', asyn
   const seen: (string | null)[] = []
   for (const progress of [0.07, 0.21, 0.93, 0.5]) {
     await scrollToProgress(page, progress)
-    seen.push(await section(page).getAttribute('data-theme'))
+    seen.push((await page.locator('html').getAttribute('data-theme')) ?? 'light')
   }
-  expect(seen).toEqual([null, 'dark', null, 'dark'])
+  expect(seen).toEqual(['light', 'dark', 'light', 'dark'])
 })
 
 test('reduced motion: the static design state is the dark pink scene of Startups', async ({ browser }) => {
@@ -314,7 +349,7 @@ test('reduced motion: the static design state is the dark pink scene of Startups
   const page = await context.newPage()
   await page.goto('/')
   await section(page).scrollIntoViewIfNeeded()
-  await expect(section(page)).toHaveAttribute('data-theme', 'dark')
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
   await expect(section(page)).toHaveAttribute('data-glow', 'pink')
   await context.close()
 })
