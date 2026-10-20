@@ -7,6 +7,7 @@ import { ButtonLink } from '../components/ui/ButtonLink'
 import { Container } from '../components/ui/Container'
 import { ColumnFade } from '../components/ui/ColumnFade'
 import { Footer } from '../components/ui/Footer'
+import { GlowBackdrop, type GlowHue } from '../components/ui/GlowBackdrop'
 import { Header } from '../components/ui/Header'
 import { CornerDots } from '../components/ui/CornerDots'
 import { Icon } from '../components/ui/Icon'
@@ -32,6 +33,8 @@ const colorGroups = ['typography', 'icon', 'surface', 'border'].map((group) => (
   group,
   tokens: colorTokens.filter((token) => token.startsWith(`color-${group}-`)),
 }))
+
+const glowHues: readonly GlowHue[] = ['violet', 'pink', 'orange', 'blue', 'green']
 
 const textStyles = [
   'type-display-2xl',
@@ -288,6 +291,31 @@ export default function UiKitPage() {
               </div>
             </dl>
           </div>
+        </Section>
+
+        <Section
+          id="glow"
+          title="Glow and glass"
+          note="GlowBackdrop: a soft blurred ellipse of colored light behind a card. It is used by the dark scenes of the Industries block: the block gets data-theme=&quot;dark&quot; (every token flips inside it, in a light site too), the open card is glass (surface-white-16 + backdrop blur) and the button is the inverse (white) one. The hues are the tokens surface-glow-*."
+        >
+          <ul className="grid grid-cols-1 gap-4 tablet:grid-cols-2 desktop:grid-cols-3">
+            {glowHues.map((hue) => (
+              <li
+                key={hue}
+                data-el={`ui-kit__glow-demo-${hue}`}
+                data-theme="dark"
+                className="relative flex h-56 items-center justify-center overflow-hidden rounded-32 bg-surface-page ring-1 ring-inset ring-border-medium"
+              >
+                <GlowBackdrop hue={hue} visible className="absolute top-1/2 left-1/2 h-40 w-[130%] -translate-x-1/2 -translate-y-1/2" />
+                <div className="relative flex flex-col items-center gap-4 rounded-32 bg-surface-white-16 px-8 py-6 text-center ring-1 ring-inset ring-border-subtle backdrop-blur-xl">
+                  <p className="type-heading-md text-typography-primary">{hue}</p>
+                  <ButtonLink href="#glow" variant="inverse" icon="export">
+                    Book a demo
+                  </ButtonLink>
+                </div>
+              </li>
+            ))}
+          </ul>
         </Section>
 
         <Section

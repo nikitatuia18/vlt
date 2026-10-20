@@ -17,7 +17,7 @@ test('UI Kit lists every text style and every semantic color from the CSS', asyn
   const themeBlock = tokensCss.split('@theme static {')[1].split('\n}')[0]
   const cssColors = [...themeBlock.matchAll(/--(color-(?:typography|icon|surface|border)-[a-z0-9-]+):/g)].length
   await expect(page.locator('[data-el="ui-kit__colors"] ul li')).toHaveCount(cssColors)
-  expect(cssColors).toBe(41) // 40 + surface-dots
+  expect(cssColors).toBe(46) // 40 + surface-dots + 5 glow hues (surface-glow-*)
 })
 
 test('UI Kit: text styles are really applied (font size from the computed style)', async ({ page }) => {
@@ -72,5 +72,16 @@ test('UI Kit screenshots, no sideways scroll', async ({ page }) => {
     await page.screenshot({ path: `tests/artifacts/ui-kit-${name}.png`, fullPage: true })
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)
     expect(overflow).toBe(0)
+  }
+})
+
+test('UI Kit shows the glow hues: a dark panel, a glow behind a glass card and the white button, for every hue', async ({ page }) => {
+  await page.goto('/ui-kit')
+  for (const hue of ['violet', 'pink', 'orange', 'blue', 'green']) {
+    const demo = page.locator(`[data-el="ui-kit__glow-demo-${hue}"]`)
+    await expect(demo).toBeVisible()
+    await expect(demo).toHaveAttribute('data-theme', 'dark')
+    await expect(demo.locator(`[data-hue="${hue}"]`)).toHaveAttribute('data-visible', 'true')
+    await expect(demo.locator('a')).toHaveCSS('background-color', 'rgb(255, 255, 255)')
   }
 })

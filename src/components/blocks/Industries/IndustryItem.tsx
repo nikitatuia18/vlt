@@ -23,7 +23,7 @@ const titleClasses = 'type-heading-lg tablet:type-heading-xl min-[64rem]:type-di
  * Card and colors change with CSS (700 ms), the unfolding with motion.
  */
 export function IndustryItem({ item, isActive, index, setRef }: IndustryItemProps) {
-  const { id, title, description, cta } = item
+  const { id, title, description, cta, glow } = item
 
   return (
     <Reveal
@@ -39,7 +39,10 @@ export function IndustryItem({ item, isActive, index, setRef }: IndustryItemProp
         data-el={`industries__item-${id}-inner`}
         className={`flex flex-col items-center rounded-32 text-center ring-1 ring-inset transition-[background-color,box-shadow,padding] duration-700 ease-out ${
           isActive
-            ? 'bg-surface-subtle px-6 py-6 ring-border-subtle tablet:px-10 tablet:py-8 desktop:px-15 desktop:py-10'
+            ? `px-6 py-6 ring-border-subtle tablet:px-10 tablet:py-8 desktop:px-15 desktop:py-10 ${
+                // In the dark scene the card is glass: a faint fill with the glow blurred behind it (Figma: surface/16-white).
+                glow ? 'bg-surface-white-16 backdrop-blur-xl' : 'bg-surface-subtle'
+              }`
             : 'bg-transparent px-0 py-0 ring-transparent'
         }`}
       >
@@ -77,6 +80,8 @@ export function IndustryItem({ item, isActive, index, setRef }: IndustryItemProp
               href={cta.href}
               size="lg"
               icon="export"
+              // In the dark scene the button is white (the inverse variant), in the light one it is the brand button.
+              variant={glow ? 'inverse' : 'primary'}
               data-el={`industries__item-${id}-cta`}
               tabIndex={isActive ? undefined : -1}
             >

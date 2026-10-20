@@ -10,6 +10,8 @@
  *   2. --color-*      semantic colors (Light by default). They become Tailwind utilities:
  *                     bg-surface-page, text-typography-primary, border-border-subtle, ...
  *   3. [data-theme="dark"] overrides only the semantic colors whose Dark value differs.
+ *      It works on <html> (the whole site) and on any element: a part of the page can be dark in a light site
+ *      (the Industries block turns dark while some of its items are open).
  */
 
 /* 1. Primitives (Figma: Primitives -- Colors) */
@@ -62,6 +64,15 @@
   --primitive-red-800: #7f1d1d;
   --primitive-red-900: #611414;
   --primitive-red-950: #3b0a0a;
+
+  /*
+   * EXCEPTION (no Figma variable): hues of the glow behind the open card of the Industries block.
+   * Pink is the color of the layer Ellipse 215 in the design (a node property, not a variable); violet and blue are
+   * chosen by the developer; orange and green reuse brand/400 and green/500. See docs/tokens-map.md, section 7.
+   */
+  --primitive-pink-500: #ea2e95;
+  --primitive-violet-500: #7c3aed;
+  --primitive-blue-500: #2563eb;
 }
 
 /* 2. Semantic colors, Light theme (Figma: Semantic -- Theme / Light Theme) */
@@ -116,6 +127,12 @@
   --color-surface-white-16: color-mix(in srgb, var(--primitive-neutral-0) 16%, transparent);
   --color-surface-black-0: color-mix(in srgb, var(--primitive-neutral-950) 0%, transparent);
   --color-surface-black-16: color-mix(in srgb, var(--primitive-neutral-950) 16%, transparent);
+  /* Glow (EXCEPTION, no Figma variables): light behind the open card of the Industries block, same in both themes */
+  --color-surface-glow-violet: var(--primitive-violet-500);
+  --color-surface-glow-pink: var(--primitive-pink-500);
+  --color-surface-glow-orange: var(--primitive-brand-400);
+  --color-surface-glow-blue: var(--primitive-blue-500);
+  --color-surface-glow-green: var(--primitive-green-500);
 
   /* Borders and dividers: theme/borders & dividers/* */
   --color-border-alpha-0: color-mix(in srgb, var(--primitive-neutral-900) 0%, transparent);
@@ -180,7 +197,8 @@
 }
 
 /* 3. Dark theme (Figma: Semantic -- Theme / Dark Theme). Only values that differ from Light. */
-:root[data-theme="dark"] {
+:root[data-theme="dark"],
+[data-theme="dark"] {
   color-scheme: dark;
 
   --color-typography-primary: var(--primitive-neutral-0);

@@ -34,6 +34,7 @@
 | `ColumnFade` | две вертикальные линии колонки, продолженные за блок и гаснущие в ноль (начинаются у угловых точек) | `edge`: `'bottom'` (вниз) \| `'top'` (вверх); `block`: имя блока для `data-el` (`{block}__deco-column-fade-{top|bottom}-{left|right}`); `length`: длина, px (160); родитель позиционирован |
 | `Header` | шапка сайта на все страницы: логотип, меню, переключатель темы, две кнопки; на планшете и телефоне бургер | `navItems` (по умолчанию меню сайта из `navigation.ts`), `currentId`: выбранный пункт (серая заливка, как при наведении), `primaryCta`, `secondaryCta`, `isPinned` (по умолчанию закреплён вверху и прячется при прокрутке вниз) |
 | `Footer` | подвал сайта на все страницы: верхняя часть (логотип, описание, пять колонок ссылок) и нижняя полоса (компания, юридические ссылки, копирайт) | `columns` (по умолчанию колонки сайта из `navigation.ts`), `legalLinks`, `year` (по умолчанию текущий) |
+| `GlowBackdrop` | мягкое цветное свечение за карточкой (размытый эллипс, как слой `Ellipse 215` тёмной сцены блока Industries); несколько свечений друг над другом перетекают друг в друга | `hue`: `violet` | `pink` | `orange` | `blue` | `green` (токены `surface-glow-*`); `visible`; `className` — размер и положение; за ним нужен позиционированный родитель |
 | `InteractiveDots` | «живой» фон: точки отталкиваются курсором (<canvas>, прозрачный) | `spacing` 40, `dotSize` 1, `radius` 150, `force` 1, `ease` 0.1 (значения утверждённого прототипа); `colorClass`: класс цвета точек (по умолчанию `text-surface-dots`, на баннере цвета бренда светлый `text-icon-static-w`); `className` |
 
 Служебное: `src/lib/theme.ts` — хук `useTheme` (тема живёт в `data-theme` на `<html>`).
@@ -42,6 +43,7 @@
 - **Header** теперь сам в UI Kit (`src/components/ui/Header/`): раньше был блоком. Дал: `ButtonLink` (md), `IconButton`, `ThemeToggle`, `Icon`, `Container`, пилюли меню (пока внутри блока).
 - **Hero** дал: размер `lg` у кнопки, иконку export 24 px, `InteractiveDots`, радиусы 32 / 48.
 - **InteractiveDots** теперь в двух местах: фон Hero и фон карточки Crypto Processing (Features), поэтому он в UI Kit.`n- **Cta** дал: вариант `inverse` у `ButtonLink`, `colorClass` у `InteractiveDots` (светлые точки на баннере) и радиус 60 (исключение из токенов).
+- **Industries (тёмные сцены)** дали: `GlowBackdrop`, пять токенов `surface-glow-*` (исключение, см. tokens-map.md), стеклянную карточку (`surface-white-16` + `backdrop-blur`) и приём «часть страницы тёмная»: элемент с `data-theme="dark"` переворачивает все токены внутри себя. Всё это в витрине, раздел «Glow and glass».
 - **Industries** дал: ColumnFade (линии колонки уходят вниз за блок и гаснут), нижние CornerDots и линию под блоком.
 - **Features** дал: `Badge`, `IconLink`, `IconButton` размера `lg`, `CornerDots`, радиус 40.
 

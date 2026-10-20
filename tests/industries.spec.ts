@@ -164,24 +164,24 @@ test('every one of the seven items is centered on the screen when it opens (1440
 test('the open item is a white card (radius 32, padding 60 x 40) and the description unfolds; closed items are grey and folded', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
   await page.goto('/')
-  await scrollToProgress(page, 0.4) // Startups
-  const inner = page.locator('[data-el="industries__item-startups-inner"]')
+  await scrollToProgress(page, 0.5 / ids.length) // Industry-first scenarios: a light scene (Startups is a dark glass one)
+  const inner = page.locator('[data-el="industries__item-industry-first-inner"]')
   const style = await inner.evaluate((el) => {
     const cs = getComputedStyle(el)
     return { radius: cs.borderTopLeftRadius, background: cs.backgroundColor, paddingX: cs.paddingLeft, paddingY: cs.paddingTop }
   })
   expect(style).toEqual({ radius: '32px', background: 'rgb(255, 255, 255)', paddingX: '60px', paddingY: '40px' })
-  const details = page.locator('[data-el="industries__item-startups-details"]')
+  const details = page.locator('[data-el="industries__item-industry-first-details"]')
   await expect(details).toHaveAttribute('aria-hidden', 'false')
   expect((await details.boundingBox())!.height).toBeGreaterThan(100)
   const color = (id: string) => page.locator(`[data-el="industries__item-${id}-title"]`).evaluate((el) => getComputedStyle(el).color)
-  expect(await color('startups')).toBe('rgb(24, 24, 24)') // typography-primary
+  expect(await color('industry-first')).toBe('rgb(24, 24, 24)') // typography-primary
   expect(await color('real-estate')).not.toBe('rgb(24, 24, 24)') // typography-tertiary (grey)
 
-  await scrollToProgress(page, 0.8) // Export/Import is open, Startups is closed again
+  await scrollToProgress(page, 0.8) // Export/Import is open, the first item is closed again
   await expect(details).toHaveAttribute('aria-hidden', 'true')
   expect((await details.boundingBox())!.height).toBeLessThan(2)
-  await expect(page.locator('[data-el="industries__item-startups-cta"]')).toHaveAttribute('tabindex', '-1')
+  await expect(page.locator('[data-el="industries__item-industry-first-cta"]')).toHaveAttribute('tabindex', '-1')
   expect(await inner.evaluate((el) => getComputedStyle(el).paddingLeft)).toBe('0px')
 })
 
@@ -240,8 +240,81 @@ test('dark theme: the open card is dark and its title is white', async ({ page }
   await page.goto('/')
   await page.locator('[data-el="header"] [data-el="header__theme-toggle"]').click()
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
-  await scrollToProgress(page, 0.4)
-  await expect(page.locator('[data-el="industries__item-startups-inner"]')).toHaveCSS('background-color', 'rgb(24, 24, 24)')
-  await expect(page.locator('[data-el="industries__item-startups-title"]')).toHaveCSS('color', 'rgb(255, 255, 255)')
+  await scrollToProgress(page, 0.5 / ids.length)
+  await expect(page.locator('[data-el="industries__item-industry-first-inner"]')).toHaveCSS('background-color', 'rgb(24, 24, 24)')
+  await expect(page.locator('[data-el="industries__item-industry-first-title"]')).toHaveCSS('color', 'rgb(255, 255, 255)')
   await page.screenshot({ path: 'tests/artifacts/industries-desktop-1440-dark.png' })
+})
+
+// The dark scenes: the block turns dark while E-commerce, Startups, Luxury, Real estate or Export/Import is open,
+// a glow of its own hue lies behind the glass card and the button is white. The first and the last items stay light.
+const scenes: Record<string, string | null> = {
+  'industry-first': null,
+  ecommerce: 'violet',
+  startups: 'pink',
+  'luxury-automotive': 'orange',
+  'real-estate': 'blue',
+  'export-import': 'green',
+  'operations-payroll': null,
+}
+
+for (const [index, id] of ids.entries()) {
+  test(`scene of "${id}": ${scenes[id] ? `dark with a ${scenes[id]} glow, glass card, white button` : 'light, brand button, no glow'}`, async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 })
+    await page.goto('/')
+    await page.evaluate(() => document.fonts.ready)
+    await scrollToProgress(page, (index + 0.5) / ids.length)
+    await page.waitForTimeout(900)
+    expect(await activeId(page)).toBe(id)
+
+    const hue = scenes[id]
+    const root = section(page)
+    if (hue) await expect(root).toHaveAttribute('data-theme', 'dark')
+    else await expect(root).not.toHaveAttribute('data-theme', 'dark')
+
+    // Exactly the glow of this hue is on; the others are off.
+    for (const other of Object.values(scenes).filter((value): value is string => value !== null)) {
+      const opacity = await page.locator(`[data-el="industries__glow-${other}"]`).evaluate((el) => Number(getComputedStyle(el).opacity))
+      expect(opacity, `glow ${other}`).toBe(other === hue ? 1 : 0)
+    }
+
+    const card = page.locator(`[data-el="industries__item-${id}-inner"]`)
+    const button = page.locator(`[data-el="industries__item-${id}-cta"]`)
+    const cardBackground = await card.evaluate((el) => getComputedStyle(el).backgroundColor)
+    const buttonBackground = await button.evaluate((el) => getComputedStyle(el).backgroundColor)
+    if (hue) {
+      // Glass: the fill is see-through, the backdrop is blurred; the button is the white inverse one with dark text.
+      expect(cardBackground).toMatch(/rgba\(|color\(srgb/)
+      expect(await card.evaluate((el) => getComputedStyle(el).backdropFilter)).toContain('blur')
+      expect(buttonBackground).toBe('rgb(255, 255, 255)')
+      await expect(button).toHaveCSS('color', 'rgb(24, 24, 24)')
+      // Title and page are on the dark side of the tokens.
+      expect(await page.locator(`[data-el="industries__item-${id}-title"]`).evaluate((el) => getComputedStyle(el).color)).toBe('rgb(255, 255, 255)')
+    } else {
+      expect(cardBackground).toBe('rgb(255, 255, 255)')
+      expect(buttonBackground).not.toBe('rgb(255, 255, 255)')
+    }
+  })
+}
+
+test('the scene follows the item both ways: dark, light again, dark again', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto('/')
+  await page.evaluate(() => document.fonts.ready)
+  const seen: (string | null)[] = []
+  for (const progress of [0.07, 0.21, 0.93, 0.5]) {
+    await scrollToProgress(page, progress)
+    seen.push(await section(page).getAttribute('data-theme'))
+  }
+  expect(seen).toEqual([null, 'dark', null, 'dark'])
+})
+
+test('reduced motion: the static design state is the dark pink scene of Startups', async ({ browser }) => {
+  const context = await browser.newContext({ reducedMotion: 'reduce', viewport: { width: 1440, height: 900 } })
+  const page = await context.newPage()
+  await page.goto('/')
+  await section(page).scrollIntoViewIfNeeded()
+  await expect(section(page)).toHaveAttribute('data-theme', 'dark')
+  await expect(section(page)).toHaveAttribute('data-glow', 'pink')
+  await context.close()
 })

@@ -1,3 +1,5 @@
+import type { GlowHue } from '../../ui/GlowBackdrop'
+
 export type IndustryItemData = {
   /** Same slug as the Figma layer `industries__item-{id}`. */
   id: string
@@ -6,6 +8,11 @@ export type IndustryItemData = {
   description: readonly string[]
   /** Button shown with the description. */
   cta: { label: string; href: string }
+  /**
+   * While this item is open the block turns dark and a glow of this hue lies behind the card (glass card, white button).
+   * No hue: the usual light block. The first and the last items have none (the scene is dark only in the middle).
+   */
+  glow?: GlowHue
 }
 
 /** The button is the same everywhere for now and leads nowhere yet (placeholder link). */
@@ -27,30 +34,35 @@ export const industries: readonly IndustryItemData[] = [
   },
   {
     id: 'ecommerce',
+    glow: 'violet',
     title: 'E-commerce',
     description: ['Accept crypto at checkout and settle in local currency.', 'Reach customers in every market'],
     cta: bookDemo,
   },
   {
     id: 'startups',
+    glow: 'pink',
     title: 'Startups',
     description: ['Let your clients pay in crypto, and receive fiat.', 'Forget about chargebacks'],
     cta: bookDemo,
   },
   {
     id: 'luxury-automotive',
+    glow: 'orange',
     title: 'Luxury goods and Automotive',
     description: ['Close high-value deals with instant crypto settlement.', 'No card limits, no waiting for funds'],
     cta: bookDemo,
   },
   {
     id: 'real-estate',
+    glow: 'blue',
     title: 'Real estate',
     description: ['Take deposits and payments from buyers anywhere in the world.', 'Receive the money in the currency you need'],
     cta: bookDemo,
   },
   {
     id: 'export-import',
+    glow: 'green',
     title: 'Export/Import',
     description: ['Pay suppliers and get paid across borders in one workflow.', 'Skip slow correspondent banks'],
     cta: bookDemo,

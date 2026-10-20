@@ -2,6 +2,7 @@ import { useAnimationFrame, useMotionValueEvent, useReducedMotion, useScroll } f
 import { useRef, useState } from 'react'
 import { RevealLines } from '../../../motion/reveal'
 import { ColumnFade } from '../../ui/ColumnFade'
+import { GlowBackdrop, type GlowHue } from '../../ui/GlowBackdrop'
 import { Container } from '../../ui/Container'
 import { CornerDots } from '../../ui/CornerDots'
 import { DESIGN_ACTIVE_ID, industries } from './items'
@@ -14,6 +15,9 @@ const SCROLL_PER_ITEM_VH = 60
 const FOLLOW_MS = 260
 
 const designActiveIndex = industries.findIndex((item) => item.id === DESIGN_ACTIVE_ID)
+
+/** The hues that exist in the list (one glow layer each; they cross-fade). */
+const glowHues = [...new Set(industries.flatMap((item) => (item.glow ? [item.glow] : [])))] as GlowHue[]
 
 /**
  * "From first payment to final payout." Figma block `industries`.
@@ -46,6 +50,8 @@ export function Industries() {
 
   // With reduced motion nothing follows the scroll: the design state is shown.
   const shownIndex = reducedMotion ? designActiveIndex : activeIndex
+  // The open item sets the scene: some items turn the whole block dark and light a colored glow behind the card.
+  const glow = industries[shownIndex]?.glow
 
   // Keep the open item in the middle of the screen: the content slides inside the stage (the stage cuts it at the screen edges).
   useAnimationFrame((_, delta) => {
@@ -70,11 +76,37 @@ export function Industries() {
   const scrollLength = `calc(100svh + ${(industries.length - 1) * SCROLL_PER_ITEM_VH}vh)`
 
   return (
-    <section data-el="industries" aria-labelledby="industries-title" className="border-b border-border-subtle">
-      <Container ref={tallRef} style={reducedMotion ? undefined : { height: scrollLength }}>
+    <section
+      data-el="industries"
+      // A dark scene is the same dark theme as the site's (the tokens flip inside this element), the change is a soft one.
+      data-theme={glow ? 'dark' : undefined}
+      data-glow={glow}
+      aria-labelledby="industries-title"
+      className="relative border-b border-border-subtle bg-surface-page transition-[background-color,border-color] duration-700 ease-out"
+    >
+      {/*
+        The glow lies behind the content, as wide as the screen (it goes beyond the column), and stays in the middle of the screen
+        where the open card always is. It is pinned like the stage and takes no room in the flow.
+      */}
+      <div
+        data-el="industries__glow"
+        aria-hidden="true"
+        className={`pointer-events-none overflow-hidden ${reducedMotion ? 'absolute inset-0' : 'sticky top-0 -mb-[100svh] h-svh'}`}
+      >
+        {glowHues.map((hue) => (
+          <GlowBackdrop
+            key={hue}
+            hue={hue}
+            visible={glow === hue}
+            data-el={`industries__glow-${hue}`}
+            className="absolute top-1/2 left-1/2 h-74 w-[max(166vw,70rem)] max-w-none -translate-x-1/2 -translate-y-1/2 max-tablet:h-[34svh]"
+          />
+        ))}
+      </div>
+      <Container ref={tallRef} className="relative z-10" style={reducedMotion ? undefined : { height: scrollLength }}>
         <div
           data-el="industries__container"
-          className="relative h-full shadow-[inset_1px_0_0_var(--color-border-subtle),inset_-1px_0_0_var(--color-border-subtle)]"
+          className="relative h-full shadow-[inset_1px_0_0_var(--color-border-subtle),inset_-1px_0_0_var(--color-border-subtle)] transition-shadow duration-700 ease-out"
         >
           <div
             ref={stageRef}
