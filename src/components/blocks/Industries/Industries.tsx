@@ -79,8 +79,10 @@ export function Industries() {
             ref={stageRef}
             data-el="industries__stage"
             // Pinned: the stage is the screen and cuts the sliding content at its edges.
+            // The negative bottom margin lets the stage hang out below the end of the block: the open last card stands in the middle
+            // of the screen, so the empty half under it would be a big gap; this way the end of the block comes 18rem under the middle.
             // Static (reduced motion): a plain block with the usual paddings of a section.
-            className={reducedMotion ? 'py-12 tablet:py-20 desktop:py-35' : 'sticky top-0 h-svh overflow-hidden'}
+            className={reducedMotion ? 'py-12 tablet:py-20 desktop:py-35' : 'sticky top-0 -mb-[max(0px,calc(50svh-18rem))] h-svh overflow-hidden'}
           >
             <div
               ref={sliderRef}
