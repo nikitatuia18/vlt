@@ -1,4 +1,4 @@
-import { useAnimationFrame, useMotionValueEvent, useReducedMotion, useScroll } from 'motion/react'
+import { useAnimationFrame, useInView, useMotionValueEvent, useReducedMotion, useScroll } from 'motion/react'
 import { useRef, useState } from 'react'
 import { useForcedTheme } from '../../../lib/theme'
 import { RevealLines } from '../../../motion/reveal'
@@ -54,7 +54,12 @@ export function Industries() {
   // The open item sets the scene: some items turn the whole block dark and light a colored glow behind the card.
   const glow = industries[shownIndex]?.glow
   // The dark scenes darken the whole site (the header, the page), and the theme toggle is locked meanwhile.
-  useForcedTheme(glow ? 'dark' : null)
+  // The theme changes under a curtain whose edge glows in the color of the scene.
+  // With reduced motion the block is a plain one that shows the dark scene of Startups at once: it darkens the site only while it is on the screen.
+  const sectionRef = useRef<HTMLElement>(null)
+  const onScreen = useInView(sectionRef, { amount: 0.3 })
+  const darkScene = glow && (!reducedMotion || onScreen)
+  useForcedTheme(darkScene ? 'dark' : null, { edge: glow ? `var(--color-surface-glow-${glow})` : undefined })
 
   // Keep the open item in the middle of the screen: the content slides inside the stage (the stage cuts it at the screen edges).
   useAnimationFrame((_, delta) => {
@@ -80,6 +85,7 @@ export function Industries() {
 
   return (
     <section
+      ref={sectionRef}
       data-el="industries"
       data-glow={glow}
       aria-labelledby="industries-title"

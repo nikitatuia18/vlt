@@ -8,19 +8,14 @@
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 /*
- * A short color fade of the whole page when the theme changes (src/lib/theme.ts adds the class for 0.6 s). It is in the base layer
- * on purpose: elements with their own transition (utility classes) keep it, the others get the fade.
+ * While the theme is being put on the page (under the curtain of the theme change, src/lib/theme.ts) no transition may start:
+ * the colors that some blocks fade by themselves would play on top of the change.
  */
-@layer base {
-  html.theme-fading :where(*, *::before, *::after) {
-    transition:
-      background-color 0.5s ease-out,
-      border-color 0.5s ease-out,
-      color 0.5s ease-out,
-      fill 0.5s ease-out,
-      stroke 0.5s ease-out,
-      box-shadow 0.5s ease-out;
-  }
+html.theme-flip,
+html.theme-flip *,
+html.theme-flip *::before,
+html.theme-flip *::after {
+  transition: none !important;
 }
 
 @layer base {

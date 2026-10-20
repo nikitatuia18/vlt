@@ -180,25 +180,84 @@ test('faq: the questions come one after another and the dividers draw themselves
   }
 })
 
-test('industries dark scene: the whole page fades to dark (class theme-fading), the header follows, and it fades back', async ({ page }) => {
+// The change of the theme is a curtain (src/lib/themeCurtain.ts): it covers the screen, the theme changes under it, it goes on down.
+const curtain = (page: Page) => page.locator('[data-el="theme-curtain"]')
+const htmlTheme = (page: Page) => page.locator('html').getAttribute('data-theme')
+const curtainShown = (page: Page) => curtain(page).evaluate((el) => getComputedStyle(el).display !== 'none').catch(() => false)
+
+test('theme toggle: a curtain runs down, the theme changes under it, the curtain leaves', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto('/')
+  await page.waitForTimeout(3500)
+  await page.locator('[data-el="header__theme-toggle"]').click()
+  await page.waitForTimeout(120)
+  // The curtain is on its way; the page below is still in the old theme.
+  expect(await curtainShown(page)).toBe(true)
+  expect((await htmlTheme(page)) ?? 'light').toBe('light')
+  await page.waitForTimeout(1100)
+  expect(await htmlTheme(page)).toBe('dark')
+  await page.waitForTimeout(900)
+  expect(await curtainShown(page)).toBe(false)
+  // The header is dark (its surface is the dark surface-subtle), nothing is left half-way.
+  expect(await page.locator('[data-el="header"]').evaluate((el) => getComputedStyle(el).backgroundColor)).toBe('rgb(24, 24, 24)')
+  expect(await page.locator('html').evaluate((el) => el.classList.contains('theme-flip'))).toBe(false)
+
+  // And back.
+  await page.locator('[data-el="header__theme-toggle"]').click()
+  await page.waitForTimeout(2200)
+  expect(await htmlTheme(page)).toBe('light')
+  expect(await curtainShown(page)).toBe(false)
+})
+
+test('industries dark scene: the curtain has the color of the scene on its edge, the whole page goes dark, it goes back after the scene', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
   await page.goto('/')
   await page.waitForTimeout(500)
-  await scrollToSection(page, 'industries', 0)
-  await page.waitForTimeout(800)
-  await expect(page.locator('html')).not.toHaveAttribute('data-theme', 'dark')
-  // Into Startups (the third item of seven).
-  await page.evaluate(() => {
-    const el = document.querySelector('[data-el="industries"]') as HTMLElement
-    const top = el.getBoundingClientRect().top + window.scrollY
-    window.scrollTo(0, top + (2.5 / 7) * (el.getBoundingClientRect().height - window.innerHeight))
-  })
-  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
-  await expect(page.locator('html')).toHaveClass(/theme-fading/)
+  const goTo = (fraction: number) =>
+    page.evaluate((f) => {
+      const el = document.querySelector('[data-el="industries"]') as HTMLElement
+      const top = el.getBoundingClientRect().top + window.scrollY
+      window.scrollTo(0, top + f * (el.getBoundingClientRect().height - window.innerHeight))
+    }, fraction)
+  await goTo(0.5 / 7)
   await page.waitForTimeout(1500)
-  await expect(page.locator('html')).not.toHaveClass(/theme-fading/)
-  // The header is dark too (its surface is the dark surface-subtle).
+  expect((await htmlTheme(page)) ?? 'light').toBe('light')
+  await goTo(2.5 / 7) // Startups: pink
+  await page.waitForTimeout(150)
+  expect(await curtainShown(page)).toBe(true)
+  expect(await curtain(page).evaluate((el) => el.style.getPropertyValue('--curtain-edge'))).toContain('glow-pink')
+  await page.waitForTimeout(1300)
+  expect(await htmlTheme(page)).toBe('dark')
+  // The header is dark too.
   expect(await page.locator('[data-el="header"]').evaluate((el) => getComputedStyle(el).backgroundColor)).toBe('rgb(24, 24, 24)')
+  // Leaving the scene: the curtain again, the light theme at the end.
+  await goTo(6.5 / 7)
+  await page.waitForTimeout(2300)
+  expect(await htmlTheme(page)).toBe('light')
+  expect(await curtainShown(page)).toBe(false)
+})
+
+test('theme: quick scrolling in and out of a scene ends in the right theme with no curtain left over', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto('/')
+  await page.waitForTimeout(500)
+  const goTo = (fraction: number) =>
+    page.evaluate((f) => {
+      const el = document.querySelector('[data-el="industries"]') as HTMLElement
+      const top = el.getBoundingClientRect().top + window.scrollY
+      window.scrollTo(0, top + f * (el.getBoundingClientRect().height - window.innerHeight))
+    }, fraction)
+  await goTo(0.5 / 7)
+  await page.waitForTimeout(1500)
+  // In, out, in, out, in again, with less than a second between.
+  for (const fraction of [2.5 / 7, 0.5 / 7, 3.5 / 7, 6.5 / 7, 2.5 / 7]) {
+    await goTo(fraction)
+    await page.waitForTimeout(250)
+  }
+  await page.waitForTimeout(3500)
+  expect(await htmlTheme(page)).toBe('dark') // the last item is Startups
+  expect(await curtainShown(page)).toBe(false)
+  expect(await page.locator('html').evaluate((el) => el.classList.contains('theme-flip'))).toBe(false)
 })
 
 test.describe('reduced motion', () => {
@@ -212,6 +271,10 @@ test.describe('reduced motion', () => {
     for (const name of ['hero__media', 'hero__cta-primary', 'features__card-crypto', 'faq__title', 'cta__banner', 'footer__brand']) {
       expect(await opacityOf(page, `[data-el="${name}"]`), name).toBe(1)
     }
+    // The theme changes at once, without a curtain.
+    await page.locator('[data-el="header__theme-toggle"]').click()
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
+    await expect(page.locator('[data-el="theme-curtain"]')).toHaveCount(0)
     // The heading is plain: no masks, no moving lines.
     await expect(page.locator('[data-el="hero__title"] .overflow-hidden')).toHaveCount(0)
     await expect(page.locator('[data-el="hero__title"]')).toBeVisible()

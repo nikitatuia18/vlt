@@ -18,6 +18,19 @@ export const duration = {
  */
 export const REVEAL_ENABLED = true
 
+/** The change of the theme (src/lib/themeCurtain.ts): the curtain covers the screen, the theme changes under it, the curtain goes on down. */
+export const themeSwitch = {
+  /** Seconds the curtain needs to cover the screen, and to open it again. */
+  cover: 0.45,
+  reveal: 0.5,
+  easeCover: 'cubic-bezier(0.7, 0, 0.3, 1)',
+  easeReveal: 'cubic-bezier(0.5, 0, 0.2, 1)',
+  /** Height of the soft edges of the curtain, px (at most a third of the screen). */
+  edge: 240,
+  /** Frames to wait after the change, so that the page has recalculated its styles before the curtain opens. */
+  settleFrames: 2,
+} as const
+
 /** The language of appearing (docs/reveal.motion.md): durations in seconds, steps between neighbours, distances in px. */
 export const appear = {
   /** One line of a heading rises from under its mask. */

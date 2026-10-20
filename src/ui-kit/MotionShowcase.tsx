@@ -261,7 +261,7 @@ export function ThemeSceneSection() {
         items={[
           ['useForcedTheme(theme | null)', 'Call it in a block with the theme the scene needs (null: nothing). Several scenes do not fight: the latest wins. Needs no other code: the tokens flip.'],
           ['useTheme()', 'theme (the one on the page), locked, setTheme (the visitor\'s choice; it applies when no scene holds the theme).'],
-          ['Smooth change', 'On every change the page gets the class theme-fading for 0.8 s (index.css): colors, borders and fills fade over 0.7 s. Elements with their own transition keep it. Not with reduced motion.'],
+          ['The curtain', 'A change of the theme is a curtain: it comes down from the top and covers the screen with the new color, the theme changes under it, the curtain goes on down and opens the page (about 1 s). Press the button above and the toggle in the header to see it. The glowing edge is brand-colored, or the glow color of the Industries scene. Instant with reduced motion.'],
           ['A dark part of a page', 'data-theme="dark" on any element flips the tokens inside it (the dark panels of this page). For a whole-site scene use useForcedTheme instead.'],
         ]}
       />
