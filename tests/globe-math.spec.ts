@@ -10,6 +10,7 @@ import {
   RAD,
   rotateInto,
   smoothstep,
+  spinSpeed,
 } from '../src/components/blocks/Global/globe/globeMath'
 
 const project = (lat: number, lon: number, centerLat: number, centerLon: number) => {
@@ -73,6 +74,27 @@ test('the lattice covers the sphere evenly: both hemispheres get half of the poi
   }
   expect(Math.abs(north - count / 2)).toBeLessThan(count * 0.01)
   expect(Math.abs(east - count / 2)).toBeLessThan(count * 0.03)
+})
+
+const spin = { base: 4, boost: 2.5, emptyCenter: -165, fullUntil: 20, fadeTo: 60 }
+
+test('the globe turns faster over the empty Pacific and at the base speed over the Atlantic', () => {
+  expect(spinSpeed(-165, spin)).toBeCloseTo(10, 6)
+  expect(spinSpeed(-150, spin)).toBeCloseTo(10, 6)
+  expect(spinSpeed(0, spin)).toBeCloseTo(4, 6)
+  expect(spinSpeed(20, spin)).toBeCloseTo(4, 6)
+})
+
+test('the turn speed has no jump: it changes smoothly, also across 180 degrees', () => {
+  let previous = spinSpeed(-180, spin)
+  for (let lon = -179; lon <= 180; lon++) {
+    const speed = spinSpeed(lon, spin)
+    expect(Math.abs(speed - previous)).toBeLessThan(0.5)
+    previous = speed
+  }
+  // 180 and -180 are the same meridian.
+  expect(spinSpeed(180, spin)).toBeCloseTo(spinSpeed(-180, spin), 6)
+  expect(spinSpeed(540, spin)).toBeCloseTo(spinSpeed(180, spin), 6)
 })
 
 test('smoothstep stays inside 0 to 1 and is flat at the ends', () => {

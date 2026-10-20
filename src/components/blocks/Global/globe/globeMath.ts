@@ -64,6 +64,29 @@ export const smoothstep = (from: number, to: number, value: number) => {
   return t * t * (3 - 2 * t)
 }
 
+export type SpinSettings = {
+  /** Degrees per second over land. */
+  base: number
+  /** How many times faster the globe turns over the empty part (1 = no boost). */
+  boost: number
+  /** Longitude (degrees) of the middle of the empty part: the Pacific Ocean. */
+  emptyCenter: number
+  /** Full boost within this distance (degrees) of the middle, and none farther than `fadeTo`; smooth in between. */
+  fullUntil: number
+  fadeTo: number
+}
+
+/**
+ * How fast the globe turns (degrees per second) when `centerLongitude` faces the viewer: steady over land,
+ * faster over the empty ocean so that the viewer does not wait for the land to come back. Smooth, no jump anywhere.
+ */
+export const spinSpeed = (centerLongitude: number, settings: SpinSettings) => {
+  // Distance on the circle of longitudes, 0 to 180.
+  const distance = Math.abs((((centerLongitude - settings.emptyCenter + 180) % 360) + 360) % 360 - 180)
+  const emptiness = 1 - smoothstep(settings.fullUntil, settings.fadeTo, distance)
+  return settings.base * (1 + (settings.boost - 1) * emptiness)
+}
+
 /** Even points on the sphere (Fibonacci lattice): i-th of `count`, as latitude and longitude in degrees. */
 export const latticePoint = (index: number, count: number): [number, number] => {
   const y = 1 - (2 * (index + 0.5)) / count

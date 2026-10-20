@@ -32,6 +32,7 @@ export function Global() {
   const reduced = useReducedMotion() ?? false
   const sectionRef = useRef<HTMLElement>(null)
   const slotRef = useRef<HTMLDivElement>(null)
+  const frameRef = useRef<HTMLDivElement>(null)
 
   // Two phases of one scroll: the section comes into view (the globe appears), then it stays pinned (the globe flies to its place).
   const { scrollYProgress: appear } = useScroll({ target: sectionRef, offset: ['start end', 'start start'] })
@@ -47,11 +48,11 @@ export function Global() {
       style={reduced ? undefined : { height: `calc(100svh + ${PINNED_SCROLL})` }}
     >
       <div data-el="global__stage" className={`${reduced ? 'relative' : 'sticky top-0'} h-svh min-h-160 overflow-hidden`}>
-        <Globe progress={progress} appear={appear} slotRef={slotRef} reduced={reduced} />
+        <Globe progress={progress} appear={appear} slotRef={slotRef} frameRef={frameRef} reduced={reduced} />
 
         {/* Above the canvas but transparent to the pointer: the globe is turned and pushes dots through it. */}
         <Container className="pointer-events-none relative z-10 h-full">
-          <div data-el="global__content" className="relative flex h-full flex-col justify-between gap-8 py-8 tablet:py-12 min-[64rem]:block min-[64rem]:py-0">
+          <div ref={frameRef} data-el="global__content" className="relative flex h-full flex-col justify-between gap-8 py-8 tablet:py-12 min-[64rem]:block min-[64rem]:py-0">
             <div
               ref={slotRef}
               data-el="global__globe-slot"

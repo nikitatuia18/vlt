@@ -4,7 +4,7 @@ import { useTheme } from '../../../../lib/theme'
 import { pins, type Pin } from '../pins'
 import { sampleTrack } from '../sampleTrack'
 import { DURATION, FRAMES, pinTimelines, routeSource, routeTarget, routeTimelines } from '../timeline'
-import { angleBetween, arcPoint, createView, isSeen, latLonToVector, rotateInto, smoothstep, RAD } from './globeMath'
+import { angleBetween, arcPoint, createView, isSeen, latLonToVector, rotateInto, smoothstep, spinSpeed, RAD, type SpinSettings } from './globeMath'
 import { createLandDots } from './landDots'
 
 /* Look of the globe and how it moves. Numbers from docs/blocks/global.motion.md; tune them here. */
@@ -24,8 +24,12 @@ const POINTER_RADIUS = 150
 const POINTER_FORCE = 1
 const POINTER_EASE = 0.1
 
-/** Slow turn: seconds per full revolution, the longitude that faces the viewer at the start, the tilt of the axis towards the viewer. */
-const TURN_SECONDS = 120
+/**
+ * The turn: 4 degrees per second over land (a revolution in about 90 s), 2.5 times faster over the empty Pacific so that
+ * the viewer does not wait for the land to come back. Also: the longitude that faces the viewer at the start,
+ * and the tilt of the axis towards the viewer.
+ */
+const SPIN: SpinSettings = { base: 4, boost: 2.5, emptyCenter: -165, fullUntil: 20, fadeTo: 60 }
 const START_LONGITUDE = -10
 const TILT = 20
 
@@ -36,15 +40,15 @@ const SPRING = 12
 const SPRING_DAMPING = 2 * Math.sqrt(SPRING)
 
 /** Scene (progress of the pinned section, 0 to 1): the globe flies from "big" to its place, then the cards start. */
-const MOVE_FROM = 0.15
+const MOVE_FROM = 0
 const MOVE_TO = 0.75
 const CARDS_AT = 0.85
 /** With reduced motion the timeline stands still at this frame: three cards (EU, Chile, Argentina) and three lines are on. */
 const STILL_FRAME = 800
-/** The big globe is 1.25 times the screen width (or nearly as high as the screen on tall ones). */
-const BIG_WIDTH_RATIO = 0.625
-const BIG_HEIGHT_RATIO = 0.475
-const APPEAR_SCALE_FROM = 0.7
+/** The big globe is as wide as the page container; on a phone, where that is hardly bigger than the end place, at least this many times the end size. */
+const BIG_MIN_TIMES_SLOT = 1.6
+/** While the section comes into view the globe also grows a little, from this share of its big size. */
+const APPEAR_SCALE_FROM = 0.92
 
 /** Cards: design size at a globe of this radius (the design shows the globe 650 px wide); never scaled below MIN_CARD_SCALE. */
 const CARD_REFERENCE_RADIUS = 325
@@ -62,6 +66,8 @@ type GlobeProps = {
   appear: MotionValue<number>
   /** Empty element in the layout where the globe stands at the end. */
   slotRef: RefObject<HTMLElement | null>
+  /** The element as wide as the page container: the big globe is this wide. */
+  frameRef: RefObject<HTMLElement | null>
   /** `prefers-reduced-motion`: one still picture in the final state. */
   reduced: boolean
 }
@@ -111,13 +117,13 @@ function PinCard({ pin, outerRef }: { pin: Pin; outerRef: (element: HTMLDivEleme
  * One animation loop draws the dots and the arcs on a canvas and moves the cards (plain DOM) by `transform`, without React renders.
  * The loop runs only while the globe is on screen. With `prefers-reduced-motion` one still picture is drawn and nothing moves.
  */
-export function Globe({ progress, appear, slotRef, reduced }: GlobeProps) {
+export function Globe({ progress, appear, slotRef, frameRef, reduced }: GlobeProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const dotProbeRef = useRef<HTMLSpanElement>(null)
   const lineProbeRef = useRef<HTMLSpanElement>(null)
   const pinElements = useRef<(HTMLDivElement | null)[]>([])
   // Survives a theme change: the globe must not jump back to its start angle.
-  const motionState = useRef({ spin: 0, dragLongitude: 0, dragLatitude: 0, longitudeSpeed: 0, latitudeSpeed: 0, cardsOn: 0, cardsClock: 0 })
+  const motionState = useRef({ spinAngle: 0, dragLongitude: 0, dragLatitude: 0, longitudeSpeed: 0, latitudeSpeed: 0, cardsOn: 0, cardsClock: 0 })
   // The effect restarts on a theme change: both colors are read again.
   const { theme } = useTheme()
 
@@ -138,6 +144,7 @@ export function Globe({ progress, appear, slotRef, reduced }: GlobeProps) {
     let width = 0
     let height = 0
     let slot = { x: 0, y: 0, radius: 100 }
+    let bigRadius = 300
     let dotColor = ''
     let lineColor = ''
     let latticeSize = 0
@@ -198,6 +205,7 @@ export function Globe({ progress, appear, slotRef, reduced }: GlobeProps) {
           radius: Math.min(slotRect.width, slotRect.height) / 2,
         }
       }
+      bigRadius = Math.max((frameRef.current?.getBoundingClientRect().width ?? width) / 2, slot.radius * BIG_MIN_TIMES_SLOT)
       buildDots()
     }
 
@@ -208,16 +216,15 @@ export function Globe({ progress, appear, slotRef, reduced }: GlobeProps) {
 
       // Where the globe stands: from big in the middle of the screen to its place in the layout.
       const move = smoothstep(MOVE_FROM, MOVE_TO, scroll)
-      const bigRadius = Math.max(width * BIG_WIDTH_RATIO, height * BIG_HEIGHT_RATIO)
       const radius = lerp(bigRadius * lerp(APPEAR_SCALE_FROM, 1, appearance), slot.radius, move)
       const centerX = lerp(width / 2, slot.x, move)
       const centerY = lerp(height / 2, slot.y, move)
       geometry = { x: centerX, y: centerY, radius }
 
-      // Turn: slow spin plus the offset of the hand (a spring brings it back when the hand is gone).
+      // Turn: steady spin (faster over the empty ocean) plus the offset of the hand (a spring brings it back when the hand is gone).
       const seconds = Math.min(delta, 0.1)
       if (!reduced) {
-        state.spin += seconds
+        state.spinAngle -= spinSpeed(START_LONGITUDE + state.spinAngle, SPIN) * seconds
         if (!drag) {
           state.longitudeSpeed += (-SPRING * state.dragLongitude - SPRING_DAMPING * state.longitudeSpeed) * seconds
           state.latitudeSpeed += (-SPRING * state.dragLatitude - SPRING_DAMPING * state.latitudeSpeed) * seconds
@@ -225,7 +232,7 @@ export function Globe({ progress, appear, slotRef, reduced }: GlobeProps) {
           state.dragLatitude += state.latitudeSpeed * seconds
         }
       }
-      const longitude = (START_LONGITUDE - (state.spin * 360) / TURN_SECONDS) * RAD + softLimit(state.dragLongitude, DRAG_LIMIT_LONGITUDE)
+      const longitude = (START_LONGITUDE + state.spinAngle) * RAD + softLimit(state.dragLongitude, DRAG_LIMIT_LONGITUDE)
       const latitude = TILT * RAD + softLimit(state.dragLatitude, DRAG_LIMIT_LATITUDE)
       const view = createView(longitude, latitude)
 
@@ -423,6 +430,7 @@ export function Globe({ progress, appear, slotRef, reduced }: GlobeProps) {
     })
     resizeObserver.observe(canvas)
     if (slotRef.current) resizeObserver.observe(slotRef.current)
+    if (frameRef.current) resizeObserver.observe(frameRef.current)
 
     // Nothing is drawn for a globe nobody sees.
     const visibilityObserver = new IntersectionObserver(([entry]) => {
@@ -451,7 +459,7 @@ export function Globe({ progress, appear, slotRef, reduced }: GlobeProps) {
       window.removeEventListener('pointercancel', onPointerEnd)
       document.documentElement.removeEventListener('pointerleave', onPointerLeave)
     }
-  }, [theme, progress, appear, slotRef, reduced])
+  }, [theme, progress, appear, slotRef, frameRef, reduced])
 
   return (
     <div data-el="global__globe" aria-hidden="true" className="absolute inset-0">

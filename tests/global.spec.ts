@@ -68,10 +68,21 @@ test('global has the text, the numbers and the layers of the contract', async ({
 test('scene: big globe without text, then it flies to its place, then text and cards appear', async ({ page }) => {
   await open(page, 1440, 900, 0.05)
   const big = await globe(page)
-  // Big: wider than the screen's half, in the middle, no text, no cards.
-  expect(big.radius).toBeGreaterThan(1440 * 0.55)
-  expect(Math.abs(big.x - 720)).toBeLessThan(2)
+  // Big: as wide as the page container (a bit less at the very start of the pin, the smoothstep has begun), in the middle, no text, no cards.
+  const container = (await page.locator('[data-el="global__content"]').boundingBox())!
+  expect(big.radius).toBeLessThanOrEqual(container.width / 2 + 2)
+  expect(big.radius).toBeGreaterThan(container.width * 0.45)
+  expect(Math.abs(big.x - 720)).toBeLessThan(15)
   expect(big.cards).toBe('off')
+
+  // On the way it shrinks steadily, without a pause at the top.
+  const radii = [big.radius]
+  for (const progress of [0.3, 0.6]) {
+    await scrollTo(page, progress)
+    radii.push((await globe(page)).radius)
+  }
+  expect(radii[1]).toBeLessThan(radii[0] - 20)
+  expect(radii[2]).toBeLessThan(radii[1] - 20)
   expect(Number(await page.locator('[data-el="global__text-wrap"]').evaluate((el) => getComputedStyle(el).opacity))).toBe(0)
 
   await scrollTo(page, 0.97)

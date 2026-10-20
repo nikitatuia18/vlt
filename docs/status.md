@@ -1,7 +1,7 @@
 # Статус проекта (начни с этого файла)
 
 Обновляется после каждого блока одной строкой. Подробности по блокам — в [blocks/](blocks/); правила — в [../CLAUDE.md](../CLAUDE.md); ловушки — в [lessons.md](lessons.md).
-Обновлено: 2026-10-20. В `main` — всё, кроме глобуса (он в ветке `feature/global-globe`), `npx playwright test` — 222 теста, `npm run build` и `npm run lint` чистые.
+Обновлено: 2026-10-20. В `main` — всё, кроме глобуса (он в ветке `feature/global-globe`), `npx playwright test` — 224 теста, `npm run build` и `npm run lint` чистые.
 
 ## Сделано
 - **Окружение и нейминг:** React + Vite + TS, Tailwind v4, motion, Playwright; имена слоёв Figma = `data-el` ([naming-spec.md](naming-spec.md)); десктопный кадр переименован.
