@@ -71,7 +71,7 @@ slug       = [a-z0-9]+ ( "-" [a-z0-9]+ )* латиница, нижний рег�
 |---|---|
 | Блок `how-it-works` | `src/components/blocks/HowItWorks/HowItWorks.tsx` |
 | Элемент `hero__title` | `<h1 data-el="hero__title">` (якорь для тестов и анимации; стили — через Tailwind-токены, не по имени) |
-| `icon-arrow-forward` | `<Icon name="arrow-forward" />` из `components/ui/` |
+| `icon-arrow-forward` | `<Icon src={arrowForward} … />` из `components/ui/` |
 | `img-logo-visa` | `src/assets/logos/visa.svg` |
 | Состояние `--open` | prop/state `open` компонента |
 Имя слоя в коде не меняется и не «переводится»: нашёл слой в Figma — нашёл элемент в коде по тому же имени.

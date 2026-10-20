@@ -1,7 +1,7 @@
 # Статус проекта (начни с этого файла)
 
 Обновляется после каждого блока одной строкой. Подробности по блокам — в [blocks/](blocks/); правила — в [../CLAUDE.md](../CLAUDE.md); ловушки — в [lessons.md](lessons.md).
-Обновлено: 2026-10-20. `npx playwright test` — 261 тестов, `npm run build` и `npm run lint` чистые.
+Обновлено: 2026-10-20. `npx playwright test` — 262 теста, `npm run build` и `npm run lint` чистые.
 
 ## Сделано
 - **Окружение и нейминг:** React + Vite + TS, Tailwind v4, motion, Playwright; имена слоёв Figma = `data-el` ([naming-spec.md](naming-spec.md)); десктопный кадр переименован.
@@ -12,6 +12,7 @@
 - **Global (2026-10-20):** отступы сверху и снизу как у остальных блоков (до 140 px), большая анимация глобуса играет один раз за загрузку страницы, при возврате вверх блок обычный — [global.md](blocks/global.md).
 - **Смена темы (2026-10-20):** один круг из точки (кнопка в шапке; на Industries середина экрана): внутри круга страница уже в новой теме, снаружи в старой, круг заполняет страницу за 1 с; прокрутка на время хода заблокирована; замер ×4: максимальная пауза кадров 147 мс вместо 917 мс при старом затухании — [ui-kit.md](ui-kit.md), раздел 9.
 - **Публикация (2026-10-20):** GitHub Pages, https://nikitatuia18.github.io/vlt/ (UI Kit: `/vlt/ui-kit`); сборка и выкладка — `.github/workflows/deploy.yml` при каждом пуше в `main`, путь `/vlt/` приходит из `VITE_BASE` (`vite.config.ts`), локально `/`. Один раз в настройках репозитория: Settings → Pages → Source: GitHub Actions.
+- **Оптимизация и чистка (2026-10-20):** мета/OG/canonical/noscript в `index.html`, `/ui-kit` с noindex, только латинские шрифты + preload, `loading="lazy"` у картинки CTA и флагов, флаги и sepa через SVGO (−40–60 %), глобус строит точки за экран до показа, Industries без замеров layout вдали и с `memo`, `useFontsReady` только у `atLoad`, утилита `column-lines`, общий `src/lib/media.ts`, README переписан, добавлен `.github/workflows/ci.yml` (lint, build, Playwright на PR и ветках), старые `feature/*` ветки удалены.
 - **UI Kit как база знаний (2026-10-20):** [ui-kit.md](ui-kit.md) разделы 7–11 (появление, свечение, тема) и живые разделы в `/ui-kit` с кнопками Replay.
 - **Блоки десктопного кадра (все):** [header](blocks/header.md) · [hero](blocks/hero.md) · [logos](blocks/logos.md) · [features](blocks/features.md) · [industries](blocks/industries.md) · [global](blocks/global.md) · [next-steps](blocks/next-steps.md) · [faq](blocks/faq.md) · [cta](blocks/cta.md) · [footer + footer-bottom](blocks/footer.md).
 - **Сквозное:** плавная прокрутка Lenis ([smooth-scroll.md](smooth-scroll.md)); хедер закреплён и прячется при прокрутке вниз; колонка с линиями, точками и затуханием у блоков; агент `copywriter` + навык `project-copywriting`.
@@ -25,7 +26,11 @@
 5. **Шрифт Urbanist** (бейджи cta, коды валют на карточках global, заголовки колонок футера) не подключён: заменён ближайшими стилями.
 6. **Токены:** радиус 60 — исключение (завести переменную в Figma); `theme/surface/dots` создана нами в Figma.
 7. **Навигация:** подключить пункты меню хедера к блокам и страницам, выбранный пункт по скроллу (`currentId` у `Header` уже есть).
-8. **Полировка и выпуск:** вес картинок и шрифтов, доступность, `<title>`/meta/favicon/SEO, сверка с Figma (`visual-qa`), сборка и хостинг.
+8. **Полировка и выпуск:** сверка с Figma (`visual-qa`). Остались из аудита 2026-10-20:
+   - **Фавикон:** в `public/favicon.svg` всё ещё молния Vite; знака бренда отдельно от логотипа-надписи нет, нужен от дизайнера (плюс `apple-touch-icon` и `og:image` 1200×630). Тексты description/OG — черновик.
+   - **Доступность:** Industries недоступен при reduced-motion (открыт только Startups, пункты не кнопки); NextSteps крутится без паузы (WCAG 2.2.2); нет skip-link и `scroll-padding-top` под закреплённый хедер; нет `focus-visible` у ссылок хедера и футера; `RevealLines` без `aria-label`; заголовки колонок футера `h3` без `h2`; `@media print` для скрытых до появления элементов; контраст `typography-tertiary` (~2,1:1) — решение дизайнера.
+   - **Код:** `Globe.tsx` (500 строк) и `reveal.tsx` (378) стоит разбить; тайминги из `reveal.tsx` и карточек вынести в `motion/tokens.ts`; `LazyMotion` (−10–20 КБ gz, замерить); строгие `tsconfig` (`strict`, `noUncheckedIndexedAccess`, проверка `tests/`), `jsx-a11y` в oxlint; в тестах ~120 с `waitForTimeout` и общие хелперы (`viewports`, `box`, `open`) продублированы.
+   - **Токены:** `--type-weight-semibold` и `--type-letter-spacing-neg-150` не используются, но зеркалят переменные Figma — оставлены.
 
 ## Как продолжать в новом чате
 Первое сообщение: «Продолжаем Velant Pay. Прочитай `docs/status.md` и `CLAUDE.md`, начинаем с мобильного кадра». Dev-сервер: `npm run dev` (http://localhost:5173). Правило работы: блок → отчёт → «переходим дальше»; после блока обновить этот файл, `docs/blocks/<block>.md`, тесты, закоммитить и запушить.

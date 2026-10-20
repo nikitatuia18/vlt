@@ -25,6 +25,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      # The visual tests run on pull requests and branches (ci.yml); a publication only needs a clean lint and build.
+      - run: npm run lint
       - run: npm run build
         env:
           # The site lives in a sub-folder of the domain (…github.io/vlt/), see vite.config.ts.

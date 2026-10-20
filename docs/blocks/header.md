@@ -1,7 +1,7 @@
 # Блок header
 
 Figma: кадр `page-home--desktop` → слой `header` (`1110:9195`). Компонент: [../../src/components/ui/Header/](../../src/components/ui/Header/). Тесты: [../../tests/header.spec.ts](../../tests/header.spec.ts).
-Статус: статика и адаптив готовы; анимации не делались (этап 5). Мобильный кадр не обрабатывался — мобильная и планшетная раскладки выведены.
+Статус: статика, адаптив и появление готовы (хедер выезжает сверху, прячется при прокрутке вниз; спек — [../reveal.motion.md](../reveal.motion.md)). Мобильный кадр не обрабатывался — мобильная и планшетная раскладки выведены.
 
 ## Что в блоке
 Логотип · меню (Products, Solutions, Developers, Pricing, Company) · кнопка темы · «Book a demo» (primary, с иконкой export) · «Explore products» (secondary).
