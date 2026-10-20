@@ -18,7 +18,7 @@ const UiKitPage = lazy(() => import('./ui-kit/UiKitPage'))
 export default function App() {
   useSmoothScroll()
 
-  if (window.location.pathname === '/ui-kit') {
+  if (window.location.pathname.replace(/\/$/, '') === `${import.meta.env.BASE_URL}ui-kit`) {
     return (
       <Suspense fallback={null}>
         <UiKitPage />

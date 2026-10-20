@@ -112,7 +112,7 @@ export function Header({
     >
       <Container data-el="header__container" className="flex items-center justify-between py-4">
         <div data-el="header__left" className="flex items-center gap-15">
-          <Reveal as="a" variant="drop" atLoad delay={0.3} href="/" aria-label="Velant Pay, home" data-el="header__logo" className="block shrink-0 text-typography-primary">
+          <Reveal as="a" variant="drop" atLoad delay={0.3} href={import.meta.env.BASE_URL} aria-label="Velant Pay, home" data-el="header__logo" className="block shrink-0 text-typography-primary">
             <Icon src={logo} width={97.4092} height={32} />
           </Reveal>
 
