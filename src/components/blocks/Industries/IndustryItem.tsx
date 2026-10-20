@@ -2,6 +2,7 @@ import { motion } from 'motion/react'
 import { Reveal } from '../../../motion/reveal'
 import { duration, easeOut } from '../../../motion/tokens'
 import { ButtonLink } from '../../ui/ButtonLink'
+import { GlassSurface } from '../../ui/GlassSurface'
 import type { IndustryItemData } from './items'
 
 type IndustryItemProps = {
@@ -25,6 +26,61 @@ const titleClasses = 'type-heading-lg tablet:type-heading-xl min-[64rem]:type-di
 export function IndustryItem({ item, isActive, index, setRef }: IndustryItemProps) {
   const { id, title, description, cta, glow } = item
 
+  // The box of the card. Open: padding and a fill (light card) or the glass layers (dark scene, see GlassSurface); closed: nothing.
+  const boxClasses = `flex flex-col items-center rounded-32 text-center ring-1 ring-inset transition-[background-color,box-shadow,padding] duration-700 ease-out ${
+    isActive
+      ? `px-6 py-6 tablet:px-10 tablet:py-8 desktop:px-15 desktop:py-10 ${glow ? 'ring-transparent' : 'bg-surface-subtle ring-border-subtle'}`
+      : 'bg-transparent px-0 py-0 ring-transparent'
+  }`
+
+  const content = (
+    <>
+      <h3
+        data-el={`industries__item-${id}-title`}
+        className={`${titleClasses} transition-colors duration-700 desktop:whitespace-nowrap ${
+          isActive ? 'text-typography-primary' : 'text-typography-tertiary'
+        }`}
+      >
+        {title}
+      </h3>
+
+      {/* Always in the page (screen readers and search see the text), but folded and not focusable while the item is closed. */}
+      <motion.div
+        data-el={`industries__item-${id}-details`}
+        initial={false}
+        animate={{ height: isActive ? 'auto' : 0, opacity: isActive ? 1 : 0 }}
+        transition={{ duration: duration.reveal, ease: easeOut }}
+        aria-hidden={!isActive}
+        inert={!isActive}
+        className="overflow-hidden"
+      >
+        <div className="flex flex-col items-center gap-8 pt-4">
+          <p
+            data-el={`industries__item-${id}-desc`}
+            className="type-body-md max-w-142.5 text-typography-secondary tablet:type-body-lead"
+          >
+            {description.map((line) => (
+              <span key={line} className="block">
+                {line}
+              </span>
+            ))}
+          </p>
+          <ButtonLink
+            href={cta.href}
+            size="lg"
+            icon="export"
+            // In the dark scene the button is white (the inverse variant), in the light one it is the brand button.
+            variant={glow ? 'inverse' : 'primary'}
+            data-el={`industries__item-${id}-cta`}
+            tabIndex={isActive ? undefined : -1}
+          >
+            {cta.label}
+          </ButtonLink>
+        </div>
+      </motion.div>
+    </>
+  )
+
   return (
     <Reveal
       as="li"
@@ -35,61 +91,16 @@ export function IndustryItem({ item, isActive, index, setRef }: IndustryItemProp
       data-active={isActive}
       className="flex justify-center"
     >
-      <div
-        data-el={`industries__item-${id}-inner`}
-        className={`flex flex-col items-center rounded-32 text-center ring-1 ring-inset transition-[background-color,box-shadow,padding] duration-700 ease-out ${
-          isActive
-            ? `px-6 py-6 ring-border-subtle tablet:px-10 tablet:py-8 desktop:px-15 desktop:py-10 ${
-                // In the dark scene the card is glass: a faint fill with the glow blurred behind it (Figma: surface/16-white).
-                glow ? 'bg-surface-white-16 backdrop-blur-xl' : 'bg-surface-subtle'
-              }`
-            : 'bg-transparent px-0 py-0 ring-transparent'
-        }`}
-      >
-        <h3
-          data-el={`industries__item-${id}-title`}
-          className={`${titleClasses} transition-colors duration-700 desktop:whitespace-nowrap ${
-            isActive ? 'text-typography-primary' : 'text-typography-tertiary'
-          }`}
-        >
-          {title}
-        </h3>
-
-        {/* Always in the page (screen readers and search see the text), but folded and not focusable while the item is closed. */}
-        <motion.div
-          data-el={`industries__item-${id}-details`}
-          initial={false}
-          animate={{ height: isActive ? 'auto' : 0, opacity: isActive ? 1 : 0 }}
-          transition={{ duration: duration.reveal, ease: easeOut }}
-          aria-hidden={!isActive}
-          inert={!isActive}
-          className="overflow-hidden"
-        >
-          <div className="flex flex-col items-center gap-8 pt-4">
-            <p
-              data-el={`industries__item-${id}-desc`}
-              className="type-body-md max-w-142.5 text-typography-secondary tablet:type-body-lead"
-            >
-              {description.map((line) => (
-                <span key={line} className="block">
-                  {line}
-                </span>
-              ))}
-            </p>
-            <ButtonLink
-              href={cta.href}
-              size="lg"
-              icon="export"
-              // In the dark scene the button is white (the inverse variant), in the light one it is the brand button.
-              variant={glow ? 'inverse' : 'primary'}
-              data-el={`industries__item-${id}-cta`}
-              tabIndex={isActive ? undefined : -1}
-            >
-              {cta.label}
-            </ButtonLink>
-          </div>
-        </motion.div>
-      </div>
+      {glow ? (
+        // The cards of the dark scenes are glass; the glass layers fade in and out with the card.
+        <GlassSurface data-el={`industries__item-${id}-inner`} className={boxClasses} active={isActive}>
+          {content}
+        </GlassSurface>
+      ) : (
+        <div data-el={`industries__item-${id}-inner`} className={boxClasses}>
+          {content}
+        </div>
+      )}
     </Reveal>
   )
 }

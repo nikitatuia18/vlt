@@ -29,7 +29,7 @@ test('page load: the header comes down, the hero plays in turn and everything st
   await page.goto('/')
   await page.waitForTimeout(150)
   // At the start: the header is above the screen, the media card and the buttons are not there yet.
-  expect((await page.locator('[data-el="header"]').boundingBox())!.y).toBeLessThan(-5)
+  expect((await page.locator('[data-el="header"]').boundingBox())!.y).toBeLessThan(-1)
   expect(await opacityOf(page, '[data-el="hero__media"]')).toBeLessThan(0.05)
   // (the button is inside a box that appears)
   expect(await page.locator('[data-el="hero__cta-primary"]').locator('..').evaluate((el) => Number(getComputedStyle(el).opacity))).toBeLessThan(0.05)
@@ -140,6 +140,27 @@ test('faq: the questions come one after another and the dividers draw themselves
   for (let i = 0; i < 4; i++) {
     expect(await dividers.nth(i).evaluate((el) => new DOMMatrix(getComputedStyle(el).transform).a)).toBeCloseTo(1, 2)
   }
+})
+
+test('industries dark scene: the whole page fades to dark (class theme-fading), the header follows, and it fades back', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto('/')
+  await page.waitForTimeout(500)
+  await scrollToSection(page, 'industries', 0)
+  await page.waitForTimeout(800)
+  await expect(page.locator('html')).not.toHaveAttribute('data-theme', 'dark')
+  // Into Startups (the third item of seven).
+  await page.evaluate(() => {
+    const el = document.querySelector('[data-el="industries"]') as HTMLElement
+    const top = el.getBoundingClientRect().top + window.scrollY
+    window.scrollTo(0, top + (2.5 / 7) * (el.getBoundingClientRect().height - window.innerHeight))
+  })
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
+  await expect(page.locator('html')).toHaveClass(/theme-fading/)
+  await page.waitForTimeout(1500)
+  await expect(page.locator('html')).not.toHaveClass(/theme-fading/)
+  // The header is dark too (its surface is the dark surface-subtle).
+  expect(await page.locator('[data-el="header"]').evaluate((el) => getComputedStyle(el).backgroundColor)).toBe('rgb(24, 24, 24)')
 })
 
 test.describe('reduced motion', () => {

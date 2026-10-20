@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import exportIcon from '../assets/icons/export.svg'
 import moonIcon from '../assets/icons/moon.svg'
 import sunIcon from '../assets/icons/sun.svg'
@@ -7,7 +7,6 @@ import { ButtonLink } from '../components/ui/ButtonLink'
 import { Container } from '../components/ui/Container'
 import { ColumnFade } from '../components/ui/ColumnFade'
 import { Footer } from '../components/ui/Footer'
-import { GlowBackdrop, type GlowHue } from '../components/ui/GlowBackdrop'
 import { Header } from '../components/ui/Header'
 import { CornerDots } from '../components/ui/CornerDots'
 import { Icon } from '../components/ui/Icon'
@@ -16,6 +15,8 @@ import { IconLink } from '../components/ui/IconLink'
 import { InteractiveDots } from '../components/ui/InteractiveDots'
 import { ThemeToggle } from '../components/ui/ThemeToggle'
 import { useTheme } from '../lib/theme'
+import { AppearanceSections, GlassAndGlowSections, ThemeSceneSection } from './MotionShowcase'
+import { Section } from './Section'
 import tokensCss from '../styles/tokens.css?raw'
 
 /*
@@ -33,8 +34,6 @@ const colorGroups = ['typography', 'icon', 'surface', 'border'].map((group) => (
   group,
   tokens: colorTokens.filter((token) => token.startsWith(`color-${group}-`)),
 }))
-
-const glowHues: readonly GlowHue[] = ['violet', 'pink', 'orange', 'blue', 'green']
 
 const textStyles = [
   'type-display-2xl',
@@ -58,18 +57,6 @@ const textStyles = [
 ] as const
 
 const spacingSteps = [1, 2, 3, 4, 6, 8, 10, 12, 15, 20, 35]
-
-function Section({ id, title, note, children }: { id: string; title: string; note?: string; children: ReactNode }) {
-  return (
-    <section id={id} data-el={`ui-kit__${id}`} className="flex flex-col gap-6 border-t border-border-subtle py-10">
-      <div className="flex flex-col gap-1">
-        <h2 className="type-heading-md text-typography-primary">{title}</h2>
-        {note && <p className="type-body-md max-w-3xl text-typography-secondary">{note}</p>}
-      </div>
-      {children}
-    </section>
-  )
-}
 
 function ColorSwatch({ token }: { token: string }) {
   const { theme } = useTheme()
@@ -293,30 +280,9 @@ export default function UiKitPage() {
           </div>
         </Section>
 
-        <Section
-          id="glow"
-          title="Glow and glass"
-          note="GlowBackdrop: a soft blurred ellipse of colored light behind a card. It is used by the dark scenes of the Industries block: the block gets data-theme=&quot;dark&quot; (every token flips inside it, in a light site too), the open card is glass (surface-white-16 + backdrop blur) and the button is the inverse (white) one. The hues are the tokens surface-glow-*."
-        >
-          <ul className="grid grid-cols-1 gap-4 tablet:grid-cols-2 desktop:grid-cols-3">
-            {glowHues.map((hue) => (
-              <li
-                key={hue}
-                data-el={`ui-kit__glow-demo-${hue}`}
-                data-theme="dark"
-                className="relative flex h-56 items-center justify-center overflow-hidden rounded-32 bg-surface-page ring-1 ring-inset ring-border-medium"
-              >
-                <GlowBackdrop hue={hue} visible className="absolute top-1/2 left-1/2 h-40 w-[130%] -translate-x-1/2 -translate-y-1/2" />
-                <div className="relative flex flex-col items-center gap-4 rounded-32 bg-surface-white-16 px-8 py-6 text-center ring-1 ring-inset ring-border-subtle backdrop-blur-xl">
-                  <p className="type-heading-md text-typography-primary">{hue}</p>
-                  <ButtonLink href="#glow" variant="inverse" icon="export">
-                    Book a demo
-                  </ButtonLink>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </Section>
+        <AppearanceSections />
+        <GlassAndGlowSections />
+        <ThemeSceneSection />
 
         <Section
           id="layout"
