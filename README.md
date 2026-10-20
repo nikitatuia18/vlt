@@ -1,3 +1,11 @@
+# Velant Pay
+
+Live site: https://nikitatuia18.github.io/vlt/ (UI Kit: https://nikitatuia18.github.io/vlt/ui-kit). It is published by GitHub Pages from `main` (`.github/workflows/deploy.yml`).
+
+Locally: `npm run dev` (http://localhost:5173), `npm run build`, `npx playwright test`. Project rules and status: `CLAUDE.md`, `docs/status.md`.
+
+---
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
