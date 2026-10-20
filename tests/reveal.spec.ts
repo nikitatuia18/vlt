@@ -180,37 +180,54 @@ test('faq: the questions come one after another and the dividers draw themselves
   }
 })
 
-// The change of the theme is a ripple (src/lib/themeRipple.ts): a circle spreads from a point and covers the screen, the theme changes
-// under it, a hole opens from the same point.
-const ripple = (page: Page) => page.locator('[data-el="theme-ripple"]')
+// The change of the theme is ONE circle (src/lib/themeRipple.ts, View Transitions): inside it the page is already in the new theme,
+// outside it is still the old one; the circle grows from a point until it fills the page.
 const htmlTheme = (page: Page) => page.locator('html').getAttribute('data-theme')
-const rippleShown = (page: Page) => ripple(page).evaluate((el) => getComputedStyle(el).display !== 'none').catch(() => false)
+const rippling = (page: Page) => page.locator('html').evaluate((el) => el.classList.contains('theme-ripple'))
+// The growing circle: the clip-path keyframes of the new page's picture.
+const circleFrom = (page: Page) =>
+  page.evaluate(() => {
+    const animation = document.getAnimations().find((a) => (a.effect as KeyframeEffect | null)?.pseudoElement === '::view-transition-new(root)')
+    return animation ? String((animation.effect as KeyframeEffect).getKeyframes()[0].clipPath) : null
+  })
 
-test('theme toggle: a circle spreads from the toggle, the theme changes under it, the circle dissolves', async ({ page }) => {
+test('theme toggle: one circle spreads from the toggle, the new theme is inside it, the scroll is held meanwhile', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
   await page.goto('/')
   await page.waitForTimeout(3500)
   await page.locator('[data-el="header__theme-toggle"]').click()
-  await page.waitForTimeout(120)
-  // The circle is on its way; the page below is still in the old theme.
-  expect(await rippleShown(page)).toBe(true)
-  expect((await htmlTheme(page)) ?? 'light').toBe('light')
-  await page.waitForTimeout(1100)
+  await page.waitForTimeout(250)
+  // The circle is on its way and the live page is already in the new theme (it is seen through the circle).
+  expect(await rippling(page)).toBe(true)
   expect(await htmlTheme(page)).toBe('dark')
-  await page.waitForTimeout(900)
-  expect(await rippleShown(page)).toBe(false)
+  // It starts at the toggle, not in the middle of the screen.
+  const toggle = (await page.locator('[data-el="header__theme-toggle"]').boundingBox())!
+  expect(await circleFrom(page)).toContain('circle(0px at ')
+  expect(Number.parseFloat((await circleFrom(page))!.split(' at ')[1])).toBeCloseTo(toggle.x + toggle.width / 2, 0)
+  // While it runs the wheel does not move the page.
+  await page.mouse.move(700, 500)
+  await page.mouse.wheel(0, 600)
+  await page.waitForTimeout(300)
+  expect(await page.evaluate(() => window.scrollY)).toBe(0)
+  await page.waitForTimeout(1500)
+  expect(await rippling(page)).toBe(false)
   // The header is dark (its surface is the dark surface-subtle), nothing is left half-way.
   expect(await page.locator('[data-el="header"]').evaluate((el) => getComputedStyle(el).backgroundColor)).toBe('rgb(24, 24, 24)')
   expect(await page.locator('html').evaluate((el) => el.classList.contains('theme-flip'))).toBe(false)
+  // The scroll is free again.
+  await page.mouse.wheel(0, 600)
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(100)
 
   // And back.
+  await page.evaluate(() => window.scrollTo(0, 0))
+  await page.waitForTimeout(500)
   await page.locator('[data-el="header__theme-toggle"]').click()
   await page.waitForTimeout(2200)
   expect(await htmlTheme(page)).toBe('light')
-  expect(await rippleShown(page)).toBe(false)
+  expect(await rippling(page)).toBe(false)
 })
 
-test('industries dark scene: the ripple starts in the middle of the screen with the color of the scene on its edge, the whole page goes dark, it goes back after the scene', async ({ page }) => {
+test('industries dark scene: the circle starts in the middle of the screen, the whole page goes dark, it goes back after the scene', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
   await page.goto('/')
   await page.waitForTimeout(500)
@@ -224,20 +241,32 @@ test('industries dark scene: the ripple starts in the middle of the screen with 
   await page.waitForTimeout(1500)
   expect((await htmlTheme(page)) ?? 'light').toBe('light')
   await goTo(2.5 / 7) // Startups: pink
-  await page.waitForTimeout(150)
-  expect(await rippleShown(page)).toBe(true)
-  expect(await ripple(page).evaluate((el) => el.style.backgroundImage)).toContain('glow-pink')
+  await page.waitForTimeout(250)
+  expect(await rippling(page)).toBe(true)
   // It starts in the middle of the screen, where the open card stands.
-  expect(await ripple(page).evaluate((el) => el.style.backgroundImage)).toContain('circle at 720px 450px')
-  await page.waitForTimeout(1300)
+  expect(await circleFrom(page)).toBe('circle(0px at 720px 450px)')
+  await page.waitForTimeout(1500)
   expect(await htmlTheme(page)).toBe('dark')
   // The header is dark too.
   expect(await page.locator('[data-el="header"]').evaluate((el) => getComputedStyle(el).backgroundColor)).toBe('rgb(24, 24, 24)')
-  // Leaving the scene: the ripple again, the light theme at the end.
+  // Leaving the scene: the circle again, the light theme at the end.
   await goTo(6.5 / 7)
-  await page.waitForTimeout(2300)
+  await page.waitForTimeout(2500)
   expect(await htmlTheme(page)).toBe('light')
-  expect(await rippleShown(page)).toBe(false)
+  expect(await rippling(page)).toBe(false)
+})
+
+test('theme: where View Transitions are missing the theme changes at once', async ({ page }) => {
+  await page.addInitScript(() => {
+    // @ts-expect-error simulating an old browser
+    document.startViewTransition = undefined
+  })
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto('/')
+  await page.waitForTimeout(500)
+  await page.locator('[data-el="header__theme-toggle"]').click()
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
+  expect(await rippling(page)).toBe(false)
 })
 
 test('theme: quick scrolling in and out of a scene ends in the right theme with nothing left over', async ({ page }) => {
@@ -259,7 +288,7 @@ test('theme: quick scrolling in and out of a scene ends in the right theme with 
   }
   await page.waitForTimeout(3500)
   expect(await htmlTheme(page)).toBe('dark') // the last item is Startups
-  expect(await rippleShown(page)).toBe(false)
+  expect(await rippling(page)).toBe(false)
   expect(await page.locator('html').evaluate((el) => el.classList.contains('theme-flip'))).toBe(false)
 })
 
@@ -274,10 +303,10 @@ test.describe('reduced motion', () => {
     for (const name of ['hero__media', 'hero__cta-primary', 'features__card-crypto', 'faq__title', 'cta__banner', 'footer__brand']) {
       expect(await opacityOf(page, `[data-el="${name}"]`), name).toBe(1)
     }
-    // The theme changes at once, without a ripple.
+    // The theme changes at once, without a circle.
     await page.locator('[data-el="header__theme-toggle"]').click()
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
-    await expect(page.locator('[data-el="theme-ripple"]')).toHaveCount(0)
+    expect(await rippling(page)).toBe(false)
     // The heading is plain: no masks, no moving lines.
     await expect(page.locator('[data-el="hero__title"] .overflow-hidden')).toHaveCount(0)
     await expect(page.locator('[data-el="hero__title"]')).toBeVisible()

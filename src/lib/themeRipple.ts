@@ -1,13 +1,14 @@
 import { themeSwitch } from '../motion/tokens'
+import { holdScroll } from './smoothScroll'
 
 /*
- * The "ripple" of the theme change (docs/ui-kit.md, section 9): from one point (the toggle in the header, or the middle of the open card
- * of an Industries scene) a circle of the color of the NEW theme spreads over the page like a wave of light, with a glowing edge.
- * When it covers the whole screen, the theme changes under it; then a hole opens from the same point (again with a glowing edge)
- * and shows the new theme: the circle dissolves.
+ * The change of the theme (docs/ui-kit.md, section 9): ONE circle spreads from a point (the toggle in the header, or the middle of the
+ * screen on an Industries scene). Inside the circle the page is already in the NEW theme (alive), outside it is still the old one;
+ * the circle grows until it fills the whole page.
  *
- * It is one fixed layer with a radial gradient; the radius is animated (a registered CSS property). The layer is trivial to draw,
- * and the page below is alive (scrolling goes on) and recalculates its styles while it is covered.
+ * It is done with the View Transitions API: the browser keeps a picture of the old page and shows the new, live page through a circle
+ * (`::view-transition-new(root)` with an animated `clip-path`). Because the old part is a picture, the scroll is held while it runs.
+ * Where the API is missing (or motion is off), the theme changes at once.
  */
 
 type Theme = 'light' | 'dark'
@@ -15,11 +16,9 @@ type Theme = 'light' | 'dark'
 export type RippleOrigin = { x: number; y: number }
 
 type RippleRequest = {
-  /** Where the wave starts (px of the viewport). */
+  /** Where the circle starts (px of the viewport). */
   origin: RippleOrigin
-  /** Color of the glowing edge of the wave (any CSS color, usually a token as `var(--...)`). */
-  edge: string
-  /** The theme that is wanted right now (it may change while the ripple runs). */
+  /** The theme that is wanted right now (it may change while the circle runs). */
   wanted: () => Theme
   /** The theme that is on the page right now. */
   current: () => Theme
@@ -27,101 +26,46 @@ type RippleRequest = {
   flip: (theme: Theme) => void
 }
 
-/** Page color of each theme: the neutral primitives that the semantic `surface-page` token points to. */
-const pageColor: Record<Theme, string> = { light: 'var(--primitive-neutral-50)', dark: 'var(--primitive-neutral-950)' }
+/** Whether the circle can be shown here at all; if not, the theme changes at once. */
+export const canRipple = () => typeof document !== 'undefined' && typeof document.startViewTransition === 'function'
 
-const RADIUS = '--ripple-radius'
-
-let layer: HTMLDivElement | null = null
-let registered = false
 let running = false
 
-/** The radius is an animated custom property: it has to be registered as a length (otherwise it would jump instead of grow). */
-function canAnimateRadius() {
-  if (registered) return true
-  try {
-    CSS.registerProperty({ name: RADIUS, syntax: '<length>', inherits: false, initialValue: '0px' })
-    registered = true
-  } catch (error) {
-    // "Already registered" (the module was loaded again) is fine; anything else means the browser cannot do it.
-    registered = error instanceof DOMException && error.name === 'InvalidModificationError'
-  }
-  return registered
-}
-
-/** Whether the ripple can run here at all; if not, the theme changes at once. */
-export const canRipple = () => typeof CSS !== 'undefined' && 'registerProperty' in CSS && canAnimateRadius()
-
-const frames = (count: number) =>
-  new Promise<void>((resolve) => {
-    const step = (left: number) => (left === 0 ? resolve() : requestAnimationFrame(() => step(left - 1)))
-    step(count)
-  })
-
-function ensureLayer() {
-  if (layer) return layer
-  const element = document.createElement('div')
-  element.dataset.el = 'theme-ripple'
-  element.setAttribute('aria-hidden', 'true')
-  element.style.cssText = 'position:fixed;inset:0;z-index:100;pointer-events:none;display:none'
-  document.body.append(element)
-  layer = element
-  return element
-}
-
 /**
- * The wave on its way out: the solid color inside, a glowing edge, then nothing. `glow` is the width of the soft edge.
- * (Gradient stops: the color up to the edge, the edge color at the radius, transparent `glow` px further.)
+ * Runs the circle for a change of theme. One at a time: a request made while it runs is picked up after the run
+ * (if the page still differs from what is wanted, one more circle follows).
  */
-const coverGradient = (origin: RippleOrigin, bg: string, edge: string, glow: number) =>
-  `radial-gradient(circle at ${origin.x}px ${origin.y}px, ${bg} 0, ${bg} calc(var(${RADIUS}) - ${glow * 0.6}px), ${edge} var(${RADIUS}), transparent calc(var(${RADIUS}) + ${glow}px))`
-
-/** The hole that opens: nothing inside, a glowing edge, then the solid color again. */
-const openGradient = (origin: RippleOrigin, bg: string, edge: string, glow: number) =>
-  `radial-gradient(circle at ${origin.x}px ${origin.y}px, transparent 0, transparent calc(var(${RADIUS}) - ${glow}px), ${edge} var(${RADIUS}), ${bg} calc(var(${RADIUS}) + ${glow * 0.6}px))`
-
-/**
- * Runs the ripple for a change of theme. One at a time: a request made while it runs is picked up at the moment of the
- * change (the theme that is wanted by then is the one that is put on) and after the run (if the page still differs from what is wanted).
- */
-export async function playRipple({ origin, edge, wanted, current, flip }: RippleRequest) {
+export async function playRipple({ origin, wanted, current, flip }: RippleRequest) {
   if (running) return
   running = true
-  const element = ensureLayer()
+  const root = document.documentElement
+  const release = holdScroll()
+  root.classList.add('theme-ripple')
   try {
     while (wanted() !== current()) {
       const { innerWidth: width, innerHeight: height } = window
-      const glow = themeSwitch.glow
-      // The farthest corner of the screen from the origin: the wave must reach it.
+      // The farthest corner of the screen from the origin: the circle must reach it.
       const reach = Math.hypot(Math.max(origin.x, width - origin.x), Math.max(origin.y, height - origin.y))
-      const bg = pageColor[wanted()]
 
-      // 1. The circle spreads and covers the screen.
-      element.style.setProperty(RADIUS, '0px')
-      element.style.backgroundImage = coverGradient(origin, bg, edge, glow)
-      element.style.display = 'block'
-      await element.animate(
-        [{ [RADIUS]: '0px' }, { [RADIUS]: `${reach + glow}px` }],
-        { duration: themeSwitch.cover * 1000, easing: themeSwitch.easeCover, fill: 'forwards' },
-      ).finished
-
-      // 2. Under the circle the theme changes (and the page recalculates its styles; nobody sees it).
-      flip(wanted())
-      element.style.backgroundImage = openGradient(origin, pageColor[current()], edge, glow)
-      element.getAnimations().forEach((animation) => animation.cancel())
-      element.style.setProperty(RADIUS, '0px')
-      await frames(themeSwitch.settleFrames)
-
-      // 3. A hole opens from the same point: the circle dissolves and shows the new theme.
-      await element.animate(
-        [{ [RADIUS]: '0px' }, { [RADIUS]: `${reach + glow * 2}px` }],
-        { duration: themeSwitch.reveal * 1000, easing: themeSwitch.easeReveal, fill: 'forwards' },
-      ).finished
-      element.style.display = 'none'
-      element.getAnimations().forEach((animation) => animation.cancel())
+      // The old page is photographed, the callback puts the new theme on the (live) page, and the new page appears through the circle.
+      // (Inside the callback the page is not drawn: no requestAnimationFrame there, it would never come and the transition would time out.)
+      const transition = document.startViewTransition(async () => {
+        flip(wanted())
+        await Promise.resolve() // let the listeners (React) finish their update before the new page is photographed
+      })
+      await transition.ready
+      root.animate(
+        { clipPath: [`circle(0px at ${origin.x}px ${origin.y}px)`, `circle(${reach}px at ${origin.x}px ${origin.y}px)`] },
+        { duration: themeSwitch.duration * 1000, easing: themeSwitch.ease, fill: 'forwards', pseudoElement: '::view-transition-new(root)' },
+      )
+      await transition.finished
     }
+  } catch {
+    // The browser skipped the transition (a hidden tab, another transition): the callback has run anyway, only the circle is missing.
   } finally {
-    element.style.display = 'none'
+    if (wanted() !== current()) flip(wanted())
+    root.classList.remove('theme-ripple')
+    release()
     running = false
   }
 }

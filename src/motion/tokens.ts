@@ -18,17 +18,11 @@ export const duration = {
  */
 export const REVEAL_ENABLED = true
 
-/** The change of the theme (src/lib/themeRipple.ts): a circle spreads from a point and covers the screen, the theme changes under it, a hole opens from the same point. */
+/** The change of the theme (src/lib/themeRipple.ts): one circle spreads from a point, inside it the page is already in the new theme. */
 export const themeSwitch = {
-  /** Seconds the circle needs to cover the screen, and the hole to open it again. */
-  cover: 0.55,
-  reveal: 0.6,
-  easeCover: 'cubic-bezier(0.55, 0, 0.25, 1)',
-  easeReveal: 'cubic-bezier(0.4, 0, 0.2, 1)',
-  /** Width of the glowing soft edge of the wave, px. */
-  glow: 160,
-  /** Frames to wait after the change, so that the page has recalculated its styles before the hole opens. */
-  settleFrames: 2,
+  /** Seconds the circle needs to fill the page. */
+  duration: 1,
+  ease: 'cubic-bezier(0.4, 0, 0.2, 1)',
 } as const
 
 /** The language of appearing (docs/reveal.motion.md): durations in seconds, steps between neighbours, distances in px. */

@@ -18,6 +18,16 @@ html.theme-flip *::after {
   transition: none !important;
 }
 
+/*
+ * The circle of the theme change (src/lib/themeRipple.ts): the browser shows the old page as a picture and the new, live page on top of it;
+ * the new one is revealed by an animated circle. The default cross-fade between them is switched off, the circle does the work.
+ */
+html.theme-ripple::view-transition-old(root),
+html.theme-ripple::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
 @layer base {
   /*
    * No automatic scroll anchoring: a block that gets shorter above the viewer (the Global block after its scene) is compensated in code

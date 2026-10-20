@@ -261,7 +261,7 @@ export function ThemeSceneSection() {
         items={[
           ['useForcedTheme(theme | null)', 'Call it in a block with the theme the scene needs (null: nothing). Several scenes do not fight: the latest wins. Needs no other code: the tokens flip.'],
           ['useTheme()', 'theme (the one on the page), locked, setTheme (the visitor\'s choice; it applies when no scene holds the theme).'],
-          ['The ripple', 'A change of the theme is a wave of light: a circle of the new color spreads from one point (the toggle in the header, or the middle of the screen on an Industries scene) with a glowing edge, the theme changes under it, and a hole opens from the same point and shows the new theme (about 1.2 s). Press the toggle in the header to see it. The edge is brand-colored, or the glow color of the scene. Instant with reduced motion.'],
+          ['The circle', 'A change of the theme is one circle that grows from a point (the toggle in the header, or the middle of the screen on an Industries scene). Inside the circle the page is already in the new theme, outside it is still the old one; it fills the page in about 1 s. The scroll is held meanwhile. Press the toggle in the header to see it. Instant with reduced motion.'],
           ['A dark part of a page', 'data-theme="dark" on any element flips the tokens inside it (the dark panels of this page). For a whole-site scene use useForcedTheme instead.'],
         ]}
       />

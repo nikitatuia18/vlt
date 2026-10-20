@@ -14,8 +14,8 @@ export type Theme = 'light' | 'dark'
  *     of the Industries block. While any is on, the toggle is locked; when the last one ends, the site goes back to the preference.
  * The theme on <html> is the latest forced one, or else the preference.
  *
- * A change of the theme is shown as a ripple that spreads from a point (themeRipple.ts); without motion (reduced motion, the switch-off flag)
- * it is instant.
+ * A change of the theme is shown as a circle that spreads from a point (themeRipple.ts) with the new theme inside; without motion
+ * (reduced motion, the switch-off flag, a browser without View Transitions) it is instant.
  */
 const listeners = new Set<() => void>()
 const notify = () => listeners.forEach((listener) => listener())
@@ -30,10 +30,7 @@ const getPreference = (): Theme => (preference ??= readRoot())
 
 const effectiveTheme = (): Theme => [...forced.values()].at(-1) ?? getPreference()
 
-/** The color of the ripple's glowing edge when nothing special is asked: the brand color. */
-const BRAND_EDGE = 'var(--color-surface-brand-default)'
-
-/** Where a ripple starts when nobody says: the toggle of the header, or the middle of the screen. */
+/** Where the circle starts when nobody says: the toggle of the header, or the middle of the screen. */
 function defaultOrigin(): RippleOrigin {
   const toggle = document.querySelector('[data-el="header__theme-toggle"]')?.getBoundingClientRect()
   return toggle && toggle.width > 0 ? { x: toggle.left + toggle.width / 2, y: toggle.top + toggle.height / 2 } : { x: window.innerWidth / 2, y: window.innerHeight / 2 }
@@ -53,8 +50,8 @@ function putTheme(next: Theme) {
   notify()
 }
 
-/** Brings the page to the wanted theme: with the ripple, or at once when motion is not allowed. */
-function apply(edge: string = BRAND_EDGE, origin: RippleOrigin = defaultOrigin()) {
+/** Brings the page to the wanted theme: with the circle, or at once when motion is not allowed. */
+function apply(origin: RippleOrigin = defaultOrigin()) {
   if (effectiveTheme() === readRoot()) {
     notify()
     return
@@ -63,8 +60,8 @@ function apply(edge: string = BRAND_EDGE, origin: RippleOrigin = defaultOrigin()
     putTheme(effectiveTheme())
     return
   }
-  notify() // the toggle locks at once, the page follows under the circle
-  void playRipple({ origin, edge, wanted: effectiveTheme, current: readRoot, flip: putTheme })
+  notify() // the toggle locks at once, the page follows inside the circle
+  void playRipple({ origin, wanted: effectiveTheme, current: readRoot, flip: putTheme })
 }
 
 const subscribe = (listener: () => void) => {
@@ -76,19 +73,17 @@ export function useTheme() {
   const theme = useSyncExternalStore(subscribe, readRoot, () => 'light' as Theme)
   const locked = useSyncExternalStore(subscribe, () => forced.size > 0, () => false)
 
-  /** `origin`: where the ripple starts (px); by default at the toggle of the header. */
+  /** `origin`: where the circle starts (px); by default at the toggle of the header. */
   const setTheme = (next: Theme, origin?: RippleOrigin) => {
     preference = next
-    apply(BRAND_EDGE, origin)
+    apply(origin)
   }
 
   return { theme, locked, setTheme }
 }
 
 type ForcedThemeOptions = {
-  /** Color of the ripple's glowing edge when the scene starts (a CSS color, for example the glow token of the scene). */
-  edge?: string
-  /** Where the ripple starts, as shares of the viewport (0.5, 0.5 is the middle: where the open card of Industries stands). Default: the toggle. */
+  /** Where the circle starts, as shares of the viewport (0.5, 0.5 is the middle: where the open card of Industries stands). Default: the toggle. */
   origin?: { x: number; y: number }
 }
 
@@ -96,14 +91,12 @@ type ForcedThemeOptions = {
  * Asks for a theme for the time a scene lasts (`null`: nothing asked). The toggle is locked meanwhile, and the site
  * returns to the visitor's choice afterwards. The Industries block uses it: its dark scenes darken the whole page.
  */
-export function useForcedTheme(theme: Theme | null, { edge, origin }: ForcedThemeOptions = {}) {
-  // The edge color is read when the scene starts; a change of it alone (one dark scene to another) must not end the scene.
-  const edgeRef = useRef(edge)
+export function useForcedTheme(theme: Theme | null, { origin }: ForcedThemeOptions = {}) {
+  // The origin is read when the scene starts or ends; keeping it in a ref means that a change of it alone must not end the scene.
   const originRef = useRef(origin)
   useEffect(() => {
-    edgeRef.current = edge
     originRef.current = origin
-  }, [edge, origin])
+  }, [origin])
   const sceneOrigin = (): RippleOrigin | undefined =>
     originRef.current ? { x: originRef.current.x * window.innerWidth, y: originRef.current.y * window.innerHeight } : undefined
 
@@ -112,10 +105,10 @@ export function useForcedTheme(theme: Theme | null, { edge, origin }: ForcedThem
     const owner = Symbol('forced-theme')
     getPreference()
     forced.set(owner, theme)
-    apply(edgeRef.current, sceneOrigin())
+    apply(sceneOrigin())
     return () => {
       forced.delete(owner)
-      apply(undefined, sceneOrigin())
+      apply(sceneOrigin())
     }
   }, [theme])
 }
