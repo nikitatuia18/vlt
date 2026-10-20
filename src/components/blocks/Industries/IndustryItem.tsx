@@ -1,5 +1,5 @@
 import { motion } from 'motion/react'
-import { Reveal, RevealLines } from '../../../motion/reveal'
+import { RevealLines } from '../../../motion/reveal'
 import { duration, easeOut } from '../../../motion/tokens'
 import { ButtonLink } from '../../ui/ButtonLink'
 import type { IndustryItemData } from './items'
@@ -34,14 +34,15 @@ export function IndustryItem({ item, isActive, index, setRef }: IndustryItemProp
 
   const content = (
     <>
-      <h3
+      <RevealLines
+        as="h3"
+        delay={index * 0.06}
         data-el={`industries__item-${id}-title`}
         className={`${titleClasses} transition-colors duration-400 ease-out desktop:whitespace-nowrap ${
           isActive ? 'text-typography-primary' : 'text-typography-tertiary'
         }`}
-      >
-        {title}
-      </h3>
+        lines={[title]}
+      />
 
       {/* Always in the page (screen readers and search see the text), but folded and not focusable while the item is closed. */}
       <motion.div
@@ -69,6 +70,7 @@ export function IndustryItem({ item, isActive, index, setRef }: IndustryItemProp
             icon="export"
             // In the dark scene the button is white (the inverse variant), in the light one it is the brand button.
             variant={glow ? 'inverse' : 'primary'}
+            labelReveal={{ open: isActive, delay: 0.4 }}
             data-el={`industries__item-${id}-cta`}
             tabIndex={isActive ? undefined : -1}
           >
@@ -80,18 +82,10 @@ export function IndustryItem({ item, isActive, index, setRef }: IndustryItemProp
   )
 
   return (
-    <Reveal
-      as="li"
-      variant="fade"
-      delay={index * 0.06}
-      ref={(element) => setRef(element as HTMLLIElement | null)}
-      data-el={`industries__item-${id}`}
-      data-active={isActive}
-      className="flex justify-center"
-    >
+    <li ref={setRef} data-el={`industries__item-${id}`} data-active={isActive} className="flex justify-center">
       <div data-el={`industries__item-${id}-inner`} className={boxClasses}>
         {content}
       </div>
-    </Reveal>
+    </li>
   )
 }

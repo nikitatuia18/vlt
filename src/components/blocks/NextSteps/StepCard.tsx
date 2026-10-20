@@ -38,14 +38,15 @@ export function StepCard({ step, isActive, progress, staticProgress, onOpen, ind
         isActive ? 'bg-surface-subtle min-[90rem]:grow-420' : 'bg-surface-subtle hover:bg-surface-hover min-[90rem]:grow-182'
       }`}
     >
-      <p
+      <RevealLines
+        as="p"
+        delay={0.1 + index * appear.card.step * 1.5}
         data-el={`next-steps__card-${id}-number`}
         className={`type-heading-xl w-14 shrink-0 transition-colors duration-700 tablet:type-display-sm tablet:w-20 min-[90rem]:type-display-lg min-[90rem]:w-full ${
           isActive ? 'text-typography-primary' : 'text-typography-tertiary'
         }`}
-      >
-        {number}
-      </p>
+        lines={[number]}
+      />
 
       <div data-el={`next-steps__card-${id}-details`} className="flex min-w-0 flex-1 flex-col min-[90rem]:w-full min-[90rem]:flex-none">
         <h3 className="type-heading-md text-typography-primary tablet:type-heading-lg min-[90rem]:type-heading-lg min-[100rem]:type-heading-xl">
@@ -57,7 +58,7 @@ export function StepCard({ step, isActive, progress, staticProgress, onOpen, ind
             // Text-like button that stretches over the whole card.
             className="text-left after:absolute after:inset-0 after:content-[''] focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-typography-brand focus-visible:after:ring-inset focus-visible:after:rounded-40"
           >
-            {title}
+            <RevealLines as="span" delay={0.25 + index * appear.card.step * 1.5} lines={[title]} />
           </button>
         </h3>
 

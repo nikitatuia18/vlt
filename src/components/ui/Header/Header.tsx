@@ -1,6 +1,6 @@
 import { motion, useMotionValueEvent, useScroll } from 'motion/react'
 import { useEffect, useId, useRef, useState } from 'react'
-import { Reveal } from '../../../motion/reveal'
+import { Reveal, RevealLines } from '../../../motion/reveal'
 import { appear, duration, easeOut } from '../../../motion/tokens'
 import { useRevealOn } from '../../../motion/useReveal'
 import logo from '../../../assets/brand/logo-velant-pay.svg'
@@ -120,7 +120,7 @@ export function Header({
             {navItems.map((item, index) => (
               <Reveal
                 as="a"
-                variant="drop"
+                variant="fade"
                 atLoad
                 delay={0.4 + index * 0.06}
                 key={item.id}
@@ -129,7 +129,7 @@ export function Header({
                 data-el={`header__menu-item-${item.id}`}
                 className={`${linkBaseClasses} type-ui-sm ${item.id === currentId ? linkCurrentClasses : linkDefaultClasses}`}
               >
-                {item.label}
+                <RevealLines as="span" atLoad delay={0.5 + index * 0.06} lines={[item.label]} />
               </Reveal>
             ))}
           </nav>
@@ -140,12 +140,13 @@ export function Header({
           <ThemeToggle data-el="header__theme-toggle" className="max-desktop:hidden" />
 
           <div data-el="header__buttons" className="hidden items-center gap-2 tablet:flex">
-            <ButtonLink href={primaryCta.href} icon="export" data-el="header__cta-primary">
+            <ButtonLink href={primaryCta.href} icon="export" labelReveal={{ atLoad: true, delay: 0.9 }} data-el="header__cta-primary">
               {primaryCta.label}
             </ButtonLink>
             <ButtonLink
               href={secondaryCta.href}
               variant="secondary"
+              labelReveal={{ atLoad: true, delay: 1 }}
               data-el="header__cta-secondary"
               className="max-desktop:hidden"
             >

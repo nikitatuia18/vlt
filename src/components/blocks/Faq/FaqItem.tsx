@@ -47,12 +47,13 @@ export function FaqItem({ item, isOpen, onToggle, isLast, index }: FaqItemProps)
           onClick={onToggle}
           className="group flex w-full items-start justify-between gap-6 rounded-32 text-left focus-visible:outline-2 focus-visible:outline-offset-8 focus-visible:outline-typography-brand"
         >
-          <span
+          <RevealLines
+            as="span"
+            delay={0.15 + index * 0.1}
             data-el={`faq__item-${id}-question`}
             className="type-heading-sm max-w-140 text-typography-primary tablet:type-heading-md desktop:type-heading-lg"
-          >
-            {question}
-          </span>
+            lines={[question]}
+          />
           {/* Looks like the round icon button of the UI Kit; it is the same shape, but a plain box, because a button cannot hold a button. */}
           <span
             data-el={`faq__item-${id}-toggle`}

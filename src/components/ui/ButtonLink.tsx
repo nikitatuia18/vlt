@@ -1,5 +1,6 @@
 import type { ComponentProps, ReactNode } from 'react'
 import exportIconSrc from '../../assets/icons/export.svg'
+import { RevealLines, type TextReveal } from '../../motion/reveal'
 import { Icon } from './Icon'
 
 export type ButtonLinkVariant = 'primary' | 'secondary' | 'inverse'
@@ -12,6 +13,8 @@ type ButtonLinkProps = Omit<ComponentProps<'a'>, 'children'> & {
   size?: ButtonLinkSize
   /** Optional icon shown after the label. */
   icon?: ButtonLinkIcon
+  /** How the label appears (a text label always rises word by word): when, the delay. Default: when the button comes into view. */
+  labelReveal?: TextReveal
   children: ReactNode
 }
 
@@ -56,13 +59,16 @@ export function ButtonLink({
   variant = 'primary',
   size = 'md',
   icon,
+  labelReveal,
   children,
   className = '',
   ...anchorProps
 }: ButtonLinkProps) {
   return (
     <a className={`${baseClasses} ${sizeClasses[size]} ${variantClasses[variant]} ${className}`} {...anchorProps}>
-      <span className="px-1">{children}</span>
+      <span className="px-1">
+        {typeof children === 'string' ? <RevealLines as="span" lines={[children]} {...labelReveal} /> : children}
+      </span>
       {icon && <ButtonIcon name={icon} size={size} />}
     </a>
   )

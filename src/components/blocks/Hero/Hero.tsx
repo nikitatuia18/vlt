@@ -49,22 +49,24 @@ export function Hero() {
           </div>
 
           <div data-el="hero__actions" className="flex w-full flex-col gap-4 tablet:w-auto tablet:flex-row">
-            <Reveal atLoad delay={1.35} className="w-full tablet:w-auto">
+            <Reveal variant="fade" atLoad delay={1.35} className="w-full tablet:w-auto">
               <ButtonLink
                 href="#book-a-demo"
                 size="lg"
                 icon="export"
+                labelReveal={{ atLoad: true, delay: 1.45 }}
                 data-el="hero__cta-primary"
                 className="w-full tablet:w-auto"
               >
                 Book a demo
               </ButtonLink>
             </Reveal>
-            <Reveal atLoad delay={1.45} className="w-full tablet:w-auto">
+            <Reveal variant="fade" atLoad delay={1.45} className="w-full tablet:w-auto">
               <ButtonLink
                 href="#products"
                 size="lg"
                 variant="secondary"
+                labelReveal={{ atLoad: true, delay: 1.55 }}
                 data-el="hero__cta-secondary"
                 className="w-full tablet:w-auto"
               >

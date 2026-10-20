@@ -72,8 +72,8 @@ export function Cta() {
                     lines={["We'll map your payment flow and show you how Velant can handle it."]}
                   />
                 </div>
-                <Reveal delay={1.5}>
-                  <ButtonLink href="#book-a-demo" variant="inverse" size="lg" icon="export" data-el="cta__cta-primary">
+                <Reveal variant="fade" delay={1.5}>
+                  <ButtonLink href="#book-a-demo" variant="inverse" size="lg" icon="export" labelReveal={{ delay: 1.6 }} data-el="cta__cta-primary">
                     Book a demo
                   </ButtonLink>
                 </Reveal>

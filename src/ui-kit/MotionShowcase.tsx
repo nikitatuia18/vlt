@@ -1,4 +1,5 @@
 import { useState, type ReactNode } from 'react'
+import { Badge } from '../components/ui/Badge'
 import { ButtonLink } from '../components/ui/ButtonLink'
 import { GlowBackdrop, type GlowHue } from '../components/ui/GlowBackdrop'
 import { InteractiveDots } from '../components/ui/InteractiveDots'
@@ -64,7 +65,7 @@ export function AppearanceSections() {
       <Section
         id="appearance"
         title="Appearance (reveal)"
-        note="How things come into view. One language for the whole site: take a ready-made way from here, do not invent a new one. Everything plays once, when the element is on the screen, and only moves transform and opacity (plus a light blur for “up”), so the layout never shifts."
+        note="How things come into view. One language for the whole site: take a ready-made way from here, do not invent a new one. THE RULE: all text rises word by word (RevealLines; button and badge labels do it by themselves), except counting figures, the cards on the globe, the glass badges and the narrow menu. Everything plays once, when the element is on the screen, and only moves transform and opacity (plus a light blur for “up”), so the layout never shifts."
       >
         {!revealOn && (
           <p data-el="ui-kit__reveal-off" className="type-body-sm text-typography-secondary">
@@ -81,6 +82,20 @@ export function AppearanceSections() {
               lines={['What are our next steps?']}
               className="type-heading-md max-w-64 text-center text-typography-primary"
             />
+          </Tile>
+          <Tile name="labels" usage="ButtonLink and Badge: the label rises word by word by itself; labelReveal={{ delay, atLoad, when, open }} says when. The pill itself comes with Reveal variant=&quot;fade&quot;.">
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <Reveal variant="fade">
+                <ButtonLink href="#appearance" icon="export" onClick={(event) => event.preventDefault()} labelReveal={{ delay: 0.15 }}>
+                  Book a demo
+                </ButtonLink>
+              </Reveal>
+              <Reveal variant="fade" delay={0.1}>
+                <Badge icon="clock" labelReveal={{ delay: 0.3 }}>
+                  Coming soon
+                </Badge>
+              </Reveal>
+            </div>
           </Tile>
           <Tile name="up" usage='Reveal variant="up" (default): texts, buttons. Rises and clears up from a light blur. Neighbours: delay 0.1 each.'>
             <div className="flex flex-col items-center gap-3">

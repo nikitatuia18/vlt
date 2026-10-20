@@ -26,15 +26,24 @@ const lineShift = (page: Page, heading: string) =>
 
 test('page load: the header comes down, the hero plays in turn and everything stands in place at the end', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
+  // The very first look at the elements (recorded the moment they are put into the page, so a slow or busy computer cannot spoil it):
+  // the media card and the box of the button (they wait 1.5 s) start hidden. (The header starts at once, a busy computer can not be caught on it.)
+  await page.addInitScript(() => {
+    const first: Record<string, string> = {}
+    ;(window as unknown as { __first: Record<string, string> }).__first = first
+    new MutationObserver(() => {
+      for (const name of ['hero__media', 'hero__cta-primary']) {
+        const element = document.querySelector(`[data-el="${name}"]`)
+        if (element && !(name in first)) first[name] = getComputedStyle(name === 'hero__cta-primary' ? element.parentElement! : element).opacity
+      }
+    }).observe(document, { childList: true, subtree: true })
+  })
   await page.goto('/')
-  await page.waitForTimeout(150)
-  // At the start: the header is above the screen, the media card and the buttons are not there yet.
-  expect((await page.locator('[data-el="header"]').boundingBox())!.y).toBeLessThan(-1)
-  expect(await opacityOf(page, '[data-el="hero__media"]')).toBeLessThan(0.05)
-  // (the button is inside a box that appears)
-  expect(await page.locator('[data-el="hero__cta-primary"]').locator('..').evaluate((el) => Number(getComputedStyle(el).opacity))).toBeLessThan(0.05)
+  const first = await page.evaluate(() => (window as unknown as { __first: Record<string, string> }).__first)
+  expect(Number(first['hero__media'])).toBeLessThan(0.05)
+  expect(Number(first['hero__cta-primary'])).toBeLessThan(0.05)
 
-  await page.waitForTimeout(4500)
+  await page.waitForTimeout(6500)
   expect((await page.locator('[data-el="header"]').boundingBox())!.y).toBeCloseTo(0, 0)
   expect(await lineShift(page, 'hero__title')).toBeCloseTo(0, 1)
   for (const name of ['hero__subtitle', 'hero__cta-primary', 'hero__cta-secondary', 'hero__media', 'header__logo']) {
@@ -229,7 +238,7 @@ for (const viewport of [
       }
       await page.waitForTimeout(3500)
       const rects = await page.evaluate(() => {
-        const selector = 'h1, h2, [data-el$="__desc"], [data-el$="__subtitle"], [data-el$="__eyebrow"], [data-el$="-desc"], [data-el$="-label"], [data-el^="footer__col-"][data-el$="-title"]'
+        const selector = 'h1, h2, [data-el$="__desc"], [data-el$="__subtitle"], [data-el$="__eyebrow"], [data-el$="-desc"], [data-el$="-label"], [data-el^="footer__col-"][data-el$="-title"], [data-el^="hero__cta-"], [data-el="cta__cta-primary"], [data-el^="footer__link-"], [data-el^="footer-bottom__"], [data-el$="-badge"]'
         const found: Record<string, number[]> = {}
         for (const element of document.querySelectorAll<HTMLElement>(selector)) {
           // Skip the texts inside the cards that open and close by themselves (their size depends on the moment).
@@ -328,4 +337,38 @@ test('Industries: the description of the card unrolls word by word when the card
   expect(Math.max(...early)).toBeGreaterThan(1)
   await page.waitForTimeout(2800)
   for (const shift of await wordShifts(page, '[data-el="industries__item-ecommerce-desc"]')) expect(shift).toBeCloseTo(0, 1)
+})
+
+// The rule of the design system: ALL text of the site appears word by word (RevealLines, or a label inside ButtonLink / Badge,
+// which use it). This test walks over every text of the page and names the ones that do not. The exceptions are listed here
+// on purpose: figures that count (CountUp), the cards on the globe (they have their own run in the timeline), the glass badges
+// of the banner (they jump out as a whole) and the menu of the narrow screens (it is closed).
+test('every text of the page appears word by word, except the listed exceptions', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto('/')
+  await page.waitForTimeout(500)
+  const outside = await page.evaluate(() => {
+    const exceptions = [
+      '[data-el^="global__pin"]',
+      '[data-el^="global__metric-"][data-el$="-value"]',
+      '[data-el^="cta__badge"]',
+      '[data-el="header__menu-panel"]',
+      '.sr-only',
+      'script',
+      'style',
+      'noscript',
+    ].join(',')
+    const found: string[] = []
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT)
+    for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+      const text = node.textContent?.trim()
+      const parent = node.parentElement
+      if (!text || !parent) continue
+      if (parent.closest('[data-mask]') || parent.closest(exceptions)) continue
+      const owner = parent.closest('[data-el]')?.getAttribute('data-el') ?? parent.tagName
+      found.push(`${owner}: "${text.slice(0, 40)}"`)
+    }
+    return found
+  })
+  expect(outside, 'texts that do not use the word reveal').toEqual([])
 })

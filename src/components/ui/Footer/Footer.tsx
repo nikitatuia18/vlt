@@ -79,7 +79,7 @@ export function Footer({ columns = footerColumns, legalLinks = siteLegalLinks, y
                     {column.links.map((link) => (
                       <li key={link.id}>
                         <a href={link.href} data-el={`footer__link-${link.id}`} className={`${linkClasses} desktop:whitespace-nowrap`}>
-                          {link.label}
+                          <RevealLines as="span" delay={0.3 + index * 0.08} lines={[link.label]} />
                         </a>
                       </li>
                     ))}
@@ -103,21 +103,19 @@ export function Footer({ columns = footerColumns, legalLinks = siteLegalLinks, y
             className={`flex flex-col gap-2 px-4 py-4 tablet:px-8 min-[90rem]:flex-row min-[90rem]:items-start min-[90rem]:justify-between min-[90rem]:px-10 ${columnLines}`}
           >
             <div data-el="footer-bottom__company" className="type-body-md flex flex-col gap-1 text-typography-secondary tablet:flex-row tablet:items-center tablet:gap-6 min-[90rem]:w-[673.5px]">
-              <span data-el="footer-bottom__company-name">{companyName}</span>
-              <span data-el="footer-bottom__company-license">{companyLicense}</span>
+              <RevealLines as="span" atPageEnd delay={0.1} data-el="footer-bottom__company-name" lines={[companyName]} />
+              <RevealLines as="span" atPageEnd delay={0.3} data-el="footer-bottom__company-license" lines={[companyLicense]} />
             </div>
             <ul data-el="footer-bottom__legal" className="flex flex-wrap items-center gap-x-6 gap-y-1">
               {legalLinks.map((link) => (
                 <li key={link.id}>
                   <a href={link.href} data-el={`footer-bottom__link-${link.id}`} className={linkClasses}>
-                    {link.label}
+                    <RevealLines as="span" atPageEnd delay={0.4} lines={[link.label]} />
                   </a>
                 </li>
               ))}
             </ul>
-            <p data-el="footer-bottom__copyright" className="type-body-md text-typography-secondary">
-              © {year} {companyName}
-            </p>
+            <RevealLines as="p" atPageEnd delay={0.5} data-el="footer-bottom__copyright" className="type-body-md text-typography-secondary" lines={[`© ${year} ${companyName}`]} />
           </Reveal>
         </Container>
       </div>
