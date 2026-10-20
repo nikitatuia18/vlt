@@ -1,5 +1,5 @@
 import { useAnimationFrame, useInView, useMotionValue, useReducedMotion } from 'motion/react'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { RevealLines } from '../../../motion/reveal'
 import { ColumnFade } from '../../ui/ColumnFade'
 import { Container } from '../../ui/Container'
@@ -16,6 +16,8 @@ const DESIGN_PROGRESS = 325 / 418
  * Four steps, one is open. When the cards are on the screen, the orange line of the open card fills for STEP_SECONDS,
  * then the card folds and the next one opens; after the fourth the first opens again. A click on a step opens it at once
  * and the line starts from it. When the cards leave the screen the time stops, and goes on when they come back.
+ * The time also stops while a card is held pressed (mouse or finger) and while a card has keyboard focus: the visitor
+ * may read a step as long as they want.
  * With reduced motion nothing runs by itself (the design state: step 1 open, line at 78 %); a click still opens a step.
  *
  * From the design: section border at the bottom, column 1440 px with 40 px inside, vertical padding 140 px, gap 48 px,
@@ -30,9 +32,11 @@ export function NextSteps() {
   const onScreen = useInView(cardsRef, { amount: 0.5 })
   const progress = useMotionValue(0)
   const [activeIndex, setActiveIndex] = useState(0)
+  // Why the time is held right now (not state: the frame loop reads it, nothing needs to be drawn again).
+  const holds = useRef({ pressed: false, focused: false })
 
   useAnimationFrame((_, delta) => {
-    if (reducedMotion || !onScreen) return
+    if (reducedMotion || !onScreen || holds.current.pressed || holds.current.focused) return
     // A long pause (a hidden tab) must not skip steps: one frame counts for at most 100 ms.
     const next = progress.get() + Math.min(delta, 100) / 1000 / STEP_SECONDS
     if (next >= 1) {
@@ -42,6 +46,37 @@ export function NextSteps() {
       progress.set(next)
     }
   })
+
+  useEffect(() => {
+    const cards = cardsRef.current
+    if (!cards) return
+    // A press that starts on the cards holds the time until it ends, wherever the pointer is released.
+    const release = () => {
+      holds.current.pressed = false
+    }
+    const onPressStart = () => {
+      holds.current.pressed = true
+    }
+    // Only focus from the keyboard holds the time: after a mouse click the button keeps focus, and the steps must go on.
+    const onFocusIn = (event: FocusEvent) => {
+      holds.current.focused = (event.target as Element).matches(':focus-visible')
+    }
+    const onFocusOut = () => {
+      holds.current.focused = false
+    }
+    cards.addEventListener('pointerdown', onPressStart)
+    cards.addEventListener('focusin', onFocusIn)
+    cards.addEventListener('focusout', onFocusOut)
+    window.addEventListener('pointerup', release)
+    window.addEventListener('pointercancel', release)
+    return () => {
+      cards.removeEventListener('pointerdown', onPressStart)
+      cards.removeEventListener('focusin', onFocusIn)
+      cards.removeEventListener('focusout', onFocusOut)
+      window.removeEventListener('pointerup', release)
+      window.removeEventListener('pointercancel', release)
+    }
+  }, [])
 
   const open = (index: number) => {
     if (index === activeIndex) return
@@ -80,7 +115,11 @@ export function NextSteps() {
           </div>
 
           {/* @container: the text of the open card takes its final width from the width of this row (see StepCard). */}
-          <ol ref={cardsRef} data-el="next-steps__cards" className="@container flex flex-col gap-4 min-[90rem]:flex-row min-[90rem]:gap-6">
+          <ol
+            ref={cardsRef}
+            data-el="next-steps__cards"
+            className="@container flex flex-col gap-4 min-[90rem]:flex-row min-[90rem]:gap-6"
+          >
             {steps.map((step, index) => (
               <StepCard
                 key={step.id}

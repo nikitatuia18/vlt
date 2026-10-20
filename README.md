@@ -24,7 +24,7 @@ The site is built for the sub-folder `/vlt/` on GitHub Pages: the path comes fro
 
 - `src/components/blocks/<Block>/` — one component per block of the page; `src/components/ui/` — shared elements (the design system).
 - `src/styles/` — tokens (`tokens.css`, `typography.css`) from Figma Variables, light and dark themes.
-- `src/motion/` — appearance animations (`reveal.tsx`) and shared timings (`tokens.ts`).
+- `src/motion/` — appearance animations (`reveal.tsx`, `RevealLines.tsx`, `revealVariants.ts`) and shared timings (`tokens.ts`).
 - `src/ui-kit/` — the living UI Kit page (`/ui-kit`).
 - `tests/` — Playwright specs, one per block plus cross-cutting ones.
 - `scripts/` — one-off generators: `build-globe-land.mjs` makes the land mask of the globe (needs the devDependencies `d3-geo`, `topojson-client`, `world-atlas`); `optimize-cta-person.mjs` is the record of how the banner picture was made (the source picture is not kept).

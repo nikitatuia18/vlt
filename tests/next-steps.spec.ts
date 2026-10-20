@@ -183,3 +183,37 @@ test.describe('reduced motion', () => {
     expect(await activeId(page)).toBe('pass-kyb')
   })
 })
+
+test('a card held pressed holds the time; letting go lets the line run again', async ({ page }) => {
+  await open(page, 1440, 900)
+  await page.waitForTimeout(800)
+  const open1 = (await card(page, 'book-demo').boundingBox())!
+  await page.mouse.move(open1.x + open1.width / 2, open1.y + open1.height / 2)
+  await page.mouse.down()
+  const held = await barShare(page, 'book-demo')
+  await page.waitForTimeout(1500)
+  expect(await barShare(page, 'book-demo'), 'the line stands while the card is pressed').toBeCloseTo(held, 2)
+  await page.mouse.up()
+  await page.waitForTimeout(1200)
+  expect(await barShare(page, 'book-demo'), 'the line runs again after the release').toBeGreaterThan(held + 0.1)
+})
+
+test('keyboard focus on a card holds the time; a mouse click does not', async ({ page }) => {
+  await open(page, 1440, 900)
+  // A key press first, so that the focus below counts as keyboard focus (:focus-visible).
+  await page.keyboard.press('Shift')
+  await page.locator('[data-el="next-steps__card-book-demo-title"]').focus()
+  await page.waitForTimeout(300)
+  const held = await barShare(page, 'book-demo')
+  await page.waitForTimeout(1500)
+  expect(await barShare(page, 'book-demo'), 'the line stands while a card has keyboard focus').toBeCloseTo(held, 2)
+  await page.locator('[data-el="next-steps__card-book-demo-title"]').blur()
+  await page.waitForTimeout(1200)
+  expect(await barShare(page, 'book-demo')).toBeGreaterThan(held + 0.1)
+  // After a mouse click the button keeps focus, but the steps must go on.
+  await card(page, 'pass-kyb').click()
+  await page.waitForTimeout(300)
+  const afterClick = await barShare(page, 'pass-kyb')
+  await page.waitForTimeout(1200)
+  expect(await barShare(page, 'pass-kyb'), 'the line runs after a mouse click').toBeGreaterThan(afterClick + 0.1)
+})

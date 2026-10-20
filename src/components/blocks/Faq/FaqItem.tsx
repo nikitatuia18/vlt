@@ -77,11 +77,9 @@ export function FaqItem({ item, isOpen, onToggle, isLast, index }: FaqItemProps)
         </button>
       </h3>
 
-      {/* Folded to nothing while closed (grid row 0fr to 1fr), but in the page for screen readers and search. */}
+      {/* Folded to nothing while closed (grid row 0fr to 1fr). The button names the panel through aria-controls; no region role (five landmarks would clutter the page). */}
       <div
         id={panelId}
-        role="region"
-        aria-labelledby={`faq-heading-${id}`}
         aria-hidden={!isOpen}
         inert={!isOpen}
         className={`grid transition-[grid-template-rows] duration-700 ease-out ${isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}

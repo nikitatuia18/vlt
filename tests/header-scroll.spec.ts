@@ -55,7 +55,8 @@ test('the header stays while the burger menu is open', async ({ page }) => {
 test('keyboard focus inside the header keeps it, a mouse click does not', async ({ page }) => {
   await scrollBy(page, 1200)
   await expect(header(page)).toHaveAttribute('data-hidden', 'true')
-  await page.keyboard.press('Tab')
+  await page.keyboard.press('Tab') // the skip link, the first stop of the page: not in the header
+  await page.keyboard.press('Tab') // the logo of the header
   await page.waitForTimeout(500)
   await expect(header(page)).toHaveAttribute('data-hidden', 'false')
 })

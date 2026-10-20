@@ -16,7 +16,7 @@ import { demoCta, exploreCta, navItems as siteNavItems, type HeaderCta, type Nav
 /** Scrolling less than this many px in the other direction does not flip the header (a trembling finger or wheel). */
 const SCROLL_THRESHOLD = 6
 
-const linkBaseClasses = 'rounded-pill px-4 py-3 transition-colors'
+const linkBaseClasses = 'rounded-pill px-4 py-3 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-brand'
 // The selected item is filled with the same color as a hovered one (grey in Light, lighter than the bar in Dark).
 const linkCurrentClasses = 'bg-surface-hover text-typography-primary'
 const linkDefaultClasses = 'text-typography-secondary hover:bg-surface-hover'
@@ -110,7 +110,7 @@ export function Header({
     >
       <Container data-el="header__container" className="flex items-center justify-between py-4">
         <div data-el="header__left" className="flex items-center gap-15">
-          <Reveal as="a" variant="drop" atLoad delay={0.3} href={import.meta.env.BASE_URL} aria-label="Velant Pay, home" data-el="header__logo" className="block shrink-0 text-typography-primary">
+          <Reveal as="a" variant="drop" atLoad delay={0.3} href={import.meta.env.BASE_URL} aria-label="Velant Pay, home" data-el="header__logo" className="block shrink-0 rounded-pill text-typography-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-brand">
             <Icon src={logo} width={97.4092} height={32} />
           </Reveal>
 

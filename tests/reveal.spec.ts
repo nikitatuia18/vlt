@@ -17,6 +17,9 @@ const scrollToSection = async (page: Page, name: string, fraction = 0) => {
   )
 }
 
+/** Polls until a condition holds (the animation has played), instead of sleeping for the longest possible run. */
+const SETTLE = { timeout: 15000 }
+
 /** Vertical shift of the first word (or line) of a text (px): positive while it is still below its mask. */
 const lineShift = (page: Page, heading: string) =>
   page
@@ -43,14 +46,13 @@ test('page load: the header comes down, the hero plays in turn and everything st
   expect(Number(first['hero__media'])).toBeLessThan(0.05)
   expect(Number(first['hero__cta-primary'])).toBeLessThan(0.05)
 
-  await page.waitForTimeout(6500)
-  expect((await page.locator('[data-el="header"]').boundingBox())!.y).toBeCloseTo(0, 0)
-  expect(await lineShift(page, 'hero__title')).toBeCloseTo(0, 1)
+  await expect.poll(async () => (await page.locator('[data-el="header"]').boundingBox())!.y, SETTLE).toBeCloseTo(0, 0)
+  await expect.poll(() => lineShift(page, 'hero__title'), SETTLE).toBeCloseTo(0, 1)
   for (const name of ['hero__subtitle', 'hero__cta-primary', 'hero__cta-secondary', 'hero__media', 'header__logo']) {
-    expect(await opacityOf(page, `[data-el="${name}"]`), name).toBe(1)
+    await expect.poll(() => opacityOf(page, `[data-el="${name}"]`), { ...SETTLE, message: name }).toBe(1)
   }
   // The blur is gone and the filter removed, so the text is not left on a layer of its own.
-  expect(await page.locator('[data-el="hero__subtitle"]').evaluate((el) => getComputedStyle(el).filter)).toBe('none')
+  await expect.poll(() => page.locator('[data-el="hero__subtitle"]').evaluate((el) => getComputedStyle(el).filter), SETTLE).toBe('none')
 })
 
 test('the title is still one readable heading', async ({ page }) => {
@@ -68,9 +70,8 @@ test('below the fold: waits until it comes into view, plays once, does not hide 
   expect(await lineShift(page, 'features__title')).toBeGreaterThan(10)
 
   await scrollToSection(page, 'features')
-  await page.waitForTimeout(2800)
-  expect(await opacityOf(page, '[data-el="features__card-crypto"]')).toBe(1)
-  expect(await lineShift(page, 'features__title')).toBeCloseTo(0, 1)
+  await expect.poll(() => opacityOf(page, '[data-el="features__card-crypto"]'), SETTLE).toBe(1)
+  await expect.poll(() => lineShift(page, 'features__title'), SETTLE).toBeCloseTo(0, 1)
 
   // Scroll far away and back: it stays.
   await scrollToSection(page, 'faq')
@@ -98,8 +99,8 @@ test('next steps: the title and the text unroll word by word, each word from its
   // In the middle of the run the first words are further up than the last ones: they follow one another.
   const middle = await shifts('[data-el="next-steps__title"]')
   expect(middle[0]).toBeLessThan(middle.at(-1)!)
-  await page.waitForTimeout(2600)
   for (const selector of ['[data-el="next-steps__title"]', '[data-el="next-steps__desc"]']) {
+    await expect.poll(async () => Math.max(...(await shifts(selector)).map(Math.abs)), SETTLE).toBeCloseTo(0, 1)
     const done = await shifts(selector)
     expect(done.length, selector).toBeGreaterThan(4)
     for (const shift of done) expect(shift, selector).toBeCloseTo(0, 1)
@@ -122,9 +123,8 @@ test('global: the text waits for the globe, then the figures count up', async ({
   }
 
   await scrollToSection(page, 'global', 0.7)
-  await page.waitForTimeout(3500)
-  expect(await lineShift(page, 'global__title')).toBeCloseTo(0, 1)
-  expect(await lineShift(page, 'global__desc')).toBeCloseTo(0, 1)
+  await expect.poll(() => lineShift(page, 'global__title'), SETTLE).toBeCloseTo(0, 1)
+  await expect.poll(() => lineShift(page, 'global__desc'), SETTLE).toBeCloseTo(0, 1)
   const counted = (metric: string) => page.locator(`[data-el="global__metric-${metric}-value"] > span > span[aria-hidden="true"]:not(.invisible)`)
   await expect(counted('uptime')).toHaveText('99.9%')
   await expect(counted('rails')).toHaveText('15+')
@@ -137,10 +137,9 @@ test('footer: the lower bar at the very end of the page appears too (and its lin
   await page.setViewportSize({ width: 1440, height: 900 })
   await page.goto('/')
   await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight))
-  await page.waitForTimeout(2500)
-  expect(await opacityOf(page, '[data-el="footer-bottom__container"]')).toBe(1)
+  await expect.poll(() => opacityOf(page, '[data-el="footer-bottom__container"]'), SETTLE).toBe(1)
   await expect(page.locator('[data-el^="footer-bottom__link-"]').first()).toBeVisible()
-  expect(await opacityOf(page, '[data-el="footer-bottom__copyright"]')).toBe(1)
+  await expect.poll(() => opacityOf(page, '[data-el="footer-bottom__copyright"]'), SETTLE).toBe(1)
 })
 
 test('cta: the banner opens, the person rises, the badges jump out and the end state is clean', async ({ page }) => {
@@ -149,34 +148,32 @@ test('cta: the banner opens, the person rises, the badges jump out and the end s
   await page.waitForTimeout(300)
   expect(await opacityOf(page, '[data-el="cta__banner"]')).toBe(0)
   await scrollToSection(page, 'cta')
-  await page.waitForTimeout(4500)
-  expect(await opacityOf(page, '[data-el="cta__banner"]')).toBe(1)
-  expect(await page.locator('[data-el="cta__banner"]').evaluate((el) => getComputedStyle(el).clipPath)).toBe('none')
-  expect(await opacityOf(page, '[data-el="img-cta-person"]')).toBe(1)
+  await expect.poll(() => opacityOf(page, '[data-el="cta__banner"]'), SETTLE).toBe(1)
+  await expect.poll(() => page.locator('[data-el="cta__banner"]').evaluate((el) => getComputedStyle(el).clipPath), SETTLE).toBe('none')
+  await expect.poll(() => opacityOf(page, '[data-el="img-cta-person"]'), SETTLE).toBe(1)
   for (const id of ['payments', 'multi-currency', 'kyb']) {
     // The badge itself is always visible; its box (a point) plays the jump-out.
     const outer = page.locator(`[data-el="cta__badge-${id}"]`).locator('..')
-    expect(await outer.evaluate((el) => Number(getComputedStyle(el).opacity)), id).toBe(1)
+    await expect.poll(() => outer.evaluate((el) => Number(getComputedStyle(el).opacity)), { ...SETTLE, message: id }).toBe(1)
   }
   // The badges keep their own scale of the design after the jump-out.
-  const scale = await page.locator('[data-el="cta__badge-payments"]').evaluate((el) => new DOMMatrix(getComputedStyle(el).transform).a)
-  expect(scale).toBeGreaterThan(0.3)
-  expect(scale).toBeLessThanOrEqual(1.01)
+  const scaleOf = () => page.locator('[data-el="cta__badge-payments"]').evaluate((el) => new DOMMatrix(getComputedStyle(el).transform).a)
+  await expect.poll(scaleOf, SETTLE).toBeLessThanOrEqual(1.01)
+  expect(await scaleOf()).toBeGreaterThan(0.3)
 })
 
 test('faq: the questions come one after another and the dividers draw themselves', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
   await page.goto('/')
   await scrollToSection(page, 'faq')
-  await page.waitForTimeout(3500)
   const items = page.locator('[data-el="faq__list"] > li')
   expect(await items.count()).toBe(5)
-  for (let i = 0; i < 5; i++) expect(await items.nth(i).evaluate((el) => Number(getComputedStyle(el).opacity))).toBe(1)
+  for (let i = 0; i < 5; i++) await expect.poll(() => items.nth(i).evaluate((el) => Number(getComputedStyle(el).opacity)), SETTLE).toBe(1)
   // Four dividers (the last question has none), all drawn to the full width.
   const dividers = page.locator('[data-el="faq__list"] > li > div.h-px')
   expect(await dividers.count()).toBe(4)
   for (let i = 0; i < 4; i++) {
-    expect(await dividers.nth(i).evaluate((el) => new DOMMatrix(getComputedStyle(el).transform).a)).toBeCloseTo(1, 2)
+    await expect.poll(() => dividers.nth(i).evaluate((el) => new DOMMatrix(getComputedStyle(el).transform).a), SETTLE).toBeCloseTo(1, 2)
   }
 })
 
@@ -194,7 +191,9 @@ const circleFrom = (page: Page) =>
 test('theme toggle: one circle spreads from the toggle, the new theme is inside it, the scroll is held meanwhile', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
   await page.goto('/')
-  await page.waitForTimeout(3500)
+  // The header has come down and its buttons are in place (the click must not hit a moving toggle).
+  await expect.poll(() => opacityOf(page, '[data-el="header__actions"]'), SETTLE).toBe(1)
+  await expect.poll(async () => (await page.locator('[data-el="header"]').boundingBox())!.y, SETTLE).toBeCloseTo(0, 0)
   await page.locator('[data-el="header__theme-toggle"]').click()
   await page.waitForTimeout(250)
   // The circle is on its way and the live page is already in the new theme (it is seen through the circle).
@@ -209,8 +208,7 @@ test('theme toggle: one circle spreads from the toggle, the new theme is inside 
   await page.mouse.wheel(0, 600)
   await page.waitForTimeout(300)
   expect(await page.evaluate(() => window.scrollY)).toBe(0)
-  await page.waitForTimeout(1500)
-  expect(await rippling(page)).toBe(false)
+  await expect.poll(() => rippling(page), { timeout: 6000 }).toBe(false)
   // The header is dark (its surface is the dark surface-subtle), nothing is left half-way.
   expect(await page.locator('[data-el="header"]').evaluate((el) => getComputedStyle(el).backgroundColor)).toBe('rgb(24, 24, 24)')
   expect(await page.locator('html').evaluate((el) => el.classList.contains('theme-flip'))).toBe(false)
@@ -222,9 +220,8 @@ test('theme toggle: one circle spreads from the toggle, the new theme is inside 
   await page.evaluate(() => window.scrollTo(0, 0))
   await page.waitForTimeout(500)
   await page.locator('[data-el="header__theme-toggle"]').click()
-  await page.waitForTimeout(2200)
-  expect(await htmlTheme(page)).toBe('light')
-  expect(await rippling(page)).toBe(false)
+  await expect.poll(() => htmlTheme(page), { timeout: 6000 }).toBe('light')
+  await expect.poll(() => rippling(page), { timeout: 6000 }).toBe(false)
 })
 
 test('industries dark scene: the circle starts in the middle of the screen, the whole page goes dark, it goes back after the scene', async ({ page }) => {
@@ -245,15 +242,13 @@ test('industries dark scene: the circle starts in the middle of the screen, the 
   expect(await rippling(page)).toBe(true)
   // It starts in the middle of the screen, where the open card stands.
   expect(await circleFrom(page)).toBe('circle(0px at 720px 450px)')
-  await page.waitForTimeout(1500)
-  expect(await htmlTheme(page)).toBe('dark')
+  await expect.poll(() => htmlTheme(page), { timeout: 6000 }).toBe('dark')
   // The header is dark too.
   expect(await page.locator('[data-el="header"]').evaluate((el) => getComputedStyle(el).backgroundColor)).toBe('rgb(24, 24, 24)')
   // Leaving the scene: the circle again, the light theme at the end.
   await goTo(6.5 / 7)
-  await page.waitForTimeout(2500)
-  expect(await htmlTheme(page)).toBe('light')
-  expect(await rippling(page)).toBe(false)
+  await expect.poll(() => htmlTheme(page), { timeout: 8000 }).toBe('light')
+  await expect.poll(() => rippling(page), { timeout: 8000 }).toBe(false)
 })
 
 test('theme: where View Transitions are missing the theme changes at once', async ({ page }) => {
@@ -286,9 +281,8 @@ test('theme: quick scrolling in and out of a scene ends in the right theme with 
     await goTo(fraction)
     await page.waitForTimeout(250)
   }
-  await page.waitForTimeout(3500)
-  expect(await htmlTheme(page)).toBe('dark') // the last item is Startups
-  expect(await rippling(page)).toBe(false)
+  await expect.poll(() => htmlTheme(page), { timeout: 10000 }).toBe('dark') // the last item is Startups
+  await expect.poll(() => rippling(page), { timeout: 10000 }).toBe(false)
   expect(await page.locator('html').evaluate((el) => el.classList.contains('theme-flip'))).toBe(false)
 })
 
@@ -331,7 +325,7 @@ for (const viewport of [
         await page.evaluate((top) => window.scrollTo(0, top), y)
         await page.waitForTimeout(90)
       }
-      await page.waitForTimeout(3500)
+      if (!revealOff) await page.waitForTimeout(3500) // the longest run; with the appearance off nothing runs
       const rects = await page.evaluate(() => {
         const selector = 'h1, h2, [data-el$="__desc"], [data-el$="__subtitle"], [data-el$="__eyebrow"], [data-el$="-desc"], [data-el$="-label"], [data-el^="footer__col-"][data-el$="-title"], [data-el^="hero__cta-"], [data-el="cta__cta-primary"], [data-el^="footer__link-"], [data-el^="footer-bottom__"], [data-el$="-badge"]'
         const found: Record<string, number[]> = {}
@@ -380,17 +374,18 @@ test('FAQ: an answer unrolls word by word each time its question is opened', asy
   const early = await wordShifts(page, answer)
   expect(early.length).toBeGreaterThan(6)
   expect(early[0]).toBeLessThan(early.at(-1)!)
-  await page.waitForTimeout(2800)
+  const farthest = async () => Math.max(...(await wordShifts(page, answer)).map(Math.abs))
+  await expect.poll(farthest, SETTLE).toBeCloseTo(0, 1)
   for (const shift of await wordShifts(page, answer)) expect(shift).toBeCloseTo(0, 1)
 
-  // Close it, wait for the fold to be over, open it again: the words play again.
+  // Close it, wait until the words are back under their masks (after the fold), open it again: the words play again.
   await heads.nth(1).click()
-  await page.waitForTimeout(2200)
+  await expect.poll(async () => Math.max(...(await wordShifts(page, answer))), { timeout: 6000 }).toBeGreaterThan(3)
   await heads.nth(1).click()
   await page.waitForTimeout(600)
   const again = await wordShifts(page, answer)
   expect(Math.max(...again)).toBeGreaterThan(3)
-  await page.waitForTimeout(2800)
+  await expect.poll(farthest, SETTLE).toBeCloseTo(0, 1)
   for (const shift of await wordShifts(page, answer)) expect(shift).toBeCloseTo(0, 1)
   // The lead of an answer has its own (stronger) color, as before.
   await expect(page.locator('[data-el^="faq__item-"][data-el$="-answer"]').first()).toContainText('We use a custodial solution')
@@ -409,7 +404,7 @@ test('Next steps: the description of a card unrolls word by word when the card i
   const early = await wordShifts(page, desc)
   expect(early.length).toBeGreaterThan(6)
   expect(Math.max(...early)).toBeGreaterThan(1) // not all of it is out yet
-  await page.waitForTimeout(2500)
+  await expect.poll(async () => Math.max(...(await wordShifts(page, desc)).map(Math.abs)), SETTLE).toBeCloseTo(0, 1)
   for (const shift of await wordShifts(page, desc)) expect(shift).toBeCloseTo(0, 1)
 })
 
@@ -430,7 +425,7 @@ test('Industries: the description of the card unrolls word by word when the card
   const early = await wordShifts(page, '[data-el="industries__item-ecommerce-desc"]')
   expect(early.length).toBeGreaterThan(8)
   expect(Math.max(...early)).toBeGreaterThan(1)
-  await page.waitForTimeout(2800)
+  await expect.poll(async () => Math.max(...(await wordShifts(page, '[data-el="industries__item-ecommerce-desc"]')).map(Math.abs)), SETTLE).toBeCloseTo(0, 1)
   for (const shift of await wordShifts(page, '[data-el="industries__item-ecommerce-desc"]')) expect(shift).toBeCloseTo(0, 1)
 })
 

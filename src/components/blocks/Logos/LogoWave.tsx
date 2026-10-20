@@ -156,6 +156,8 @@ export function LogoWave({ wavePeriod, drift, scrollTarget }: LogoWaveProps) {
             {icon}
           </a>
         ) : (
+          // A div with an inline SVG inside, so it cannot be an <img>.
+          // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role
           <div key={slot} ref={setRef} role="img" aria-label={brand.name} data-el={`logos__item-${brand.slug}`} className={tileClasses}>
             {icon}
           </div>

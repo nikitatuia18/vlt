@@ -99,7 +99,7 @@
 
 ## 7. Анимации появления (reveal): правила и рецепты
 
-Код: [../src/motion/reveal.tsx](../src/motion/reveal.tsx), хуки [../src/motion/useReveal.ts](../src/motion/useReveal.ts), числа [../src/motion/tokens.ts](../src/motion/tokens.ts) (`appear`, `easeOut`). Спек и отличия от первого черновика: [reveal.motion.md](reveal.motion.md). Витрина: `/ui-kit`, раздел «Appearance».
+Код: [../src/motion/reveal.tsx](../src/motion/reveal.tsx) (`Reveal`, `CountUp`), [../src/motion/RevealLines.tsx](../src/motion/RevealLines.tsx) (текст по словам), [../src/motion/revealVariants.ts](../src/motion/revealVariants.ts) (таблица заготовок), [../src/motion/revealTrigger.ts](../src/motion/revealTrigger.ts) (когда играть), хуки [../src/motion/useReveal.ts](../src/motion/useReveal.ts), числа [../src/motion/tokens.ts](../src/motion/tokens.ts) (`appear`, `easeOut`). Спек и отличия от первого черновика: [reveal.motion.md](reveal.motion.md). Витрина: `/ui-kit`, раздел «Appearance».
 
 ### 7.0 Главное правило: весь текст появляется по словам
 **Любой текст сайта** (заголовок, абзац, подпись, вопрос, ссылка, подпись на кнопке и на бейдже, число-метка, текст в карточке, текст в панели, которая открывается) появляется так: каждое слово выезжает из своей маски снизу, слова друг за другом, в маске слово чуть меньше и вырастает до 100 %. Это `RevealLines`; внутри `ButtonLink` и `Badge` он уже встроен (подпись-строка поднимается по словам сама; как именно, задаёт `labelReveal`). Новый текст без этого эффекта не добавляем.
@@ -142,7 +142,7 @@
 ### 7.5 Рецепт: появление нового блока
 1. Заголовки: `RevealLines`; подзаголовки и кнопки: `Reveal` с `delay` +0.1 за шаг.
 2. Карточки: `Reveal variant="card"`, задержка `index * appear.card.step`.
-3. Нужной заготовки нет: добавить вариант в `variants` (`reveal.tsx`) и числа в `appear`, затем плитку в `/ui-kit`, затем строку в таблицу 7.1.
+3. Нужной заготовки нет: добавить вариант в `variants` (`revealVariants.ts`) и числа в `appear`, затем плитку в `/ui-kit`, затем строку в таблицу 7.1.
 4. Проверить: Replay в витрине, `prefers-reduced-motion`, нет горизонтального скролла на 393, тесты с флагом «выкл» зелёные.
 
 ## 8. Свечение

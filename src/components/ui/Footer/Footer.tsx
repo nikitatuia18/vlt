@@ -53,7 +53,7 @@ export function Footer({ columns = footerColumns, legalLinks = siteLegalLinks, y
             className={`relative flex flex-col gap-10 px-4 py-12 tablet:px-8 tablet:py-16 desktop:gap-12 desktop:px-10 desktop:py-20 min-[100rem]:flex-row min-[100rem]:justify-between min-[100rem]:py-30 ${columnLines}`}
           >
             <Reveal variant="fade" data-el="footer__brand" className="flex flex-col items-start gap-4">
-              <a href={import.meta.env.BASE_URL} aria-label="Velant Pay, home" className="flex text-typography-primary">
+              <a href={import.meta.env.BASE_URL} aria-label="Velant Pay, home" className="flex rounded-pill text-typography-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-brand">
                 <span data-el="img-logo-velant-pay" className="flex">
                   <Icon src={logo} width={271} height={65.6985} />
                 </span>

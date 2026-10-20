@@ -12,6 +12,8 @@ type IndustryItemProps = {
   index: number
   /** The list reads the position of the open item to keep it in view. Must be a stable function (see `memo` below). */
   registerRef: (index: number, element: HTMLLIElement | null) => void
+  /** Only with reduced motion (the scroll opens nothing then): the closed item becomes a button that opens it. Must be stable. */
+  onPick?: (index: number) => void
 }
 
 /** Text steps like the headings of the page: mobile heading-lg, tablet heading-xl, from 1024 px display-sm (design). */
@@ -23,7 +25,7 @@ const titleClasses = 'type-heading-lg tablet:type-heading-xl min-[64rem]:type-di
  * padding 60 x 40 on desktop), and the description and the button unfold under the title.
  * Card and colors change with CSS (700 ms), the unfolding with motion.
  */
-export const IndustryItem = memo(function IndustryItem({ item, isActive, index, registerRef }: IndustryItemProps) {
+export const IndustryItem = memo(function IndustryItem({ item, isActive, index, registerRef, onPick }: IndustryItemProps) {
   const { id, title, description, cta, glow } = item
 
   // The box of the card. Open: padding and a fill (a white card; in a dark scene a faint see-through one, the glow shows through); closed: nothing.
@@ -89,8 +91,19 @@ export const IndustryItem = memo(function IndustryItem({ item, isActive, index, 
       data-active={isActive}
       className="flex justify-center"
     >
-      <div data-el={`industries__item-${id}-inner`} className={boxClasses}>
+      <div data-el={`industries__item-${id}-inner`} className={`${boxClasses} relative`}>
         {content}
+        {onPick && !isActive && (
+          // A button over the whole closed item (the open one holds a link of its own, so it has none).
+          <button
+            type="button"
+            data-el={`industries__item-${id}-open`}
+            aria-label={title}
+            aria-expanded={false}
+            onClick={() => onPick(index)}
+            className="absolute -inset-x-4 -inset-y-2 rounded-32 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-typography-brand focus-visible:ring-inset"
+          />
+        )}
       </div>
     </li>
   )

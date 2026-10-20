@@ -63,6 +63,8 @@ html.theme-ripple::view-transition-new(root) {
    */
   html {
     overflow-anchor: none;
+    /* A jump to an anchor (a menu item, the skip link) must not end under the pinned header. */
+    scroll-padding-top: calc(var(--spacing) * 20);
   }
 
   body {

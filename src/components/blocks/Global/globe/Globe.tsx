@@ -1,68 +1,45 @@
 import type { MotionValue } from 'motion/react'
 import { useEffect, useRef, type RefObject } from 'react'
 import { useTheme } from '../../../../lib/theme'
-import { pins, type Pin } from '../pins'
+import { pins } from '../pins'
 import { sampleTrack } from '../sampleTrack'
 import { DURATION, FRAMES, pinTimelines, routeSource, routeTarget, routeTimelines } from '../timeline'
-import { angleBetween, arcPoint, createView, isSeen, latLonToVector, rotateInto, smoothstep, spinSpeed, RAD, type SpinSettings } from './globeMath'
+import { angleBetween, arcPoint, createView, isSeen, latLonToVector, rotateInto, smoothstep, spinSpeed, RAD } from './globeMath'
 import { createLandDots } from './landDots'
+import { PinCard } from './PinCard'
+import {
+  DOT_SPACING,
+  DOT_RADIUS,
+  DOT_RADIUS_GROWTH,
+  LEVEL_FROM_DEPTH,
+  LEVEL_ALPHA,
+  LEVEL_SIZE,
+  POINTER_RADIUS,
+  POINTER_AWAY,
+  POINTER_FAR,
+  PRIME_MARGIN,
+  POINTER_FORCE,
+  POINTER_EASE,
+  SPIN,
+  START_LONGITUDE,
+  TILT,
+  DRAG_LIMIT_LONGITUDE,
+  DRAG_LIMIT_LATITUDE,
+  SPRING,
+  SPRING_DAMPING,
+  MOVE_FROM,
+  MOVE_TO,
+  CARDS_AT,
+  STILL_FRAME,
+  BIG_MIN_TIMES_SLOT,
+  APPEAR_SCALE_FROM,
+  CARD_REFERENCE_RADIUS,
+  MIN_CARD_SCALE,
+  CARD_VISIBLE_FROM,
+  CARD_VISIBLE_TO,
+  ARC_STEPS,
+} from './globeSettings'
 
-/* Look of the globe and how it moves. Numbers from docs/blocks/global.motion.md; tune them here. */
-
-/** Distance between neighbouring dots at the final size, px: sets how many dots the globe gets (and the cost of a frame). */
-const DOT_SPACING = 4.7
-/** Dot radius, px, on a globe 650 px wide; it grows slower than the globe, so the big globe has fine dots, not blobs. */
-const DOT_RADIUS = 1
-const DOT_RADIUS_GROWTH = 0.6
-/** Brightness and size of the dots by depth: the rim of the globe is faint and fine, the middle is full. */
-const LEVEL_FROM_DEPTH = [0, 0.18, 0.4, 0.7]
-const LEVEL_ALPHA = [0.25, 0.5, 0.8, 1]
-const LEVEL_SIZE = [0.6, 0.8, 0.9, 1]
-
-/** The pointer pushes dots away: the values of the approved prototype (see InteractiveDots). */
-const POINTER_RADIUS = 150
-/** The pointer's position while it is not over the page (no push, and no need to measure the canvas), and a point far enough from any dot. */
-const POINTER_AWAY = -1000
-const POINTER_FAR = 100000
-/** The dots are built when the globe comes within this distance of the screen (one screen up or down), not at page load. */
-const PRIME_MARGIN = '100% 0px 100% 0px'
-const POINTER_FORCE = 1
-const POINTER_EASE = 0.1
-
-/**
- * The turn: 4 degrees per second over land (a revolution in about 90 s), 2.5 times faster over the empty Pacific so that
- * the viewer does not wait for the land to come back. Also: the longitude that faces the viewer at the start,
- * and the tilt of the axis towards the viewer.
- */
-const SPIN: SpinSettings = { base: 4, boost: 2.5, emptyCenter: -165, fullUntil: 20, fadeTo: 60 }
-const START_LONGITUDE = -10
-const TILT = 20
-
-/** The hand may turn the globe only a little: the limits (degrees) of the soft stop, and the spring that brings it back. */
-const DRAG_LIMIT_LONGITUDE = 45 * RAD
-const DRAG_LIMIT_LATITUDE = 12 * RAD
-const SPRING = 12
-const SPRING_DAMPING = 2 * Math.sqrt(SPRING)
-
-/** Scene (progress of the pinned section, 0 to 1): the globe flies from "big" to its place, then the cards start. */
-const MOVE_FROM = 0
-const MOVE_TO = 0.75
-const CARDS_AT = 0.85
-/** With reduced motion the timeline stands still at this frame: three cards (EU, Chile, Argentina) and three lines are on. */
-const STILL_FRAME = 800
-/** The big globe is as wide as the page container; on a phone, where that is hardly bigger than the end place, at least this many times the end size. */
-const BIG_MIN_TIMES_SLOT = 1.6
-/** While the section comes into view the globe also grows a little, from this share of its big size. */
-const APPEAR_SCALE_FROM = 0.92
-
-/** Cards: design size at a globe of this radius (the design shows the globe 650 px wide); never scaled below MIN_CARD_SCALE. */
-const CARD_REFERENCE_RADIUS = 325
-const MIN_CARD_SCALE = 0.6
-/** A card fades out as its country turns to the rim of the globe (z of the surface point). */
-const CARD_VISIBLE_FROM = 0.02
-const CARD_VISIBLE_TO = 0.28
-
-const ARC_STEPS = 56
 
 type GlobeProps = {
   /** 0 to 1 while the section is pinned (the globe moves from big to its place). */
@@ -87,35 +64,6 @@ const softLimit = (value: number, limit: number) => limit * Math.tanh(value / li
 const routeIds = Object.keys(routeTimelines).map(Number)
 const pinIndex = (id: string) => pins.findIndex((pin) => pin.id === id)
 
-/**
- * Card with a flag, a currency code and the payment rails. Figma `global__pin-{id}`.
- * Above 1280 px it is a pill with text; below, only the flag in a round frame (derived: the text would be too small).
- * The outer layer is moved onto the country every frame by the globe loop; the flag centre is its origin.
- * Font note: the design uses Urbanist for the code, which is not in the font set; the closest styles are used (ui-md, body-sm).
- */
-function PinCard({ pin, outerRef }: { pin: Pin; outerRef: (element: HTMLDivElement | null) => void }) {
-  const toLeft = pin.side === 'left'
-  return (
-    <div ref={outerRef} className="pointer-events-none absolute top-0 left-0 origin-top-left opacity-0 will-change-transform">
-      <div
-        data-el={`global__pin-${pin.id}`}
-        className={`absolute top-[-30px] desktop:top-[-38px] flex items-center justify-center gap-3 rounded-pill bg-surface-subtle p-2 ring-1 ring-inset ring-border-subtle desktop:p-4 ${
-          toLeft ? 'right-[-30px] desktop:right-[-38px] flex-row-reverse' : 'left-[-30px] desktop:left-[-38px]'
-        }`}
-      >
-        <img src={pin.flag} alt="" width={44} height={44} loading="lazy" decoding="async" className="size-11 shrink-0" />
-        <div className={`hidden flex-col items-start justify-center text-center whitespace-nowrap desktop:flex ${toLeft ? 'pl-2' : 'pr-2'}`}>
-          <span data-el={`global__pin-${pin.id}-label`} className="type-ui-md text-typography-primary">
-            {pin.code}
-          </span>
-          <span data-el={`global__pin-${pin.id}-desc`} className="type-body-sm text-typography-secondary">
-            {pin.rails}
-          </span>
-        </div>
-      </div>
-    </div>
-  )
-}
 
 /**
  * The globe of the "global" block: dots on land, 3D, slowly turning, pushed away by the pointer, turnable by hand a little;

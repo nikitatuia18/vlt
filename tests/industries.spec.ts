@@ -147,7 +147,7 @@ test('every one of the seven items is centered on the screen when it opens (1440
       if (neighbour < 0 || neighbour >= ids.length) continue
       const state = await item(page, ids[neighbour]).evaluate((el) => {
         const chain: string[] = []
-        for (let node: HTMLElement | null = el; node; node = node.parentElement) {
+        for (let node: Element | null = el; node; node = node.parentElement) {
           const style = getComputedStyle(node)
           chain.push(`${style.opacity}|${style.maskImage}`)
         }
@@ -354,3 +354,21 @@ test('reduced motion: the static design state is the dark pink scene of Startups
   await context.close()
 })
 
+
+test('reduced motion: every closed item is a button that opens it (the scroll opens nothing)', async ({ browser }) => {
+  const context = await browser.newContext({ reducedMotion: 'reduce', viewport: { width: 1440, height: 900 } })
+  const page = await context.newPage()
+  await page.goto('/')
+  await section(page).scrollIntoViewIfNeeded()
+  expect(await activeId(page)).toBe('startups')
+  // The open item has no button of its own (it holds a link); the six closed ones have.
+  await expect(page.locator('[data-el^="industries__item-"][data-el$="-open"]')).toHaveCount(ids.length - 1)
+  await page.locator('[data-el="industries__item-ecommerce-open"]').click()
+  expect(await activeId(page)).toBe('ecommerce')
+  await expect(section(page)).toHaveAttribute('data-glow', 'violet')
+  // The first one has no scene: the site is light again.
+  await page.locator('[data-el="industries__item-industry-first-open"]').click()
+  expect(await activeId(page)).toBe('industry-first')
+  await expect(section(page)).not.toHaveAttribute('data-glow', /.+/)
+  await context.close()
+})

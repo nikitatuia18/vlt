@@ -42,6 +42,8 @@ export function Industries() {
   const itemRefs = useRef<(HTMLLIElement | null)[]>([])
   const offsetRef = useRef<number | null>(null)
   const [activeIndex, setActiveIndex] = useState(0)
+  // With reduced motion the scroll opens nothing, so the items are opened by hand (the design state, Startups, is open at first).
+  const [pickedIndex, setPickedIndex] = useState(designActiveIndex)
   // A stable function (not a new one per render), so the items that did not change are not drawn again when the open one changes.
   const registerItem = useCallback((index: number, element: HTMLLIElement | null) => {
     itemRefs.current[index] = element
@@ -53,8 +55,8 @@ export function Industries() {
     setActiveIndex(index)
   })
 
-  // With reduced motion nothing follows the scroll: the design state is shown.
-  const shownIndex = reducedMotion ? designActiveIndex : activeIndex
+  // With reduced motion nothing follows the scroll: the design state is shown first, then the item the visitor picked.
+  const shownIndex = reducedMotion ? pickedIndex : activeIndex
   // The open item sets the scene: some items turn the whole block dark and light a colored glow behind the card.
   const glow = industries[shownIndex]?.glow
   // The dark scenes darken the whole site (the header, the page), and the theme toggle is locked meanwhile.
@@ -156,6 +158,7 @@ export function Industries() {
                     isActive={index === shownIndex}
                     index={index}
                     registerRef={registerItem}
+                    onPick={reducedMotion ? setPickedIndex : undefined}
                   />
                 ))}
               </ul>
