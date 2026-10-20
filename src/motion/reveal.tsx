@@ -90,7 +90,7 @@ const viewportAtPageEnd = { once: true, amount: 0.2, margin: '0px' } as const
 type Trigger = { when?: boolean; atLoad?: boolean; /** The element is at the very end of the page: it must appear even though it cannot come above the bottom margin. */ atPageEnd?: boolean }
 
 function useTriggerProps({ when, atLoad, atPageEnd }: Trigger) {
-  const fonts = useFontsReady()
+  const fonts = useFontsReady(when === undefined && !!atLoad)
   if (when !== undefined) return { initial: 'hidden', animate: when ? 'shown' : 'hidden' } as const
   if (atLoad) return { initial: 'hidden', animate: fonts ? 'shown' : 'hidden' } as const
   return { initial: 'hidden', whileInView: 'shown', viewport: atPageEnd ? viewportAtPageEnd : viewport } as const
@@ -319,7 +319,7 @@ const NUMBER = /\d+(\.\d+)?/
 /** A figure that counts up from zero to the number in `value` (the rest of the text stays), then stands still. */
 export function CountUp({ value, className, delay = 0, when, atLoad, ...rest }: CountUpProps) {
   const on = useRevealOn()
-  const fonts = useFontsReady()
+  const fonts = useFontsReady(when === undefined && !!atLoad)
   const [inView, setInView] = useState(false)
   const holder = useRef<HTMLSpanElement>(null)
   const count = useMotionValue(0)

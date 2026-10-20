@@ -1,3 +1,6 @@
+/** How long one step stays open before the next one opens (seconds). Set with the designer: about 5 s. */
+export const STEP_SECONDS = 5
+
 export type StepData = {
   /** Same slug as in the Figma layers `next-steps__card-{id}`. */
   id: string

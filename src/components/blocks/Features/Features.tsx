@@ -23,7 +23,7 @@ export function Features() {
         <div
           data-el="features__container"
           // The column lines are drawn inside (an inset shadow, like a Figma stroke), so they do not narrow the content.
-          className="relative flex flex-col items-center gap-8 py-12 shadow-[inset_1px_0_0_var(--color-border-subtle),inset_-1px_0_0_var(--color-border-subtle)] tablet:gap-10 tablet:py-20 desktop:gap-12 desktop:px-10 desktop:py-35"
+          className="relative flex flex-col items-center gap-8 py-12 column-lines tablet:gap-10 tablet:py-20 desktop:gap-12 desktop:px-10 desktop:py-35"
         >
           <div
             data-el="features__header"

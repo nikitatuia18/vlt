@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { prefersReducedMotion } from '../../lib/media'
 import { useTheme } from '../../lib/theme'
 import { useRevealOn } from '../../motion/useReveal'
 
@@ -77,7 +78,7 @@ export function InteractiveDots({
     const context = canvas?.getContext('2d')
     if (!canvas || !context) return
 
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const reducedMotion = prefersReducedMotion()
 
     let dots: Dot[] = []
     let width = 0
@@ -111,7 +112,8 @@ export function InteractiveDots({
 
     const resize = () => {
       const rect = canvas.getBoundingClientRect()
-      const pixelRatio = window.devicePixelRatio || 1
+      // At most 2: at 3 the hero canvas would be cleared and filled with nine times its CSS area in every frame, for dots a pixel apart from the eye.
+      const pixelRatio = Math.min(window.devicePixelRatio || 1, 2)
       width = rect.width
       height = rect.height
       canvas.width = Math.round(width * pixelRatio)
@@ -198,6 +200,7 @@ export function InteractiveDots({
     const onPointerMove = (event: PointerEvent) => {
       if (event.pointerType === 'touch') return
       pointer = { x: event.clientX, y: event.clientY }
+      if (!isVisible) return // read again when the canvas comes into view (see the observer below)
       updateMouse()
       start()
     }
@@ -210,7 +213,7 @@ export function InteractiveDots({
 
     const onScroll = () => {
       // The canvas moves under a standing pointer: the pointer position inside it changes (nothing to do while the pointer is outside).
-      if (pointer.x === OFFSCREEN) return
+      if (pointer.x === OFFSCREEN || !isVisible) return
       updateMouse()
       start()
     }
@@ -226,7 +229,10 @@ export function InteractiveDots({
     const visibilityObserver = new IntersectionObserver(([entry]) => {
       isVisible = entry.isIntersecting
       if (isVisible && rippleStart === null) rippleStart = performance.now() + rippleDelay
-      if (isVisible) start()
+      if (isVisible) {
+        updateMouse() // the pointer may have moved while the canvas was out of sight
+        start()
+      }
     })
     visibilityObserver.observe(canvas)
 

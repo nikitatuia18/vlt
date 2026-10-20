@@ -27,7 +27,7 @@ const linkClasses =
   'focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-typography-brand'
 
 // The column lines are drawn inside (an inset shadow, like a Figma stroke), so they do not narrow the content.
-const columnLines = 'shadow-[inset_1px_0_0_var(--color-border-subtle),inset_-1px_0_0_var(--color-border-subtle)]'
+const columnLines = 'column-lines'
 
 /**
  * Site footer, one component for all pages. Figma blocks `footer` (logo, description, five columns of links) and

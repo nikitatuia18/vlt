@@ -4,6 +4,7 @@ import { Reveal, RevealLines } from '../../../motion/reveal'
 import { appear, duration, easeOut } from '../../../motion/tokens'
 import { useRevealOn } from '../../../motion/useReveal'
 import logo from '../../../assets/brand/logo-velant-pay.svg'
+import { DESKTOP_QUERY } from '../../../lib/media'
 import { ButtonLink } from '../ButtonLink'
 import { Container } from '../Container'
 import { Icon } from '../Icon'
@@ -11,9 +12,6 @@ import { IconButton } from '../IconButton'
 import { ThemeToggle } from '../ThemeToggle'
 import { MenuToggleIcon } from './MenuToggleIcon'
 import { demoCta, exploreCta, navItems as siteNavItems, type HeaderCta, type NavItem } from './navigation'
-
-// Must match --breakpoint-desktop in styles/tokens.css: from here the full menu is shown instead of the burger.
-const DESKTOP_QUERY = '(min-width: 80rem)'
 
 /** Scrolling less than this many px in the other direction does not flip the header (a trembling finger or wheel). */
 const SCROLL_THRESHOLD = 6

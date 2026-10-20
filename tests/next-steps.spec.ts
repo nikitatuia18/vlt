@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test'
+import { STEP_SECONDS } from '../src/components/blocks/NextSteps/steps'
 
 const viewports = [
   { name: 'mobile-393', width: 393, height: 850 },
@@ -10,7 +11,6 @@ const viewports = [
 ]
 
 const ids = ['book-demo', 'pass-kyb', 'start-process', 'go-live']
-const STEP_SECONDS = 5
 
 const card = (page: Page, id: string) => page.locator(`[data-el="next-steps__card-${id}"]`)
 const activeId = (page: Page) =>

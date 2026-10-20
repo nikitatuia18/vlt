@@ -21,6 +21,11 @@ const LEVEL_SIZE = [0.6, 0.8, 0.9, 1]
 
 /** The pointer pushes dots away: the values of the approved prototype (see InteractiveDots). */
 const POINTER_RADIUS = 150
+/** The pointer's position while it is not over the page (no push, and no need to measure the canvas), and a point far enough from any dot. */
+const POINTER_AWAY = -1000
+const POINTER_FAR = 100000
+/** The dots are built when the globe comes within this distance of the screen (one screen up or down), not at page load. */
+const PRIME_MARGIN = '100% 0px 100% 0px'
 const POINTER_FORCE = 1
 const POINTER_EASE = 0.1
 
@@ -98,7 +103,7 @@ function PinCard({ pin, outerRef }: { pin: Pin; outerRef: (element: HTMLDivEleme
           toLeft ? 'right-[-30px] desktop:right-[-38px] flex-row-reverse' : 'left-[-30px] desktop:left-[-38px]'
         }`}
       >
-        <img src={pin.flag} alt="" width={44} height={44} className="size-11 shrink-0" />
+        <img src={pin.flag} alt="" width={44} height={44} loading="lazy" decoding="async" className="size-11 shrink-0" />
         <div className={`hidden flex-col items-start justify-center text-center whitespace-nowrap desktop:flex ${toLeft ? 'pl-2' : 'pr-2'}`}>
           <span data-el={`global__pin-${pin.id}-label`} className="type-ui-md text-typography-primary">
             {pin.code}
@@ -170,9 +175,11 @@ export function Globe({ progress, appear, slotRef, frameRef, reduced, settled = 
     let frameId = 0
     let running = false
     let lastTime = 0
-    let isVisible = true
+    let isVisible = false // the observer below tells at once
+    // The lattice of dots (60 thousand points at most) costs a few frames of work: it is built when the globe is about to be seen.
+    let primed = false
     // The pointer in the viewport; touch is ignored (a finger scrolls the page or turns the globe).
-    let pointer = { x: -1000, y: -1000 }
+    let pointer = { x: POINTER_AWAY, y: POINTER_AWAY }
     let drag: { id: number; x: number; y: number } | null = null
     // Where the globe stood in the last frame: the hand grabs only the globe, not the empty space around it.
     let geometry = { x: 0, y: 0, radius: 0 }
@@ -219,7 +226,15 @@ export function Globe({ progress, appear, slotRef, frameRef, reduced, settled = 
         }
       }
       bigRadius = Math.max((frameRef.current?.getBoundingClientRect().width ?? width) / 2, slot.radius * BIG_MIN_TIMES_SLOT)
+      if (primed) buildDots()
+    }
+
+    /** Builds the dots and draws the first picture (the one that stays with reduced motion). */
+    const prime = () => {
+      if (primed) return
+      primed = true
       buildDots()
+      render(0)
     }
 
     /** Draws one frame. `delta` is the time since the last frame in seconds (0 for a still picture). */
@@ -254,9 +269,10 @@ export function Globe({ progress, appear, slotRef, frameRef, reduced, settled = 
       const latitude = TILT * RAD + softLimit(state.dragLatitude, DRAG_LIMIT_LATITUDE)
       const view = createView(longitude, latitude)
 
-      const rect = canvas.getBoundingClientRect()
-      const mouseX = pointer.x - rect.left
-      const mouseY = pointer.y - rect.top
+      // The canvas is measured only while the pointer is over the page: reading the layout right after the pins were moved forces a layout in every frame.
+      const rect = pointer.x === POINTER_AWAY ? null : canvas.getBoundingClientRect()
+      const mouseX = rect ? pointer.x - rect.left : -POINTER_FAR
+      const mouseY = rect ? pointer.y - rect.top : -POINTER_FAR
       const frames = Math.min(seconds * 60, 3)
       const relax = (1 - POINTER_EASE) ** frames
       const pushScale = POINTER_FORCE * 50 * 0.2 * frames
@@ -427,6 +443,7 @@ export function Globe({ progress, appear, slotRef, frameRef, reduced, settled = 
       }
       if (event.pointerType === 'touch') return
       pointer = { x: event.clientX, y: event.clientY }
+      if (!isVisible) return // the cursor of a globe nobody sees is not worth a layout read on every mouse move
       canvas.style.cursor = drag ? 'grabbing' : isOnGlobe(event.clientX, event.clientY) ? 'grab' : ''
     }
 
@@ -435,27 +452,39 @@ export function Globe({ progress, appear, slotRef, frameRef, reduced, settled = 
     }
 
     const onPointerLeave = () => {
-      pointer = { x: -1000, y: -1000 }
+      pointer = { x: POINTER_AWAY, y: POINTER_AWAY }
     }
 
     measure()
-    render(0)
     // With reduced motion nothing redraws by itself: a theme change asks for one more picture.
-    redrawStill.current = reduced ? () => render(0) : null
+    redrawStill.current = reduced ? () => primed && render(0) : null
 
     const resizeObserver = new ResizeObserver(() => {
       measure()
-      if (reduced) render(0)
+      if (reduced && primed) render(0)
     })
     resizeObserver.observe(canvas)
     if (slotRef.current) resizeObserver.observe(slotRef.current)
     if (frameRef.current) resizeObserver.observe(frameRef.current)
 
+    // The dots are built a screen ahead of the globe, so the work does not fall on the first frame it is seen.
+    const primeObserver = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return
+        prime()
+        primeObserver.disconnect()
+      },
+      { rootMargin: PRIME_MARGIN },
+    )
+    primeObserver.observe(canvas)
+
     // Nothing is drawn for a globe nobody sees.
     const visibilityObserver = new IntersectionObserver(([entry]) => {
       isVisible = entry.isIntersecting
-      if (isVisible) start()
-      else stop()
+      if (isVisible) {
+        prime()
+        start()
+      } else stop()
     })
     visibilityObserver.observe(canvas)
 
@@ -471,6 +500,7 @@ export function Globe({ progress, appear, slotRef, frameRef, reduced, settled = 
     return () => {
       stop()
       resizeObserver.disconnect()
+      primeObserver.disconnect()
       visibilityObserver.disconnect()
       canvas.removeEventListener('pointerdown', onPointerDown)
       window.removeEventListener('pointermove', onPointerMove)

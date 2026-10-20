@@ -1,9 +1,1 @@
-<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g id="Chile">
-<path id="Intersect" d="M44 22C44 9.84974 34.1503 0 22 0C20.1005 0 18.2573 0.240723 16.4991 0.693327V22H44Z" fill-rule="evenodd" clip-rule="evenodd" fill="white"/>
-<path id="Intersect_2" d="M16.4991 0.693327V22H0C0 11.7492 7.01081 3.13587 16.4991 0.693327Z" fill-rule="evenodd" clip-rule="evenodd" fill="#0039A6"/>
-<path id="Vector" d="M10.8143 17.8557L8.262 15.9414L5.7161 17.875L6.66356 14.7297L4.1241 12.7896L7.26297 12.7574L8.23621 9.625L9.23524 12.751L12.3741 12.7574L9.84754 14.7168L10.8143 17.8557Z" fill-rule="evenodd" clip-rule="evenodd" fill="white"/>
-<path id="Intersect_3" d="M22 44C34.1503 44 44 34.1503 44 22H0C0 34.1503 9.84974 44 22 44Z" fill-rule="evenodd" clip-rule="evenodd" fill="#D52B1E"/>
-<path id="Ellipse 203 (Stroke)" d="M22 42.7167C33.4415 42.7167 42.7167 33.4415 42.7167 22C42.7167 10.5585 33.4415 1.28333 22 1.28333C10.5585 1.28333 1.28333 10.5585 1.28333 22C1.28333 33.4415 10.5585 42.7167 22 42.7167ZM22 44C34.1503 44 44 34.1503 44 22C44 9.84974 34.1503 0 22 0C9.84974 0 0 9.84974 0 22C0 34.1503 9.84974 44 22 44Z" fill-rule="evenodd" clip-rule="evenodd" fill="#D9D9D9"/>
-</g>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" fill="none" overflow="visible" preserveAspectRatio="none" style="display:block" viewBox="0 0 44 44"><g fill-rule="evenodd" clip-rule="evenodd"><path fill="#fff" d="M44 22C44 9.8497 34.1503 0 22 0c-1.8995 0-3.7427.2407-5.5009.6933V22z"/><path fill="#0039a6" d="M16.4991.6933V22H0C0 11.7492 7.0108 3.1359 16.4991.6933"/><path fill="#fff" d="M10.8143 17.8557 8.262 15.9414 5.7161 17.875l.9475-3.1453-2.5395-1.9401 3.1389-.0322.9732-3.1324.999 3.126 3.1389.0064-2.5266 1.9594z"/><path fill="#d52b1e" d="M22 44c12.1503 0 22-9.8497 22-22H0c0 12.1503 9.8497 22 22 22"/><path fill="#d9d9d9" d="M22 42.7167c11.4415 0 20.7167-9.2752 20.7167-20.7167S33.4415 1.2833 22 1.2833 1.2833 10.5585 1.2833 22 10.5585 42.7167 22 42.7167M22 44c12.1503 0 22-9.8497 22-22S34.1503 0 22 0 0 9.8497 0 22s9.8497 22 22 22"/></g></svg>

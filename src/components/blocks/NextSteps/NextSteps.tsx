@@ -5,10 +5,7 @@ import { ColumnFade } from '../../ui/ColumnFade'
 import { Container } from '../../ui/Container'
 import { CornerDots } from '../../ui/CornerDots'
 import { StepCard } from './StepCard'
-import { steps } from './steps'
-
-/** How long one step stays open before the next one opens (seconds). Set with the designer: about 5 s. */
-export const STEP_SECONDS = 5
+import { steps, STEP_SECONDS } from './steps'
 
 /** The line of the open card in the design is drawn at 325 of 418 px. */
 const DESIGN_PROGRESS = 325 / 418
@@ -58,7 +55,7 @@ export function NextSteps() {
         <div
           data-el="next-steps__container"
           // The column lines are drawn inside (an inset shadow, like a Figma stroke), so they do not narrow the content.
-          className="relative flex flex-col gap-8 py-12 shadow-[inset_1px_0_0_var(--color-border-subtle),inset_-1px_0_0_var(--color-border-subtle)] tablet:gap-10 tablet:py-20 desktop:gap-12 desktop:px-10 desktop:py-35"
+          className="relative flex flex-col gap-8 py-12 column-lines tablet:gap-10 tablet:py-20 desktop:gap-12 desktop:px-10 desktop:py-35"
         >
           <div
             data-el="next-steps__header"

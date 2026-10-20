@@ -1,5 +1,6 @@
 import { themeSwitch } from '../motion/tokens'
 import { holdScroll } from './smoothScroll'
+import type { Theme } from './theme'
 
 /*
  * The change of the theme (docs/ui-kit.md, section 9): ONE circle spreads from a point (the toggle in the header, or the middle of the
@@ -10,8 +11,6 @@ import { holdScroll } from './smoothScroll'
  * (`::view-transition-new(root)` with an animated `clip-path`). Because the old part is a picture, the scroll is held while it runs.
  * Where the API is missing (or motion is off), the theme changes at once.
  */
-
-type Theme = 'light' | 'dark'
 
 export type RippleOrigin = { x: number; y: number }
 

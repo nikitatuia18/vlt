@@ -1,4 +1,5 @@
 import { motion } from 'motion/react'
+import { memo } from 'react'
 import { RevealLines } from '../../../motion/reveal'
 import { duration, easeOut } from '../../../motion/tokens'
 import { ButtonLink } from '../../ui/ButtonLink'
@@ -9,8 +10,8 @@ type IndustryItemProps = {
   isActive: boolean
   /** Place in the list: the neighbours appear with a small step. */
   index: number
-  /** The list reads the position of the open item to keep it in view. */
-  setRef: (element: HTMLLIElement | null) => void
+  /** The list reads the position of the open item to keep it in view. Must be a stable function (see `memo` below). */
+  registerRef: (index: number, element: HTMLLIElement | null) => void
 }
 
 /** Text steps like the headings of the page: mobile heading-lg, tablet heading-xl, from 1024 px display-sm (design). */
@@ -22,7 +23,7 @@ const titleClasses = 'type-heading-lg tablet:type-heading-xl min-[64rem]:type-di
  * padding 60 x 40 on desktop), and the description and the button unfold under the title.
  * Card and colors change with CSS (700 ms), the unfolding with motion.
  */
-export function IndustryItem({ item, isActive, index, setRef }: IndustryItemProps) {
+export const IndustryItem = memo(function IndustryItem({ item, isActive, index, registerRef }: IndustryItemProps) {
   const { id, title, description, cta, glow } = item
 
   // The box of the card. Open: padding and a fill (a white card; in a dark scene a faint see-through one, the glow shows through); closed: nothing.
@@ -82,10 +83,15 @@ export function IndustryItem({ item, isActive, index, setRef }: IndustryItemProp
   )
 
   return (
-    <li ref={setRef} data-el={`industries__item-${id}`} data-active={isActive} className="flex justify-center">
+    <li
+      ref={(element) => registerRef(index, element)}
+      data-el={`industries__item-${id}`}
+      data-active={isActive}
+      className="flex justify-center"
+    >
       <div data-el={`industries__item-${id}-inner`} className={boxClasses}>
         {content}
       </div>
     </li>
   )
-}
+})

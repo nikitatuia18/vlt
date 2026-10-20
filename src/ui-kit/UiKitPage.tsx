@@ -108,6 +108,20 @@ function TextStyleRow({ name }: { name: string }) {
 const preventNavigation = (event: { preventDefault: () => void }) => event.preventDefault()
 
 export default function UiKitPage() {
+  // The UI Kit is an internal page: keep it out of search results (the home page has no such tag).
+  useEffect(() => {
+    const previousTitle = document.title
+    const robots = document.createElement('meta')
+    robots.name = 'robots'
+    robots.content = 'noindex,nofollow'
+    document.head.append(robots)
+    document.title = 'UI Kit — Velant Pay'
+    return () => {
+      robots.remove()
+      document.title = previousTitle
+    }
+  }, [])
+
   return (
     <main className="py-10">
       <Container>
@@ -325,7 +339,7 @@ export default function UiKitPage() {
               <div className="border-b border-border-subtle">
                 <div
                   data-el="ui-kit__corner-dots-demo"
-                  className="relative h-24 shadow-[inset_1px_0_0_var(--color-border-subtle),inset_-1px_0_0_var(--color-border-subtle)]"
+                  className="relative h-24 column-lines"
                 >
                   <CornerDots edge="bottom" block="ui-kit" />
                 </div>
@@ -340,7 +354,7 @@ export default function UiKitPage() {
               <div className="mb-24 border-b border-border-subtle">
                 <div
                   data-el="ui-kit__column-fade-demo"
-                  className="relative h-24 shadow-[inset_1px_0_0_var(--color-border-subtle),inset_-1px_0_0_var(--color-border-subtle)]"
+                  className="relative h-24 column-lines"
                 >
                   <CornerDots edge="bottom" block="ui-kit-fade" />
                   <ColumnFade edge="bottom" block="ui-kit" length={96} />

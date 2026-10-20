@@ -1,5 +1,5 @@
 import { useAnimationFrame, useInView, useMotionValueEvent, useReducedMotion, useScroll } from 'motion/react'
-import { useRef, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { useForcedTheme } from '../../../lib/theme'
 import { RevealLines } from '../../../motion/reveal'
 import { ColumnFade } from '../../ui/ColumnFade'
@@ -42,6 +42,10 @@ export function Industries() {
   const itemRefs = useRef<(HTMLLIElement | null)[]>([])
   const offsetRef = useRef<number | null>(null)
   const [activeIndex, setActiveIndex] = useState(0)
+  // A stable function (not a new one per render), so the items that did not change are not drawn again when the open one changes.
+  const registerItem = useCallback((index: number, element: HTMLLIElement | null) => {
+    itemRefs.current[index] = element
+  }, [])
 
   const { scrollYProgress } = useScroll({ target: tallRef, offset: ['start start', 'end end'] })
   useMotionValueEvent(scrollYProgress, 'change', (progress) => {
@@ -61,13 +65,17 @@ export function Industries() {
   const darkScene = glow && (!reducedMotion || onScreen)
   useForcedTheme(darkScene ? 'dark' : null, { origin: { x: 0.5, y: 0.5 } })
 
+  // Far from the block (a screen above or below, the margin also covers the stage that hangs out below the block) nothing is measured:
+  // reading the layout in every frame of the whole page would cost a forced layout each time.
+  const nearScreen = useInView(tallRef, { margin: '100% 0px 100% 0px' })
+
   // Keep the open item in the middle of the screen: the content slides inside the stage (the stage cuts it at the screen edges).
   useAnimationFrame((_, delta) => {
     const stage = stageRef.current
     const slider = sliderRef.current
     const list = listRef.current
     const item = itemRefs.current[shownIndex]
-    if (reducedMotion || !stage || !slider || !list || !item) return
+    if (reducedMotion || !nearScreen || !stage || !slider || !list || !item) return
     const bounds = stage.getBoundingClientRect()
     if (bounds.bottom < 0 || bounds.top > window.innerHeight) return // not on screen: nothing to do
 
@@ -115,7 +123,7 @@ export function Industries() {
       <Container ref={tallRef} className="relative z-10" style={reducedMotion ? undefined : { height: scrollLength }}>
         <div
           data-el="industries__container"
-          className="relative h-full shadow-[inset_1px_0_0_var(--color-border-subtle),inset_-1px_0_0_var(--color-border-subtle)] transition-shadow duration-500 ease-out"
+          className="relative h-full column-lines transition-shadow duration-500 ease-out"
         >
           <div
             ref={stageRef}
@@ -147,9 +155,7 @@ export function Industries() {
                     item={item}
                     isActive={index === shownIndex}
                     index={index}
-                    setRef={(element) => {
-                      itemRefs.current[index] = element
-                    }}
+                    registerRef={registerItem}
                   />
                 ))}
               </ul>
