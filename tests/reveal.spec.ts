@@ -204,7 +204,7 @@ test.describe('reduced motion', () => {
       expect(await opacityOf(page, `[data-el="${name}"]`), name).toBe(1)
     }
     // The heading is plain: no masks, no moving lines.
-    await expect(page.locator('[data-el="hero__title"] > span > span')).toHaveCount(0)
+    await expect(page.locator('[data-el="hero__title"] .overflow-hidden')).toHaveCount(0)
     await expect(page.locator('[data-el="hero__title"]')).toBeVisible()
   })
 })
@@ -255,3 +255,77 @@ for (const viewport of [
     }
   })
 }
+
+// The text of a panel that opens (an answer, the text of a step, the text of an Industries card) rises word by word every time it opens.
+const wordShifts = (page: Page, selector: string) =>
+  page.locator(selector).evaluate((text) =>
+    [...text.querySelectorAll('.overflow-hidden > span')].map((word) => new DOMMatrix(getComputedStyle(word).transform).m42),
+  )
+
+test('FAQ: an answer unrolls word by word each time its question is opened', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto('/')
+  await page.waitForTimeout(500)
+  await scrollToSection(page, 'faq', 0)
+  await page.waitForTimeout(2500)
+  const heads = page.locator('[data-el^="faq__item-"][data-el$="-head"]')
+  const answer = '[data-el^="faq__item-"][data-el$="-answer"] >> nth=1'
+  await heads.nth(1).click()
+  await page.waitForTimeout(500)
+  // Early in the run: the first words are further along than the last ones.
+  const early = await wordShifts(page, answer)
+  expect(early.length).toBeGreaterThan(6)
+  expect(early[0]).toBeLessThan(early.at(-1)!)
+  await page.waitForTimeout(2800)
+  for (const shift of await wordShifts(page, answer)) expect(shift).toBeCloseTo(0, 1)
+
+  // Close it, wait for the fold to be over, open it again: the words play again.
+  await heads.nth(1).click()
+  await page.waitForTimeout(2200)
+  await heads.nth(1).click()
+  await page.waitForTimeout(600)
+  const again = await wordShifts(page, answer)
+  expect(Math.max(...again)).toBeGreaterThan(3)
+  await page.waitForTimeout(2800)
+  for (const shift of await wordShifts(page, answer)) expect(shift).toBeCloseTo(0, 1)
+  // The lead of an answer has its own (stronger) color, as before.
+  await expect(page.locator('[data-el^="faq__item-"][data-el$="-answer"]').first()).toContainText('We use a custodial solution')
+})
+
+test('Next steps: the description of a card unrolls word by word when the card is opened', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto('/')
+  await page.waitForTimeout(500)
+  await scrollToSection(page, 'next-steps', 0)
+  await page.waitForTimeout(2500)
+  const titles = page.locator('[data-el^="next-steps__card-"][data-el$="-title"]')
+  const desc = '[data-el^="next-steps__card-"][data-el$="-desc"] >> nth=2'
+  await titles.nth(2).click()
+  await page.waitForTimeout(900)
+  const early = await wordShifts(page, desc)
+  expect(early.length).toBeGreaterThan(6)
+  expect(Math.max(...early)).toBeGreaterThan(1) // not all of it is out yet
+  await page.waitForTimeout(2500)
+  for (const shift of await wordShifts(page, desc)) expect(shift).toBeCloseTo(0, 1)
+})
+
+test('Industries: the description of the card unrolls word by word when the card opens', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto('/')
+  await page.waitForTimeout(800)
+  const goTo = (fraction: number) =>
+    page.evaluate((f) => {
+      const el = document.querySelector('[data-el="industries"]') as HTMLElement
+      const top = el.getBoundingClientRect().top + window.scrollY
+      window.scrollTo(0, top + f * (el.getBoundingClientRect().height - window.innerHeight))
+    }, fraction)
+  await goTo(0.5 / 7)
+  await page.waitForTimeout(2500)
+  await goTo(1.5 / 7) // E-commerce opens
+  await page.waitForTimeout(1100)
+  const early = await wordShifts(page, '[data-el="industries__item-ecommerce-desc"]')
+  expect(early.length).toBeGreaterThan(8)
+  expect(Math.max(...early)).toBeGreaterThan(1)
+  await page.waitForTimeout(2800)
+  for (const shift of await wordShifts(page, '[data-el="industries__item-ecommerce-desc"]')) expect(shift).toBeCloseTo(0, 1)
+})

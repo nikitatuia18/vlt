@@ -1,6 +1,6 @@
 import collapseIcon from '../../../assets/faq/icon-collapse-button.svg'
 import expandIcon from '../../../assets/faq/icon-expand-button.svg'
-import { Reveal } from '../../../motion/reveal'
+import { Reveal, RevealLines } from '../../../motion/reveal'
 import { Icon } from '../../ui/Icon'
 import type { FaqItemData } from './items'
 
@@ -86,15 +86,17 @@ export function FaqItem({ item, isOpen, onToggle, isLast, index }: FaqItemProps)
         className={`grid transition-[grid-template-rows] duration-700 ease-out ${isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}
       >
         <div className="min-h-0 overflow-hidden">
-          <p
+          {/* The words rise from their masks each time the question is opened (the lead of the answer is in the stronger color). */}
+          <RevealLines
+            as="p"
+            open={isOpen}
+            delay={0.2}
             data-el={`faq__item-${id}-answer`}
             className={`type-body-md max-w-140 pt-4 text-typography-secondary transition-opacity ease-out tablet:type-body-lead ${
               isOpen ? 'opacity-100 delay-200 duration-500' : 'opacity-0 duration-200'
             }`}
-          >
-            {lead ? <span className="text-typography-primary">{lead} </span> : null}
-            {answer}
-          </p>
+            lines={[lead ? [{ text: lead, className: 'text-typography-primary' }, { text: answer }] : [{ text: answer }]]}
+          />
         </div>
       </div>
     </Reveal>

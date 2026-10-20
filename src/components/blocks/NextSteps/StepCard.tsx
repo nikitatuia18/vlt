@@ -1,5 +1,5 @@
 import { motion, useTransform, type MotionValue } from 'motion/react'
-import { Reveal } from '../../../motion/reveal'
+import { Reveal, RevealLines } from '../../../motion/reveal'
 import { appear } from '../../../motion/tokens'
 import type { StepData } from './steps'
 
@@ -78,12 +78,15 @@ export function StepCard({ step, isActive, progress, staticProgress, onOpen, ind
                 isActive ? 'opacity-100 delay-300 duration-500' : 'opacity-0 duration-200'
               }`}
             >
-              <p
+              {/* The words rise from their masks each time the card opens (while the card is still widening: a little wait). */}
+              <RevealLines
+                as="p"
+                open={isActive}
+                delay={0.3}
                 data-el={`next-steps__card-${id}-desc`}
                 className="type-body-md text-typography-secondary min-[90rem]:type-body-lead"
-              >
-                {description}
-              </p>
+                lines={[description]}
+              />
               <div
                 data-el={`next-steps__card-${id}-progress`}
                 aria-hidden="true"

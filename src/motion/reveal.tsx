@@ -1,5 +1,5 @@
 import { animate, motion, useMotionValue, useTransform, type HTMLMotionProps, type Variants } from 'motion/react'
-import { createElement, useEffect, useRef, useState, type ElementType, type ReactNode, type Ref } from 'react'
+import { createElement, useEffect, useRef, useState, type ElementType, type ReactNode, type Ref, type RefObject } from 'react'
 import { appear, easeOut } from './tokens'
 import { useFontsReady, useRevealOn } from './useReveal'
 
@@ -151,13 +151,24 @@ export function Reveal({ variant = 'up', as = 'div', delay = 0, when, atLoad, at
   )
 }
 
+/** A piece of a line with its own class (for example the first words of an answer in a stronger color). */
+type Segment = { text: string; className?: string }
+type Line = string | readonly Segment[]
+const segmentsOf = (line: Line): readonly Segment[] => (typeof line === 'string' ? [{ text: line }] : line)
+
 type RevealLinesProps = Trigger & {
-  lines: readonly string[]
+  /** The text. Every entry is a block (a forced line break); an entry may be a list of segments when parts need their own class. */
+  lines: readonly Line[]
   as?: 'h1' | 'h2' | 'h3' | 'p'
   /** `word` (default): every word rises from its own mask, one after another (a phrase "unrolls"). `line`: a line rises as a whole. */
   by?: 'line' | 'word'
   /** Seconds between neighbours (lines or words); the default comes from `appear`. */
   step?: number
+  /**
+   * For a text inside a panel that opens and closes (an answer, the text of a card): the words play every time the panel
+   * is open and the text is on the screen, and go back under their masks a moment after it has closed. Instead of the other triggers.
+   */
+  open?: boolean
   className?: string
   id?: string
   delay?: number
@@ -176,15 +187,52 @@ const wordVariants: Variants = {
   shown: (delay: number) => ({ y: '0%', scale: 1, transition: { duration: appear.word.duration, ease: easeOut, delay } }),
 }
 
+/** After a panel has closed (its fold takes 0.7 s) the words go back under their masks, ready to play again. */
+const CLOSE_RESET_MS = 900
+
+/** For `open`: true while the text should be shown (the panel is open and the text is on the screen), with the delayed reset on closing. */
+function useOpenPlay(open: boolean | undefined, holder: RefObject<HTMLElement | null>) {
+  const [visible, setVisible] = useState(false)
+  const [shown, setShown] = useState(false)
+  const enabled = open !== undefined
+
+  // A folded panel is not on the screen, so the observer also tells when the text has really been uncovered.
+  useEffect(() => {
+    const element = holder.current
+    if (!enabled || !element) return
+    const observer = new IntersectionObserver(([entry]) => setVisible(entry.isIntersecting), { threshold: 0.1 })
+    observer.observe(element)
+    return () => observer.disconnect()
+  }, [enabled, holder])
+
+  useEffect(() => {
+    if (!enabled) return
+    if (!open) {
+      // Closed: put the words back under their masks once the fold is over.
+      const timer = setTimeout(() => setShown(false), CLOSE_RESET_MS)
+      return () => clearTimeout(timer)
+    }
+    if (open && visible) {
+      const timer = setTimeout(() => setShown(true), 0)
+      return () => clearTimeout(timer)
+    }
+  }, [enabled, open, visible])
+
+  return shown
+}
+
 /**
  * A heading or a text whose words rise from under their masks, one after another (each word a little smaller under the mask and
  * full size when it is out): the phrase unrolls. The words wrap as the text wraps, so it suits headings and paragraphs alike;
- * the strings of `lines` are separate blocks (forced line breaks). The text reads and copies as one text.
- * With `by="line"` whole lines rise instead, one after another.
+ * the entries of `lines` are separate blocks (forced line breaks). The text reads and copies as one text.
+ * With `by="line"` whole lines rise instead, one after another. With `open` it plays each time a panel opens.
  */
-export function RevealLines({ lines, as = 'h2', by = 'word', step, className, delay = 0, when, atLoad, ...rest }: RevealLinesProps) {
+export function RevealLines({ lines, as = 'h2', by = 'word', step, open, className, delay = 0, when, atLoad, ...rest }: RevealLinesProps) {
   const on = useRevealOn()
-  const trigger = useTriggerProps({ when, atLoad })
+  const holder = useRef<HTMLElement | null>(null)
+  const opened = useOpenPlay(open, holder)
+  const ownTrigger = useTriggerProps({ when, atLoad })
+  const trigger = open === undefined ? ownTrigger : ({ initial: 'hidden', animate: opened ? 'shown' : 'hidden' } as const)
   const Element = motionTags[as] as typeof motion.div
 
   // Headings go a word at a time at 0.07 s, a paragraph (many words) faster, at 0.03 s.
@@ -195,8 +243,13 @@ export function RevealLines({ lines, as = 'h2', by = 'word', step, className, de
       as,
       { className, ...rest },
       lines.map((line, index) => (
-        <span key={line} className="block">
-          {line}
+        <span key={index} className="block">
+          {segmentsOf(line).map((segment, segmentIndex, all) => (
+            <span key={segmentIndex} className={segment.className}>
+              {segment.text}
+              {segmentIndex < all.length - 1 ? ' ' : null}
+            </span>
+          ))}
           {index < lines.length - 1 ? ' ' : null}
         </span>
       )),
@@ -207,20 +260,22 @@ export function RevealLines({ lines, as = 'h2', by = 'word', step, className, de
     // The words are counted over all lines, so the whole phrase runs on in one beat.
     let counted = 0
     return (
-      <Element className={className} {...rest} {...trigger}>
+      <Element ref={holder as Ref<HTMLDivElement>} className={className} {...rest} {...trigger}>
         {lines.map((line, lineIndex) => (
-          <span key={line} className="block">
-            {line.split(' ').map((word, wordIndex) => (
-              <span key={`${word}-${wordIndex}`}>
-                {wordIndex > 0 ? ' ' : null}
-                {/* Every word has its own mask (a little taller below and wider at the sides, so the tails of g, y are not cut). */}
-                <span className="-mx-[0.06em] -mb-[0.16em] inline-block overflow-hidden px-[0.06em] pb-[0.16em] align-top">
-                  <motion.span className="inline-block" style={growFrom} variants={wordVariants} custom={delay + counted++ * gap}>
-                    {word}
-                  </motion.span>
+          <span key={lineIndex} className="block">
+            {segmentsOf(line)
+              .flatMap((segment) => segment.text.split(' ').filter(Boolean).map((word) => ({ word, wordClass: segment.className })))
+              .map(({ word, wordClass }, wordIndex) => (
+                <span key={wordIndex} className={wordClass}>
+                  {wordIndex > 0 ? ' ' : null}
+                  {/* Every word has its own mask (a little taller below and wider at the sides, so the tails of g, y are not cut). */}
+                  <span className="-mx-[0.06em] -mb-[0.16em] inline-block overflow-hidden px-[0.06em] pb-[0.16em] align-top">
+                    <motion.span className="inline-block" style={growFrom} variants={wordVariants} custom={delay + counted++ * gap}>
+                      {word}
+                    </motion.span>
+                  </span>
                 </span>
-              </span>
-            ))}
+              ))}
             {lineIndex < lines.length - 1 ? ' ' : null}
           </span>
         ))}
@@ -229,13 +284,15 @@ export function RevealLines({ lines, as = 'h2', by = 'word', step, className, de
   }
 
   return (
-    <Element className={className} {...rest} {...trigger}>
+    <Element ref={holder as Ref<HTMLDivElement>} className={className} {...rest} {...trigger}>
       {lines.map((line, index) => (
         // The mask: a little taller below and wider at the sides, so that the tails of g, y and the side bearings are not cut;
         // the negative margins give it back, so the layout is the same as without the mask.
-        <span key={line} className="-mx-[0.06em] -mb-[0.16em] block overflow-hidden px-[0.06em] pb-[0.16em]">
+        <span key={index} className="-mx-[0.06em] -mb-[0.16em] block overflow-hidden px-[0.06em] pb-[0.16em]">
           <motion.span className="block" style={growFrom} variants={lineVariants} custom={delay + index * gap}>
-            {line}
+            {segmentsOf(line)
+              .map((segment) => segment.text)
+              .join(' ')}
           </motion.span>
           {index < lines.length - 1 ? ' ' : null}
         </span>

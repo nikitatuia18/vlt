@@ -1,5 +1,5 @@
 import { motion } from 'motion/react'
-import { Reveal } from '../../../motion/reveal'
+import { Reveal, RevealLines } from '../../../motion/reveal'
 import { duration, easeOut } from '../../../motion/tokens'
 import { ButtonLink } from '../../ui/ButtonLink'
 import type { IndustryItemData } from './items'
@@ -54,16 +54,15 @@ export function IndustryItem({ item, isActive, index, setRef }: IndustryItemProp
         className="overflow-hidden"
       >
         <div className="flex flex-col items-center gap-8 pt-4">
-          <p
+          {/* The words rise from their masks each time the card opens. */}
+          <RevealLines
+            as="p"
+            open={isActive}
+            delay={0.25}
             data-el={`industries__item-${id}-desc`}
             className="type-body-md max-w-142.5 text-typography-secondary tablet:type-body-lead"
-          >
-            {description.map((line) => (
-              <span key={line} className="block">
-                {line}
-              </span>
-            ))}
-          </p>
+            lines={description}
+          />
           <ButtonLink
             href={cta.href}
             size="lg"

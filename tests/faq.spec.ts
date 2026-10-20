@@ -51,7 +51,7 @@ test('texts: the title, five questions and their answers (the answers of closed 
   ])
   // The first part of two answers is set in the primary color, the rest in the secondary one, like in the design.
   const colors = await page.locator('[data-el="faq__item-timeline-answer"]').evaluate((el) => ({
-    lead: getComputedStyle(el.querySelector('span')!).color,
+    lead: getComputedStyle(el.querySelector('span.text-typography-primary')!).color,
     rest: getComputedStyle(el).color,
   }))
   expect(colors.lead).toBe('rgb(24, 24, 24)')

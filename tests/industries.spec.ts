@@ -51,13 +51,13 @@ test('texts: the title, the seven items, a description and a "Book a demo" butto
   ])
   for (const entry of industries) {
     await expect(page.locator(`[data-el="industries__item-${entry.id}-title"]`)).toHaveText(entry.title)
-    await expect(page.locator(`[data-el="industries__item-${entry.id}-desc"]`)).toHaveText(entry.description.join(''))
+    await expect(page.locator(`[data-el="industries__item-${entry.id}-desc"]`)).toHaveText(entry.description.join(' '))
     await expect(page.locator(`[data-el="industries__item-${entry.id}-cta"]`)).toHaveText('Book a demo')
     await expect(page.locator(`[data-el="industries__item-${entry.id}-cta"]`)).toHaveAttribute('href', '#book-a-demo')
   }
   // The text of the design is kept as it is.
   await expect(page.locator('[data-el="industries__item-startups-desc"]')).toHaveText(
-    'Let your clients pay in crypto, and receive fiat.Forget about chargebacks',
+    'Let your clients pay in crypto, and receive fiat. Forget about chargebacks',
   )
 })
 
