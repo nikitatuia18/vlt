@@ -83,7 +83,7 @@ test('scene: big globe without text, then it flies to its place, then text and c
   }
   expect(radii[1]).toBeLessThan(radii[0] - 20)
   expect(radii[2]).toBeLessThan(radii[1] - 20)
-  expect(Number(await page.locator('[data-el="global__text-wrap"]').evaluate((el) => getComputedStyle(el).opacity))).toBe(0)
+  expect(Number(await page.locator('[data-el="global__message"]').evaluate((el) => getComputedStyle(el).opacity))).toBe(0)
 
   await scrollTo(page, 0.97)
   const final = await globe(page)
@@ -91,7 +91,7 @@ test('scene: big globe without text, then it flies to its place, then text and c
   expect(final.radius).toBeLessThan(big.radius / 1.5)
   expect(Math.abs(final.radius - Math.min(slot.width, slot.height) / 2)).toBeLessThan(2)
   expect(final.cards).toBe('on')
-  expect(Number(await page.locator('[data-el="global__text-wrap"]').evaluate((el) => getComputedStyle(el).opacity))).toBe(1)
+  expect(Number(await page.locator('[data-el="global__message"]').evaluate((el) => getComputedStyle(el).opacity))).toBe(1)
 })
 
 test('global in wide layout: globe on the left, metrics under it, message on the right', async ({ page }) => {
@@ -101,6 +101,8 @@ test('global in wide layout: globe on the left, metrics under it, message on the
   const message = (await page.locator('[data-el="global__message"]').boundingBox())!
   expect(slot.x + slot.width).toBeLessThanOrEqual(message.x + 1)
   expect(metrics.y).toBeGreaterThanOrEqual(slot.y + slot.height - 1)
+  // The globe stands right above the numbers (a few px apart), not hanging at the top of the screen.
+  expect(metrics.y - (slot.y + slot.height)).toBeLessThan(24)
   expect(metrics.x + metrics.width).toBeLessThanOrEqual(message.x + 1)
   expect(Math.abs(metrics.y + metrics.height - (message.y + message.height))).toBeLessThan(2)
 })

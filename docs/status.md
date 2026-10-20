@@ -1,12 +1,12 @@
 # Статус проекта (начни с этого файла)
 
 Обновляется после каждого блока одной строкой. Подробности по блокам — в [blocks/](blocks/); правила — в [../CLAUDE.md](../CLAUDE.md); ловушки — в [lessons.md](lessons.md).
-Обновлено: 2026-10-20. В `main` — всё, кроме глобуса (он в ветке `feature/global-globe`), `npx playwright test` — 224 теста, `npm run build` и `npm run lint` чистые.
+Обновлено: 2026-10-20. `npx playwright test` — 224 теста, `npm run build` и `npm run lint` чистые.
 
 ## Сделано
 - **Окружение и нейминг:** React + Vite + TS, Tailwind v4, motion, Playwright; имена слоёв Figma = `data-el` ([naming-spec.md](naming-spec.md)); десктопный кадр переименован.
 - **Токены** Light/Dark ([tokens-map.md](tokens-map.md)) и **UI Kit** (`/ui-kit`, [ui-kit.md](ui-kit.md)): кнопки, иконки, бейдж, `Container`, `InteractiveDots`, `CornerDots`, `ColumnFade`, **`Header`** и **`Footer`** (переиспользуемые, настраиваются пропсами).
-- **Глобус в global (2026-10-20, ветка `feature/global-globe`):** 3D из точек, мышь, драг, закреплённая сцена — [global.md](blocks/global.md).
+- **Глобус в global (2026-10-20, принят дизайнером):** 3D из точек, мышь, драг, закреплённая сцена — [global.md](blocks/global.md).
 - **Блоки десктопного кадра (все):** [header](blocks/header.md) · [hero](blocks/hero.md) · [logos](blocks/logos.md) · [features](blocks/features.md) · [industries](blocks/industries.md) · [global](blocks/global.md) · [next-steps](blocks/next-steps.md) · [faq](blocks/faq.md) · [cta](blocks/cta.md) · [footer + footer-bottom](blocks/footer.md).
 - **Сквозное:** плавная прокрутка Lenis ([smooth-scroll.md](smooth-scroll.md)); хедер закреплён и прячется при прокрутке вниз; колонка с линиями, точками и затуханием у блоков; агент `copywriter` + навык `project-copywriting`.
 - Планшет и мобильный размеры **выведены** по [responsive.md](responsive.md) (мобильный кадр не разбирали).
@@ -19,7 +19,7 @@
 5. **Шрифт Urbanist** (бейджи cta, коды валют на карточках global, заголовки колонок футера) не подключён: заменён ближайшими стилями.
 6. **Токены:** радиус 60 — исключение (завести переменную в Figma); `theme/surface/dots` создана нами в Figma.
 7. **Навигация:** подключить пункты меню хедера к блокам и страницам, выбранный пункт по скроллу (`currentId` у `Header` уже есть).
-8. **Глобус (global):** собран в ветке `feature/global-globe` (откат — тег `before-globe`); ждёт просмотра дизайнером и слияния в `main`; числа сцены — константы в `globe/Globe.tsx`.
+8. **Промежуток после Industries:** последняя карточка по задумке стоит в центре экрана, ниже неё до конца блока ≈ 300 px (на 900 px высоты); решается с дизайнером (см. industries.md).
 9. **Полировка и выпуск:** вес картинок и шрифтов, доступность, `<title>`/meta/favicon/SEO, сверка с Figma (`visual-qa`), сборка и хостинг.
 
 ## Как продолжать в новом чате

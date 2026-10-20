@@ -52,54 +52,65 @@ export function Global() {
 
         {/* Above the canvas but transparent to the pointer: the globe is turned and pushes dots through it. */}
         <Container className="pointer-events-none relative z-10 h-full">
-          <div ref={frameRef} data-el="global__content" className="relative flex h-full flex-col justify-between gap-8 py-8 tablet:py-12 min-[64rem]:block min-[64rem]:py-0">
+          {/*
+            Narrow: a column (globe, message, metrics). From 1024 px a grid: on the left the globe with the metrics right under it,
+            on the right the message; both columns stand on the bottom line. The globe slot is a row of its own, so the globe always
+            sits right above the metrics, whatever the height of the screen is.
+          */}
+          <div
+            ref={frameRef}
+            data-el="global__content"
+            className="relative flex h-full flex-col justify-between gap-8 py-8 tablet:py-12 min-[64rem]:grid min-[64rem]:grid-cols-[minmax(0,1fr)_auto] min-[64rem]:grid-rows-[1fr_auto] min-[64rem]:gap-x-0 min-[64rem]:gap-y-1 min-[64rem]:pt-0 min-[64rem]:pr-0 min-[64rem]:pb-12 min-[64rem]:pl-[8%]"
+          >
             <div
               ref={slotRef}
               data-el="global__globe-slot"
-              className="min-h-0 w-full flex-1 min-[64rem]:absolute min-[64rem]:top-[6%] min-[64rem]:left-[8%] min-[64rem]:aspect-square min-[64rem]:w-[min(48%,calc(100svh-17rem))] min-[64rem]:flex-none"
+              className="min-h-0 w-full flex-1 min-[64rem]:aspect-square min-[64rem]:w-[min(100%,calc(100svh-17rem))] min-[64rem]:flex-none min-[64rem]:self-end"
             />
 
-            <motion.div
-              data-el="global__text-wrap"
+            <motion.ul
+              data-el="global__metrics"
               style={reduced ? undefined : { opacity: textOpacity, y: textShift }}
-              className="relative flex flex-col-reverse gap-8 min-[64rem]:absolute min-[64rem]:inset-x-0 min-[64rem]:bottom-12 min-[64rem]:flex-row min-[64rem]:items-end min-[64rem]:justify-between min-[64rem]:gap-0"
+              className="order-3 flex flex-wrap gap-x-8 gap-y-6 whitespace-nowrap min-[64rem]:order-none min-[64rem]:col-start-1 min-[64rem]:row-start-2"
             >
-              <ul data-el="global__metrics" className="flex flex-wrap gap-x-10 gap-y-6 whitespace-nowrap min-[64rem]:ml-[8%]">
-                {metrics.map((metric) => (
-                  <li key={metric.id} data-el={`global__metric-${metric.id}`} className="flex flex-col gap-2">
-                    <p
-                      data-el={`global__metric-${metric.id}-value`}
-                      className="type-heading-lg text-typography-primary tablet:type-heading-xl min-[64rem]:type-display-sm"
-                    >
-                      {metric.value}
-                    </p>
-                    <p
-                      data-el={`global__metric-${metric.id}-label`}
-                      className="type-body-md text-typography-secondary tablet:type-body-lead"
-                    >
-                      {metric.label}
-                    </p>
-                  </li>
-                ))}
-              </ul>
+              {metrics.map((metric) => (
+                <li key={metric.id} data-el={`global__metric-${metric.id}`} className="flex flex-col gap-2">
+                  <p
+                    data-el={`global__metric-${metric.id}-value`}
+                    className="type-heading-lg text-typography-primary tablet:type-heading-xl min-[90rem]:type-display-sm"
+                  >
+                    {metric.value}
+                  </p>
+                  <p
+                    data-el={`global__metric-${metric.id}-label`}
+                    className="type-body-md text-typography-secondary tablet:type-body-lead"
+                  >
+                    {metric.label}
+                  </p>
+                </li>
+              ))}
+            </motion.ul>
 
-              <div data-el="global__message" className="flex w-fit max-w-full flex-col gap-8">
-                <h2
-                  id="global-title"
-                  data-el="global__title"
-                  className="type-heading-lg text-typography-primary tablet:type-heading-xl min-[64rem]:type-display-sm min-[100rem]:type-display-xl"
-                >
-                  Go global without
-                  <br />
-                  rebuilding your
-                  <br />
-                  payments stack.
-                </h2>
-                {/* As wide as the title above it, not wider (w-0 + min-w-full). */}
-                <p data-el="global__desc" className="type-body-md w-0 min-w-full text-typography-secondary tablet:type-body-lead">
-                  Connect local payment methods, international rails and crypto through one integration.
-                </p>
-              </div>
+            <motion.div
+              data-el="global__message"
+              style={reduced ? undefined : { opacity: textOpacity, y: textShift }}
+              className="order-2 flex w-fit max-w-full flex-col gap-8 min-[64rem]:order-none min-[64rem]:col-start-2 min-[64rem]:row-span-2 min-[64rem]:row-start-1 min-[64rem]:self-end"
+            >
+              <h2
+                id="global-title"
+                data-el="global__title"
+                className="type-heading-lg text-typography-primary tablet:type-heading-xl desktop:type-display-sm min-[100rem]:type-display-xl"
+              >
+                Go global without
+                <br />
+                rebuilding your
+                <br />
+                payments stack.
+              </h2>
+              {/* As wide as the title above it, not wider (w-0 + min-w-full). */}
+              <p data-el="global__desc" className="type-body-md w-0 min-w-full text-typography-secondary tablet:type-body-lead">
+                Connect local payment methods, international rails and crypto through one integration.
+              </p>
             </motion.div>
           </div>
         </Container>
