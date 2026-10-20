@@ -70,6 +70,8 @@ type GlobeProps = {
   frameRef: RefObject<HTMLElement | null>
   /** `prefers-reduced-motion`: one still picture in the final state. */
   reduced: boolean
+  /** The big scene has played: the globe stands in its place at once (cards, turn and pointer keep working). */
+  settled?: boolean
 }
 
 const lerp = (from: number, to: number, t: number) => from + (to - from) * t
@@ -117,11 +119,16 @@ function PinCard({ pin, outerRef }: { pin: Pin; outerRef: (element: HTMLDivEleme
  * One animation loop draws the dots and the arcs on a canvas and moves the cards (plain DOM) by `transform`, without React renders.
  * The loop runs only while the globe is on screen. With `prefers-reduced-motion` one still picture is drawn and nothing moves.
  */
-export function Globe({ progress, appear, slotRef, frameRef, reduced }: GlobeProps) {
+export function Globe({ progress, appear, slotRef, frameRef, reduced, settled = false }: GlobeProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const dotProbeRef = useRef<HTMLSpanElement>(null)
   const lineProbeRef = useRef<HTMLSpanElement>(null)
   const pinElements = useRef<(HTMLDivElement | null)[]>([])
+  // Read in every frame (not an effect dependency, so that settling does not rebuild the globe).
+  const settledRef = useRef(settled)
+  useEffect(() => {
+    settledRef.current = settled
+  }, [settled])
   // Survives a theme change: the globe must not jump back to its start angle.
   const motionState = useRef({ spinAngle: 0, dragLongitude: 0, dragLatitude: 0, longitudeSpeed: 0, latitudeSpeed: 0, cardsOn: 0, cardsClock: 0 })
   // A theme change only refreshes the two colors; it must not rebuild the globe (60 thousand lattice points) and its listeners.
@@ -221,8 +228,9 @@ export function Globe({ progress, appear, slotRef, frameRef, reduced }: GlobePro
         readColors()
         colorsStale.current = false
       }
-      const scroll = reduced ? 1 : progress.get()
-      const appearance = reduced ? 1 : smoothstep(0, 1, appear.get())
+      const sceneDone = reduced || settledRef.current
+      const scroll = sceneDone ? 1 : progress.get()
+      const appearance = sceneDone ? 1 : smoothstep(0, 1, appear.get())
 
       // Where the globe stands: from big in the middle of the screen to its place in the layout.
       const move = smoothstep(MOVE_FROM, MOVE_TO, scroll)

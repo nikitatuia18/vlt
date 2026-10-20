@@ -1,5 +1,6 @@
 import { useMotionValueEvent, useReducedMotion, useScroll } from 'motion/react'
-import { useRef, useState } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
+import { shiftScroll } from '../../../lib/smoothScroll'
 import { CountUp, Reveal, RevealLines } from '../../../motion/reveal'
 import { Container } from '../../ui/Container'
 import { Globe } from './globe/Globe'
@@ -36,6 +37,33 @@ export function Global() {
   // Two phases of one scroll: the section comes into view (the globe appears), then it stays pinned (the globe flies to its place).
   const { scrollYProgress: appear } = useScroll({ target: sectionRef, offset: ['start end', 'start start'] })
   const { scrollYProgress: progress } = useScroll({ target: sectionRef, offset: ['start start', 'end end'] })
+  // The big scene plays once (docs/blocks/global.md): when the block has gone up out of the screen, it becomes a plain block with the
+  // globe in its place, so scrolling back up shows the finished state, not the big globe again. Reload plays it again.
+  const [settled, setSettled] = useState(false)
+  const heightBefore = useRef(0)
+  const { scrollYProgress: leaving } = useScroll({ target: sectionRef, offset: ['end end', 'end start'] })
+  const settle = () => {
+    if (settled || !sectionRef.current) return
+    heightBefore.current = sectionRef.current.offsetHeight
+    setSettled(true)
+  }
+  useMotionValueEvent(leaving, 'change', (value) => {
+    if (value >= 1) settle()
+  })
+  useLayoutEffect(() => {
+    // The page may be opened already below the block (a restored scroll position or a link).
+    if (sectionRef.current && sectionRef.current.getBoundingClientRect().bottom < 0) settle()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+  // The block got shorter while it was above the screen: keep the visitor where they were (before the next frame is drawn).
+  useLayoutEffect(() => {
+    if (!settled || !sectionRef.current) return
+    const delta = heightBefore.current - sectionRef.current.offsetHeight
+    if (delta > 0) shiftScroll(-delta)
+  }, [settled])
+  // A plain block (reduced motion, or the scene has played): no pinning, no extra scroll length.
+  const plain = reduced || settled
+
   // The heading rises line by line, the text comes up, the figures count (docs/reveal.motion.md); it plays once.
   const [textOn, setTextOn] = useState(false)
   useMotionValueEvent(progress, 'change', (value) => {
@@ -47,10 +75,10 @@ export function Global() {
       ref={sectionRef}
       data-el="global"
       aria-labelledby="global-title"
-      style={reduced ? undefined : { height: `calc(100svh + ${PINNED_SCROLL})` }}
+      style={plain ? undefined : { height: `calc(100svh + ${PINNED_SCROLL})` }}
     >
-      <div data-el="global__stage" className={`${reduced ? 'relative' : 'sticky top-0'} h-svh min-h-160 overflow-hidden`}>
-        <Globe progress={progress} appear={appear} slotRef={slotRef} frameRef={frameRef} reduced={reduced} />
+      <div data-el="global__stage" className={`${plain ? 'relative' : 'sticky top-0'} h-svh min-h-160 overflow-hidden`}>
+        <Globe progress={progress} appear={appear} slotRef={slotRef} frameRef={frameRef} reduced={reduced} settled={settled} />
 
         {/* Above the canvas but transparent to the pointer: the globe is turned and pushes dots through it. */}
         <Container className="pointer-events-none relative z-10 h-full">
@@ -62,12 +90,12 @@ export function Global() {
           <div
             ref={frameRef}
             data-el="global__content"
-            className="relative flex h-full flex-col justify-between gap-8 py-8 tablet:py-12 min-[64rem]:grid min-[64rem]:grid-cols-[minmax(0,1fr)_auto] min-[64rem]:grid-rows-[1fr_auto] min-[64rem]:gap-x-0 min-[64rem]:gap-y-1 min-[64rem]:pt-0 min-[64rem]:pr-0 min-[64rem]:pb-12 min-[64rem]:pl-[8%]"
+            className="relative flex h-full flex-col justify-between gap-8 pt-8 pb-12 tablet:pt-12 tablet:pb-20 min-[64rem]:grid min-[64rem]:grid-cols-[minmax(0,1fr)_auto] min-[64rem]:grid-rows-[1fr_auto] min-[64rem]:gap-x-0 min-[64rem]:gap-y-1 min-[64rem]:pt-[clamp(4rem,12svh,8.75rem)] min-[64rem]:pr-0 min-[64rem]:pb-[clamp(4rem,12svh,8.75rem)] min-[64rem]:pl-[8%]"
           >
             <div
               ref={slotRef}
               data-el="global__globe-slot"
-              className="min-h-0 w-full flex-1 min-[64rem]:aspect-square min-[64rem]:w-[min(100%,calc(100svh-17rem))] min-[64rem]:flex-none min-[64rem]:self-end"
+              className="min-h-0 w-full flex-1 min-[64rem]:aspect-square min-[64rem]:h-full min-[64rem]:w-auto min-[64rem]:max-w-full min-[64rem]:flex-none min-[64rem]:self-end"
             />
 
             <ul

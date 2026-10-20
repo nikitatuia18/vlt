@@ -24,6 +24,14 @@
 }
 
 @layer base {
+  /*
+   * No automatic scroll anchoring: a block that gets shorter above the viewer (the Global block after its scene) is compensated in code
+   * (shiftScroll in smoothScroll.ts), the same way in every browser. With the browser's anchoring too, the page would shift twice.
+   */
+  html {
+    overflow-anchor: none;
+  }
+
   body {
     background-color: var(--color-surface-page);
     color: var(--color-typography-primary);

@@ -205,3 +205,114 @@ test.describe('reduced motion', () => {
     await page.locator('[data-el="global__stage"]').screenshot({ path: 'tests/artifacts/global-reduced-1440.png' })
   })
 })
+
+// Spacing: the text stands as far from the lower edge of the block as the globe from the upper one (the rhythm of the other blocks),
+// not 48 px from the edge of the screen.
+test('global spacing: room under the text, the same room above the globe', async ({ page }) => {
+  await open(page, 1440, 900)
+  const stage = (await page.locator('[data-el="global__stage"]').boundingBox())!
+  const slot = (await page.locator('[data-el="global__globe-slot"]').boundingBox())!
+  const metrics = (await page.locator('[data-el="global__metrics"]').boundingBox())!
+  const message = (await page.locator('[data-el="global__message"]').boundingBox())!
+  const below = stage.y + stage.height - Math.max(metrics.y + metrics.height, message.y + message.height)
+  const above = slot.y - stage.y
+  expect(below).toBeGreaterThanOrEqual(100)
+  expect(Math.abs(below - above)).toBeLessThan(3)
+  // The globe is still big enough to be the hero of the block.
+  expect(slot.width).toBeGreaterThan(480)
+})
+
+test('global spacing on a tall screen reaches the 140 px of the other blocks', async ({ page }) => {
+  await open(page, 1920, 1200)
+  const stage = (await page.locator('[data-el="global__stage"]').boundingBox())!
+  const message = (await page.locator('[data-el="global__message"]').boundingBox())!
+  expect(stage.y + stage.height - (message.y + message.height)).toBeGreaterThanOrEqual(139)
+})
+
+// The big scene plays once: after the block has gone up out of the screen it is a plain block with the globe in its place.
+const sectionRect = (page: Page) =>
+  page.locator('[data-el="global"]').evaluate((el) => {
+    const rect = el.getBoundingClientRect()
+    return { top: rect.top + window.scrollY, height: rect.height }
+  })
+
+test('the big globe plays once: scrolling back up shows the finished block, and the page does not jump while it settles', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto('/')
+  await page.evaluate(() => document.fonts.ready)
+
+  // Through the scene, to the very end of the pinned scroll.
+  const tall = await sectionRect(page)
+  await page.evaluate((y) => window.scrollTo(0, y), tall.top + tall.height - 900 - 10)
+  await page.waitForTimeout(1200)
+  await expect(page.locator('[data-el="global__stage"]')).toHaveCSS('position', 'sticky')
+  const before = await globe(page)
+  expect(before.cards).toBe('on')
+
+  // A marker below the block: where it stands on the screen while the block is still on the screen, and after it has settled.
+  const markerTop = () => page.locator('[data-el="next-steps"]').evaluate((el) => el.getBoundingClientRect().top)
+  const markerBefore = await markerTop()
+  const step = 1200 // leaves the block behind (it is 900 + 150vh tall; the end is 10 px below the screen bottom)
+  await page.evaluate((delta) => window.scrollBy(0, delta), step)
+  await page.waitForTimeout(1200)
+  await expect(page.locator('[data-el="global__stage"]')).toHaveCSS('position', 'relative')
+  // The marker moved up by exactly the scroll we made: the collapse of the block did not shift the page.
+  expect(Math.abs(markerBefore - step - (await markerTop()))).toBeLessThan(3)
+
+  // Back up into the block: no big globe, no pinning; the globe stands in its place, the text is there, the block is one screen tall.
+  const plain = await sectionRect(page)
+  expect(plain.height).toBeLessThan(900 * 1.1)
+  await page.evaluate((y) => window.scrollTo(0, y), plain.top)
+  await page.waitForTimeout(1200)
+  const slot = (await page.locator('[data-el="global__globe-slot"]').boundingBox())!
+  const settled = await globe(page)
+  expect(Math.abs(settled.radius - Math.min(slot.width, slot.height) / 2)).toBeLessThan(2)
+  expect(settled.cards).toBe('on')
+  await expect(page.locator('[data-el="global__title"]')).toBeVisible()
+  // Scrolled a bit more up: still the same finished globe (nothing flies in).
+  await page.evaluate((y) => window.scrollTo(0, y), Math.max(0, plain.top - 300))
+  await page.waitForTimeout(800)
+  expect(Math.abs((await globe(page)).radius - settled.radius)).toBeLessThan(2)
+})
+
+test('after a reload the big globe plays again', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto('/')
+  await page.evaluate(() => document.fonts.ready)
+  const tall = await sectionRect(page)
+  await page.evaluate((y) => window.scrollTo(0, y), tall.top + tall.height + 200)
+  await page.waitForTimeout(1000)
+  await page.reload()
+  await page.evaluate(() => document.fonts.ready)
+  await scrollTo(page, 0.05)
+  expect((await globe(page)).radius).toBeGreaterThan(550)
+})
+
+test('a hard wheel flick through the end of the block does not make the page jump (the smooth scroll is kept in step)', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto('/')
+  await page.evaluate(() => document.fonts.ready)
+  const tall = await sectionRect(page)
+  await page.evaluate((y) => window.scrollTo(0, y), tall.top + tall.height - 900 - 900)
+  await page.waitForTimeout(1500)
+  await page.evaluate(() => {
+    const w = window as unknown as { __tops: number[] }
+    w.__tops = []
+    const marker = document.querySelector('[data-el="next-steps"]') as HTMLElement
+    const tick = () => {
+      w.__tops.push(marker.getBoundingClientRect().top)
+      requestAnimationFrame(tick)
+    }
+    requestAnimationFrame(tick)
+  })
+  await page.mouse.move(700, 450)
+  await page.mouse.wheel(0, 2400)
+  await page.waitForTimeout(2500)
+  const jumps = await page.evaluate(() => {
+    const tops = (window as unknown as { __tops: number[] }).__tops
+    return tops.slice(1).map((top, index) => Math.abs(top - tops[index]))
+  })
+  expect(Math.max(...jumps)).toBeLessThan(700)
+  // The block settled meanwhile (the flick took it up out of the screen).
+  await expect(page.locator('[data-el="global__stage"]')).toHaveCSS('position', 'relative')
+})
