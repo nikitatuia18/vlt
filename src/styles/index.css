@@ -8,7 +8,7 @@
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 /*
- * While the theme is being put on the page (under the curtain of the theme change, src/lib/theme.ts) no transition may start:
+ * While the theme is being put on the page (under the ripple of the theme change, src/lib/theme.ts) no transition may start:
  * the colors that some blocks fade by themselves would play on top of the change.
  */
 html.theme-flip,

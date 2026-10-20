@@ -18,16 +18,16 @@ export const duration = {
  */
 export const REVEAL_ENABLED = true
 
-/** The change of the theme (src/lib/themeCurtain.ts): the curtain covers the screen, the theme changes under it, the curtain goes on down. */
+/** The change of the theme (src/lib/themeRipple.ts): a circle spreads from a point and covers the screen, the theme changes under it, a hole opens from the same point. */
 export const themeSwitch = {
-  /** Seconds the curtain needs to cover the screen, and to open it again. */
-  cover: 0.45,
-  reveal: 0.5,
-  easeCover: 'cubic-bezier(0.7, 0, 0.3, 1)',
-  easeReveal: 'cubic-bezier(0.5, 0, 0.2, 1)',
-  /** Height of the soft edges of the curtain, px (at most a third of the screen). */
-  edge: 240,
-  /** Frames to wait after the change, so that the page has recalculated its styles before the curtain opens. */
+  /** Seconds the circle needs to cover the screen, and the hole to open it again. */
+  cover: 0.55,
+  reveal: 0.6,
+  easeCover: 'cubic-bezier(0.55, 0, 0.25, 1)',
+  easeReveal: 'cubic-bezier(0.4, 0, 0.2, 1)',
+  /** Width of the glowing soft edge of the wave, px. */
+  glow: 160,
+  /** Frames to wait after the change, so that the page has recalculated its styles before the hole opens. */
   settleFrames: 2,
 } as const
 

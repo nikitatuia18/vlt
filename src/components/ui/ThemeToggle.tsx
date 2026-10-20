@@ -20,7 +20,11 @@ export function ThemeToggle(props: Omit<ComponentProps<'button'>, 'children' | '
       disabled={locked}
       aria-disabled={locked}
       className={`${props.className ?? ''} disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-surface-subtle`}
-      onClick={() => setTheme(isDark ? 'light' : 'dark')}
+      // The ripple of the change spreads from this button.
+      onClick={(event) => {
+        const box = event.currentTarget.getBoundingClientRect()
+        setTheme(isDark ? 'light' : 'dark', { x: box.left + box.width / 2, y: box.top + box.height / 2 })
+      }}
     >
       {/* Both icons live in a 24 px slot; the moon glyph is 20.9 x 21.5 px in the design. */}
       <span className="grid size-6 place-items-center">
