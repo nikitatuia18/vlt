@@ -96,6 +96,7 @@ export function Footer({ columns = footerColumns, legalLinks = siteLegalLinks, y
         <Container>
           <Reveal
             variant="fade"
+            atPageEnd
             data-el="footer-bottom__container"
             className={`flex flex-col gap-2 px-4 py-4 tablet:px-8 min-[90rem]:flex-row min-[90rem]:items-start min-[90rem]:justify-between min-[90rem]:px-10 ${columnLines}`}
           >

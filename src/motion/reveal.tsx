@@ -54,11 +54,11 @@ const variants: Record<Variant, Variants> = {
     }),
   },
   // A glass badge jumps out with a small overshoot.
+  // (No opacity: a glass badge with a blurred backdrop inside a half-transparent box blinks when the box becomes solid.)
   spring: {
-    hidden: { opacity: 0, scale: 0.6 },
+    hidden: { scale: 0 },
     shown: (delay: number) => ({
-      opacity: 1,
-      scale: [0.6, 1.06, 1],
+      scale: [0, 1.06, 1],
       transition: { duration: appear.spring.duration, ease: easeOut, delay, times: [0, 0.65, 1] },
     }),
   },
@@ -83,15 +83,17 @@ const variants: Record<Variant, Variants> = {
 }
 
 const viewport = { once: true, amount: 0.2, margin: '0px 0px -8% 0px' } as const
+/** For things at the very end of the page (the lower bar of the footer): the page cannot be scrolled further, so no margin. */
+const viewportAtPageEnd = { once: true, amount: 0.2, margin: '0px' } as const
 
 /** What plays the appearance: `when` (a flag set by the block), `atLoad` (once the fonts are ready), or, by default, coming into view. */
-type Trigger = { when?: boolean; atLoad?: boolean }
+type Trigger = { when?: boolean; atLoad?: boolean; /** The element is at the very end of the page: it must appear even though it cannot come above the bottom margin. */ atPageEnd?: boolean }
 
-function useTriggerProps({ when, atLoad }: Trigger) {
+function useTriggerProps({ when, atLoad, atPageEnd }: Trigger) {
   const fonts = useFontsReady()
   if (when !== undefined) return { initial: 'hidden', animate: when ? 'shown' : 'hidden' } as const
   if (atLoad) return { initial: 'hidden', animate: fonts ? 'shown' : 'hidden' } as const
-  return { initial: 'hidden', whileInView: 'shown', viewport } as const
+  return { initial: 'hidden', whileInView: 'shown', viewport: atPageEnd ? viewportAtPageEnd : viewport } as const
 }
 
 type Tag = 'div' | 'p' | 'span' | 'ul' | 'ol' | 'li' | 'article' | 'h1' | 'h2' | 'h3' | 'a'
@@ -122,9 +124,9 @@ type RevealProps = Trigger &
   }
 
 /** One element that appears. `className`, `style`, `data-el` and the rest go to the element itself (it is `as`, a div by default). */
-export function Reveal({ variant = 'up', as = 'div', delay = 0, when, atLoad, children, ref, ...rest }: RevealProps) {
+export function Reveal({ variant = 'up', as = 'div', delay = 0, when, atLoad, atPageEnd, children, ref, ...rest }: RevealProps) {
   const on = useRevealOn()
-  const trigger = useTriggerProps({ when, atLoad })
+  const trigger = useTriggerProps({ when, atLoad, atPageEnd })
 
   if (!on) {
     const Plain = as as ElementType
@@ -255,9 +257,10 @@ export function CountUp({ value, className, delay = 0, when, atLoad, ...rest }: 
     )
   }
 
+  // The figure is hidden until it starts (it must not stand there as "0" before the count begins), then it comes up and counts.
   // The invisible copy keeps the width of the final text, so that the neighbours do not shift while the figure grows.
   return (
-    <p className={className} {...rest}>
+    <Reveal as="p" when={go} delay={delay} className={className} {...rest}>
       <span ref={holder} className="relative inline-block">
         <span className="sr-only">{value}</span>
         <span aria-hidden="true" className="invisible">
@@ -267,6 +270,6 @@ export function CountUp({ value, className, delay = 0, when, atLoad, ...rest }: 
           {text}
         </motion.span>
       </span>
-    </p>
+    </Reveal>
   )
 }

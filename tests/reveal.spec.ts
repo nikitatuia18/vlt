@@ -78,6 +78,10 @@ test('global: the text waits for the globe, then the figures count up', async ({
   await page.waitForTimeout(1500)
   expect(await lineShift(page, 'global__title')).toBeGreaterThan(10)
   expect(await opacityOf(page, '[data-el="global__desc"]')).toBe(0)
+  // The figures are not there before their turn (they must not stand as zeros).
+  for (const metric of ['uptime', 'rails', 'latency']) {
+    expect(await opacityOf(page, `[data-el="global__metric-${metric}-value"]`), metric).toBe(0)
+  }
 
   await scrollToSection(page, 'global', 0.7)
   await page.waitForTimeout(3500)
@@ -89,6 +93,16 @@ test('global: the text waits for the globe, then the figures count up', async ({
   await expect(counted('latency')).toHaveText('<1 sec')
   // The figure keeps its place (the invisible copy has the final width).
   expect((await page.locator('[data-el="global__metric-uptime-value"]').boundingBox())!.width).toBeGreaterThan(100)
+})
+
+test('footer: the lower bar at the very end of the page appears too (and its links can be used)', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto('/')
+  await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight))
+  await page.waitForTimeout(2500)
+  expect(await opacityOf(page, '[data-el="footer-bottom__container"]')).toBe(1)
+  await expect(page.locator('[data-el^="footer-bottom__link-"]').first()).toBeVisible()
+  expect(await opacityOf(page, '[data-el="footer-bottom__copyright"]')).toBe(1)
 })
 
 test('cta: the banner opens, the person rises, the badges jump out and the end state is clean', async ({ page }) => {
