@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { RevealLines } from '../../../motion/reveal'
 import { Container } from '../../ui/Container'
 import { CornerDots } from '../../ui/CornerDots'
 import { FaqItem } from './FaqItem'
@@ -26,14 +27,13 @@ export function Faq() {
           // px: the text must not touch the column lines (unlike the cards of other blocks, whose borders stand on the lines).
           className="relative flex flex-col gap-8 px-4 py-12 shadow-[inset_1px_0_0_var(--color-border-subtle),inset_-1px_0_0_var(--color-border-subtle)] tablet:gap-10 tablet:px-8 tablet:py-20 desktop:flex-row desktop:items-center desktop:gap-12 desktop:px-10 desktop:py-35"
         >
-          <h2
+          <RevealLines
             id="faq-title"
             data-el="faq__title"
             // 64 px type needs about 330 px for "questions?"; between 1280 and 1599 px the title column is narrower, so one step smaller there.
             className="type-heading-lg text-typography-primary tablet:type-heading-xl min-[64rem]:type-display-sm desktop:type-heading-xl desktop:min-w-72.5 desktop:flex-1 desktop:px-px min-[100rem]:type-display-sm"
-          >
-            Still have questions?
-          </h2>
+            lines={['Still have questions?']}
+          />
 
           <ul data-el="faq__list" className="w-full desktop:w-226.5 desktop:min-w-175 desktop:shrink">
             {faqItems.map((item, index) => (
@@ -42,6 +42,7 @@ export function Faq() {
                 item={item}
                 isOpen={item.id === openId}
                 isLast={index === faqItems.length - 1}
+                index={index}
                 onToggle={() => setOpenId((current) => (current === item.id ? null : item.id))}
               />
             ))}

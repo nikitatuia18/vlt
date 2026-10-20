@@ -1,4 +1,6 @@
 import { motion, useTransform, type MotionValue } from 'motion/react'
+import { Reveal } from '../../../motion/reveal'
+import { appear } from '../../../motion/tokens'
 import type { StepData } from './steps'
 
 type StepCardProps = {
@@ -9,6 +11,8 @@ type StepCardProps = {
   /** Share of the line shown when nothing runs (reduced motion): the design shows it at 78 %. */
   staticProgress: number | null
   onOpen: () => void
+  /** Place in the row: the cards appear one after another. */
+  index: number
 }
 
 /**
@@ -19,12 +23,15 @@ type StepCardProps = {
  * From 1440 to 1599 px the closed cards are narrower than 262 px, so the title is one size smaller there (derived).
  * Below: the cards stand one under another, and the text unfolds downwards (derived: the design has only the wide layout).
  */
-export function StepCard({ step, isActive, progress, staticProgress, onOpen }: StepCardProps) {
+export function StepCard({ step, isActive, progress, staticProgress, onOpen, index }: StepCardProps) {
   const { id, number, title, description } = step
   const width = useTransform(progress, (value) => `${value * 100}%`)
 
   return (
-    <li
+    <Reveal
+      as="li"
+      variant="card"
+      delay={index * appear.card.step * 1.5}
       data-el={`next-steps__card-${id}`}
       data-active={isActive}
       className={`relative flex flex-row items-start gap-4 overflow-clip rounded-40 p-6 ring-1 ring-border-subtle transition-[background-color,flex-grow] duration-700 ease-out ring-inset tablet:gap-8 tablet:p-8 min-[90rem]:h-170 min-[90rem]:min-w-0 min-[90rem]:flex-col min-[90rem]:justify-between min-[90rem]:gap-0 min-[90rem]:basis-0 min-[90rem]:p-10 ${
@@ -93,6 +100,6 @@ export function StepCard({ step, isActive, progress, staticProgress, onOpen }: S
           </div>
         </div>
       </div>
-    </li>
+    </Reveal>
   )
 }

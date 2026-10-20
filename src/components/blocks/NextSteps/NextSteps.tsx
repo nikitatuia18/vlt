@@ -1,5 +1,6 @@
 import { useAnimationFrame, useInView, useMotionValue, useReducedMotion } from 'motion/react'
 import { useRef, useState } from 'react'
+import { Reveal, RevealLines } from '../../../motion/reveal'
 import { ColumnFade } from '../../ui/ColumnFade'
 import { Container } from '../../ui/Container'
 import { CornerDots } from '../../ui/CornerDots'
@@ -63,19 +64,20 @@ export function NextSteps() {
             data-el="next-steps__header"
             className="flex flex-col gap-4 tablet:gap-6 desktop:flex-row desktop:items-end desktop:justify-between desktop:px-10"
           >
-            <h2
+            <RevealLines
               id="next-steps-title"
               data-el="next-steps__title"
               className="type-heading-lg text-typography-primary tablet:type-heading-xl min-[64rem]:type-display-sm desktop:w-113.5 desktop:shrink-0"
-            >
-              What are our next steps?
-            </h2>
-            <p
+              lines={['What are our next steps?']}
+            />
+            <Reveal
+              as="p"
+              delay={0.3}
               data-el="next-steps__desc"
               className="type-body-md max-w-115 text-typography-secondary tablet:type-body-lead desktop:flex-1"
             >
               From initial consultation to your first live transaction in 4 transparent steps.
-            </p>
+            </Reveal>
           </div>
 
           {/* @container: the text of the open card takes its final width from the width of this row (see StepCard). */}
@@ -87,6 +89,7 @@ export function NextSteps() {
                 isActive={index === activeIndex}
                 progress={progress}
                 staticProgress={reducedMotion ? DESIGN_PROGRESS : null}
+                index={index}
                 onOpen={() => open(index)}
               />
             ))}

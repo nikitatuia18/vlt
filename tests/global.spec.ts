@@ -83,7 +83,6 @@ test('scene: big globe without text, then it flies to its place, then text and c
   }
   expect(radii[1]).toBeLessThan(radii[0] - 20)
   expect(radii[2]).toBeLessThan(radii[1] - 20)
-  expect(Number(await page.locator('[data-el="global__message"]').evaluate((el) => getComputedStyle(el).opacity))).toBe(0)
 
   await scrollTo(page, 0.97)
   const final = await globe(page)

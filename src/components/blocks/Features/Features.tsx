@@ -1,7 +1,9 @@
+import { Reveal, RevealLines } from '../../../motion/reveal'
 import { ColumnFade } from '../../ui/ColumnFade'
 import { Container } from '../../ui/Container'
 import { CornerDots } from '../../ui/CornerDots'
 import { InteractiveDots } from '../../ui/InteractiveDots'
+import { appear } from '../../../motion/tokens'
 import { mainCards, soonCards } from './cards'
 import { FeatureCard, SoonCard } from './FeatureCard'
 
@@ -27,19 +29,20 @@ export function Features() {
             data-el="features__header"
             className="flex flex-col items-center gap-4 text-center tablet:gap-6 desktop:px-10"
           >
-            <p
+            <Reveal
+              as="p"
               data-el="features__eyebrow"
               className="type-heading-sm max-w-120 text-typography-secondary tablet:type-heading-md desktop:type-heading-lg"
             >
               Accept. Move. Hold. Pay out.
-            </p>
-            <h2
+            </Reveal>
+            <RevealLines
+              delay={0.15}
               id="features-title"
               data-el="features__title"
               className="type-heading-lg max-w-156 text-typography-primary tablet:type-heading-xl min-[64rem]:type-display-sm"
-            >
-              Everything you need to move money.
-            </h2>
+              lines={['Everything you need to move money.']}
+            />
           </div>
 
           <div data-el="features__grid" className="grid w-full grid-cols-1 gap-6 tablet:grid-cols-2 desktop:grid-cols-3">
@@ -47,17 +50,19 @@ export function Features() {
               <FeatureCard
                 key={card.id}
                 {...card}
+                // The cards come one after another along the row (the rows come into view one by one anyway).
+                revealDelay={(index % 3) * appear.card.step * 1.5}
                 // The first card spans two columns. The crypto text is a fixed 400 px wide in the design.
                 className={index === 0 ? 'tablet:col-span-2' : ''}
                 textClassName={index === 0 ? 'w-full desktop:w-100' : 'w-full'}
                 // The background of the crypto card is the same dot grid as in the hero (the static picture `features__card-crypto-bg`
                 // of the design is replaced by the UI Kit component). The tesseract (`img-tesseract`) will be added to this slot later.
-                illustration={index === 0 ? <InteractiveDots /> : undefined}
+                illustration={index === 0 ? <InteractiveDots ripple={{ delay: 0.4, duration: 1.2 }} /> : undefined}
               />
             ))}
             <div data-el="features__col-soon" className="flex flex-col justify-center gap-6 self-stretch">
-              {soonCards.map((card) => (
-                <SoonCard key={card.id} {...card} />
+              {soonCards.map((card, index) => (
+                <SoonCard key={card.id} {...card} revealDelay={0.24 + index * appear.card.step * 1.5} />
               ))}
             </div>
           </div>

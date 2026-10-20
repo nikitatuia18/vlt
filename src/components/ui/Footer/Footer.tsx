@@ -1,4 +1,5 @@
 import logo from '../../../assets/brand/logo-velant-pay-footer.svg'
+import { Reveal } from '../../../motion/reveal'
 import { Container } from '../Container'
 import { CornerDots } from '../CornerDots'
 import { Icon } from '../Icon'
@@ -51,7 +52,7 @@ export function Footer({ columns = footerColumns, legalLinks = siteLegalLinks, y
             data-el="footer__container"
             className={`relative flex flex-col gap-10 px-4 py-12 tablet:px-8 tablet:py-16 desktop:gap-12 desktop:px-10 desktop:py-20 min-[100rem]:flex-row min-[100rem]:justify-between min-[100rem]:py-30 ${columnLines}`}
           >
-            <div data-el="footer__brand" className="flex flex-col items-start gap-4">
+            <Reveal data-el="footer__brand" className="flex flex-col items-start gap-4">
               <a href="/" aria-label="Velant Pay, home" className="flex text-typography-primary">
                 <span data-el="img-logo-velant-pay" className="flex">
                   <Icon src={logo} width={271} height={65.6985} />
@@ -60,15 +61,15 @@ export function Footer({ columns = footerColumns, legalLinks = siteLegalLinks, y
               <p data-el="footer__brand-desc" className="type-body-md text-typography-secondary">
                 {brandDescription}
               </p>
-            </div>
+            </Reveal>
 
             <nav
               aria-label="Footer"
               data-el="footer__links"
               className="grid grid-cols-2 gap-x-6 gap-y-8 tablet:grid-cols-3 desktop:flex desktop:items-start desktop:gap-10"
             >
-              {columns.map((column) => (
-                <div key={column.id} data-el={`footer__col-${column.id}`} className="flex flex-col gap-2">
+              {columns.map((column, index) => (
+                <Reveal key={column.id} delay={0.1 + index * 0.08} data-el={`footer__col-${column.id}`} className="flex flex-col gap-2">
                   <h3 data-el={`footer__col-${column.id}-title`} className="type-heading-md text-typography-primary">
                     {column.title}
                   </h3>
@@ -81,7 +82,7 @@ export function Footer({ columns = footerColumns, legalLinks = siteLegalLinks, y
                       </li>
                     ))}
                   </ul>
-                </div>
+                </Reveal>
               ))}
             </nav>
 
@@ -93,7 +94,8 @@ export function Footer({ columns = footerColumns, legalLinks = siteLegalLinks, y
 
       <div data-el="footer-bottom" className="bg-surface-page">
         <Container>
-          <div
+          <Reveal
+            variant="fade"
             data-el="footer-bottom__container"
             className={`flex flex-col gap-2 px-4 py-4 tablet:px-8 min-[90rem]:flex-row min-[90rem]:items-start min-[90rem]:justify-between min-[90rem]:px-10 ${columnLines}`}
           >
@@ -113,7 +115,7 @@ export function Footer({ columns = footerColumns, legalLinks = siteLegalLinks, y
             <p data-el="footer-bottom__copyright" className="type-body-md text-typography-secondary">
               © {year} {companyName}
             </p>
-          </div>
+          </Reveal>
         </Container>
       </div>
     </footer>

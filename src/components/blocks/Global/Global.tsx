@@ -1,5 +1,6 @@
-import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react'
-import { useRef } from 'react'
+import { useMotionValueEvent, useReducedMotion, useScroll } from 'motion/react'
+import { useRef, useState } from 'react'
+import { CountUp, Reveal, RevealLines } from '../../../motion/reveal'
 import { Container } from '../../ui/Container'
 import { Globe } from './globe/Globe'
 
@@ -12,10 +13,8 @@ const metrics = [
 /** Scroll the section takes after the screen is full: the globe flies to its place, then the text and the cards appear. */
 const PINNED_SCROLL = '150vh'
 
-/** The text appears (progress of the pinned scroll, 0 to 1) after the globe has mostly stood up. */
-const TEXT_FROM = 0.6
-const TEXT_TO = 0.9
-const TEXT_RISE = 24
+/** The text appears (once) when the pinned scroll (0 to 1) reaches this point: the globe has mostly stood up. */
+const TEXT_AT = 0.6
 
 /**
  * "Go global without rebuilding your payments stack." Figma block `global`.
@@ -37,8 +36,11 @@ export function Global() {
   // Two phases of one scroll: the section comes into view (the globe appears), then it stays pinned (the globe flies to its place).
   const { scrollYProgress: appear } = useScroll({ target: sectionRef, offset: ['start end', 'start start'] })
   const { scrollYProgress: progress } = useScroll({ target: sectionRef, offset: ['start start', 'end end'] })
-  const textOpacity = useTransform(progress, [TEXT_FROM, TEXT_TO], [0, 1])
-  const textShift = useTransform(progress, [TEXT_FROM, TEXT_TO], [TEXT_RISE, 0])
+  // The heading rises line by line, the text comes up, the figures count (docs/reveal.motion.md); it plays once.
+  const [textOn, setTextOn] = useState(false)
+  useMotionValueEvent(progress, 'change', (value) => {
+    if (value >= TEXT_AT) setTextOn(true)
+  })
 
   return (
     <section
@@ -68,50 +70,54 @@ export function Global() {
               className="min-h-0 w-full flex-1 min-[64rem]:aspect-square min-[64rem]:w-[min(100%,calc(100svh-17rem))] min-[64rem]:flex-none min-[64rem]:self-end"
             />
 
-            <motion.ul
+            <ul
               data-el="global__metrics"
-              style={reduced ? undefined : { opacity: textOpacity, y: textShift }}
               className="order-3 flex flex-wrap gap-x-8 gap-y-6 whitespace-nowrap min-[64rem]:order-none min-[64rem]:col-start-1 min-[64rem]:row-start-2"
             >
-              {metrics.map((metric) => (
+              {metrics.map((metric, index) => (
                 <li key={metric.id} data-el={`global__metric-${metric.id}`} className="flex flex-col gap-2">
-                  <p
+                  <CountUp
+                    when={textOn}
+                    delay={0.5 + index * 0.15}
+                    value={metric.value}
                     data-el={`global__metric-${metric.id}-value`}
                     className="type-heading-lg text-typography-primary tablet:type-heading-xl min-[90rem]:type-display-sm"
-                  >
-                    {metric.value}
-                  </p>
-                  <p
+                  />
+                  <Reveal
+                    as="p"
+                    when={textOn}
+                    delay={0.6 + index * 0.15}
                     data-el={`global__metric-${metric.id}-label`}
                     className="type-body-md text-typography-secondary tablet:type-body-lead"
                   >
                     {metric.label}
-                  </p>
+                  </Reveal>
                 </li>
               ))}
-            </motion.ul>
+            </ul>
 
-            <motion.div
+            <div
               data-el="global__message"
-              style={reduced ? undefined : { opacity: textOpacity, y: textShift }}
               className="order-2 flex w-fit max-w-full flex-col gap-8 min-[64rem]:order-none min-[64rem]:col-start-2 min-[64rem]:row-span-2 min-[64rem]:row-start-1 min-[64rem]:self-end"
             >
-              <h2
+              <RevealLines
+                when={textOn}
                 id="global-title"
                 data-el="global__title"
                 className="type-heading-lg text-typography-primary tablet:type-heading-xl desktop:type-display-sm min-[100rem]:type-display-xl"
-              >
-                Go global without
-                <br />
-                rebuilding your
-                <br />
-                payments stack.
-              </h2>
+                lines={['Go global without', 'rebuilding your', 'payments stack.']}
+              />
               {/* As wide as the title above it, not wider (w-0 + min-w-full). */}
-              <p data-el="global__desc" className="type-body-md w-0 min-w-full text-typography-secondary tablet:type-body-lead">
+              <Reveal
+                as="p"
+                when={textOn}
+                delay={0.45}
+                data-el="global__desc"
+                className="type-body-md w-0 min-w-full text-typography-secondary tablet:type-body-lead"
+              >
                 Connect local payment methods, international rails and crypto through one integration.
-              </p>
-            </motion.div>
+              </Reveal>
+            </div>
           </div>
         </Container>
       </div>

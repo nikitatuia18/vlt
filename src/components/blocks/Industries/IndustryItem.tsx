@@ -1,4 +1,5 @@
 import { motion } from 'motion/react'
+import { Reveal } from '../../../motion/reveal'
 import { duration, easeOut } from '../../../motion/tokens'
 import { ButtonLink } from '../../ui/ButtonLink'
 import type { IndustryItemData } from './items'
@@ -6,6 +7,8 @@ import type { IndustryItemData } from './items'
 type IndustryItemProps = {
   item: IndustryItemData
   isActive: boolean
+  /** Place in the list: the neighbours appear with a small step. */
+  index: number
   /** The list reads the position of the open item to keep it in view. */
   setRef: (element: HTMLLIElement | null) => void
 }
@@ -19,11 +22,19 @@ const titleClasses = 'type-heading-lg tablet:type-heading-xl min-[64rem]:type-di
  * padding 60 x 40 on desktop), and the description and the button unfold under the title.
  * Card and colors change with CSS (700 ms), the unfolding with motion.
  */
-export function IndustryItem({ item, isActive, setRef }: IndustryItemProps) {
+export function IndustryItem({ item, isActive, index, setRef }: IndustryItemProps) {
   const { id, title, description, cta } = item
 
   return (
-    <li ref={setRef} data-el={`industries__item-${id}`} data-active={isActive} className="flex justify-center">
+    <Reveal
+      as="li"
+      variant="fade"
+      delay={index * 0.06}
+      ref={(element) => setRef(element as HTMLLIElement | null)}
+      data-el={`industries__item-${id}`}
+      data-active={isActive}
+      className="flex justify-center"
+    >
       <div
         data-el={`industries__item-${id}-inner`}
         className={`flex flex-col items-center rounded-32 text-center ring-1 ring-inset transition-[background-color,box-shadow,padding] duration-700 ease-out ${
@@ -74,6 +85,6 @@ export function IndustryItem({ item, isActive, setRef }: IndustryItemProps) {
           </div>
         </motion.div>
       </div>
-    </li>
+    </Reveal>
   )
 }

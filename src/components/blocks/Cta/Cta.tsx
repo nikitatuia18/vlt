@@ -3,6 +3,7 @@ import iconCard from '../../../assets/cta/icon-card.svg'
 import iconGlobal from '../../../assets/cta/icon-global.svg'
 import iconSecurity from '../../../assets/cta/icon-security.svg'
 import person from '../../../assets/cta/img-cta-person.webp'
+import { Reveal, RevealLines } from '../../../motion/reveal'
 import { ButtonLink } from '../../ui/ButtonLink'
 import { Container } from '../../ui/Container'
 import { CornerDots } from '../../ui/CornerDots'
@@ -39,7 +40,8 @@ export function Cta() {
           className="relative px-4 py-12 shadow-[inset_1px_0_0_var(--color-border-subtle),inset_-1px_0_0_var(--color-border-subtle)] tablet:px-8 tablet:py-20 desktop:px-10 desktop:py-35"
         >
           <div ref={wrapRef} data-el="cta__banner-wrap" className="relative" style={{ '--s': scale } as CSSProperties}>
-            <div
+            <Reveal
+              variant="shutter"
               data-el="cta__banner"
               // Below 1280 px the bottom padding keeps room for the picture that stands under the text.
               className="relative overflow-clip rounded-40 bg-surface-brand-default desktop:rounded-60 p-6 max-desktop:pb-[calc(592px*var(--s)+24px)] tablet:p-10 tablet:max-desktop:pb-[calc(592px*var(--s)+40px)] desktop:p-15"
@@ -50,30 +52,34 @@ export function Cta() {
                 aria-hidden="true"
                 className="pointer-events-none absolute top-[-13.6%] left-0 h-[134%] w-[106%] opacity-70 [mask-image:radial-gradient(ellipse_90.9%_180%_at_70.9%_51.8%,#000_0%,transparent_100%)]"
               >
-                <InteractiveDots colorClass="text-icon-static-w" />
+                <InteractiveDots colorClass="text-icon-static-w" ripple={{ delay: 0.5, duration: 1.4, origin: [0.7, 0.5] }} />
               </div>
 
               <div data-el="cta__content" className="relative flex flex-col items-start gap-8 desktop:gap-12">
                 <div data-el="cta__text-wrap" className="flex flex-col gap-4 text-typography-static-w desktop:w-150 desktop:gap-8">
-                  <h2
+                  <RevealLines
+                    delay={0.55}
                     id="cta-title"
                     data-el="cta__title"
                     className="type-heading-xl tablet:type-display-sm desktop:type-display-lg min-[100rem]:type-display-xl"
-                  >
-                    Tell us what you&apos;re building.
-                  </h2>
-                  <p
+                    lines={["Tell us what you're building."]}
+                  />
+                  <Reveal
+                    as="p"
+                    delay={0.9}
                     data-el="cta__subtitle"
                     className="type-body-md max-w-107 tablet:type-body-lead desktop:type-heading-md"
                   >
                     We&apos;ll map your payment flow and show you how Velant can handle it.
-                  </p>
+                  </Reveal>
                 </div>
-                <ButtonLink href="#book-a-demo" variant="inverse" size="lg" icon="export" data-el="cta__cta-primary">
-                  Book a demo
-                </ButtonLink>
+                <Reveal delay={1.05}>
+                  <ButtonLink href="#book-a-demo" variant="inverse" size="lg" icon="export" data-el="cta__cta-primary">
+                    Book a demo
+                  </ButtonLink>
+                </Reveal>
               </div>
-            </div>
+            </Reveal>
 
             {/* The picture and the badges: bottom edge on the lower edge of the banner, rising above its upper edge (wide screens). */}
             <div
@@ -81,17 +87,17 @@ export function Cta() {
               aria-hidden="true"
               className="pointer-events-none absolute bottom-0 h-[calc(592px*var(--s))] w-[calc(666px*var(--s))] max-desktop:left-1/2 max-desktop:-translate-x-1/2 desktop:right-[calc(59px*var(--s))]"
             >
-              <CtaBadge id="payments" icon={iconCard} label="Pay-in / Pay-out" left={11.11} top={43.75} size={1} />
-              <div data-el="img-cta-person" className="absolute top-0 left-[10.96%] h-full w-[76.1%] overflow-hidden">
+              <CtaBadge id="payments" icon={iconCard} label="Pay-in / Pay-out" left={11.11} top={43.75} size={1} revealDelay={1.1} />
+              <Reveal variant="rise" delay={0.7} data-el="img-cta-person" className="absolute top-0 left-[10.96%] h-full w-[76.1%] overflow-hidden">
                 {/* The design shows the middle part of the picture: 150 % high, shifted up by 13.5 %. */}
                 <img
                   src={person}
                   alt=""
                   className="absolute top-[-13.51%] left-[-0.24%] h-[150%] w-[100.2%] max-w-none"
                 />
-              </div>
-              <CtaBadge id="multi-currency" icon={iconGlobal} label="Multi-currency" left={0} top={73.99} size={1.2137} />
-              <CtaBadge id="kyb" icon={iconSecurity} label="Instant KYB" left={72.22} top={55.07} size={1.1696} />
+              </Reveal>
+              <CtaBadge id="multi-currency" icon={iconGlobal} label="Multi-currency" left={0} top={73.99} size={1.2137} revealDelay={1.25} />
+              <CtaBadge id="kyb" icon={iconSecurity} label="Instant KYB" left={72.22} top={55.07} size={1.1696} revealDelay={1.4} />
             </div>
           </div>
 

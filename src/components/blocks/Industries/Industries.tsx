@@ -1,5 +1,6 @@
 import { useAnimationFrame, useMotionValueEvent, useReducedMotion, useScroll } from 'motion/react'
 import { useRef, useState } from 'react'
+import { RevealLines } from '../../../motion/reveal'
 import { ColumnFade } from '../../ui/ColumnFade'
 import { Container } from '../../ui/Container'
 import { CornerDots } from '../../ui/CornerDots'
@@ -90,13 +91,12 @@ export function Industries() {
               className="relative flex flex-col items-center gap-8 will-change-transform tablet:gap-10 desktop:gap-12 desktop:px-10"
             >
               <div data-el="industries__header" className="flex w-full flex-col items-center text-center">
-                <h2
+                <RevealLines
                   id="industries-title"
                   data-el="industries__title"
                   className="type-heading-lg max-w-156 text-typography-primary tablet:type-heading-xl min-[64rem]:type-display-sm"
-                >
-                  From first payment to final payout.
-                </h2>
+                  lines={['From first payment to final payout.']}
+                />
               </div>
 
               <ul ref={listRef} data-el="industries__list" className="relative flex w-full flex-col gap-6">
@@ -105,6 +105,7 @@ export function Industries() {
                     key={item.id}
                     item={item}
                     isActive={index === shownIndex}
+                    index={index}
                     setRef={(element) => {
                       itemRefs.current[index] = element
                     }}

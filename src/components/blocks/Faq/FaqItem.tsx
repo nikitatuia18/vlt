@@ -1,5 +1,6 @@
 import collapseIcon from '../../../assets/faq/icon-collapse-button.svg'
 import expandIcon from '../../../assets/faq/icon-expand-button.svg'
+import { Reveal } from '../../../motion/reveal'
 import { Icon } from '../../ui/Icon'
 import type { FaqItemData } from './items'
 
@@ -9,6 +10,8 @@ type FaqItemProps = {
   onToggle: () => void
   /** The last item has no line under it. */
   isLast: boolean
+  /** Place in the list: the questions appear one after another. */
+  index: number
 }
 
 /**
@@ -17,16 +20,23 @@ type FaqItemProps = {
  * target); the round toggle shows plus or minus. The answer unfolds under it: the row grows from 0 to its height while the text
  * keeps its width (max 560 px), so it never re-wraps and does not jump; it fades in a little later.
  */
-export function FaqItem({ item, isOpen, onToggle, isLast }: FaqItemProps) {
+export function FaqItem({ item, isOpen, onToggle, isLast, index }: FaqItemProps) {
   const { id, question, lead, answer } = item
   const panelId = `faq-panel-${id}`
 
   return (
-    <li
+    <Reveal
+      as="li"
+      variant="card"
+      delay={index * 0.1}
       data-el={`faq__item-${id}`}
       data-open={isOpen}
-      className={`py-6 tablet:py-8 ${isLast ? '' : 'border-b border-border-subtle'}`}
+      className="relative py-6 tablet:py-8"
     >
+      {/* The line under the question draws itself from the left (it was a border). */}
+      {isLast ? null : (
+        <Reveal variant="line-x" delay={0.5 + index * 0.1} aria-hidden="true" className="absolute inset-x-0 bottom-0 h-px origin-left bg-border-subtle" />
+      )}
       <h3>
         <button
           type="button"
@@ -87,6 +97,6 @@ export function FaqItem({ item, isOpen, onToggle, isLast }: FaqItemProps) {
           </p>
         </div>
       </div>
-    </li>
+    </Reveal>
   )
 }

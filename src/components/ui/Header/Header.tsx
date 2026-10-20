@@ -1,6 +1,8 @@
 import { motion, useMotionValueEvent, useScroll } from 'motion/react'
 import { useEffect, useId, useRef, useState } from 'react'
-import { duration, easeOut } from '../../../motion/tokens'
+import { Reveal } from '../../../motion/reveal'
+import { appear, duration, easeOut } from '../../../motion/tokens'
+import { useRevealOn } from '../../../motion/useReveal'
 import logo from '../../../assets/brand/logo-velant-pay.svg'
 import { ButtonLink } from '../ButtonLink'
 import { Container } from '../Container'
@@ -57,6 +59,9 @@ export function Header({
   const headerRef = useRef<HTMLElement>(null)
   const [isScrolledAway, setIsScrolledAway] = useState(false)
   const [hasFocus, setHasFocus] = useState(false)
+  // On loading the header comes down from above (slowly, once); afterwards it only hides and shows quickly.
+  const revealOn = useRevealOn()
+  const [hasEntered, setHasEntered] = useState(false)
 
   const { scrollY } = useScroll()
   useMotionValueEvent(scrollY, 'change', (y) => {
@@ -97,22 +102,27 @@ export function Header({
       data-el="header"
       data-hidden={isHidden}
       className={`border-b border-border-subtle bg-surface-subtle ${isPinned ? 'sticky top-0 z-50' : 'relative'}`}
-      initial={false}
-      animate={{ y: isHidden ? '-100%' : '0%' }}
-      transition={{ duration: duration.reveal / 2, ease: easeOut }}
+      initial={revealOn ? { y: '-100%', opacity: 0 } : false}
+      animate={{ y: isHidden ? '-100%' : '0%', opacity: 1 }}
+      transition={{ duration: hasEntered ? duration.reveal / 2 : appear.line.duration, ease: easeOut }}
+      onAnimationComplete={() => setHasEntered(true)}
       // Only focus from the keyboard keeps the header: a mouse click leaves focus on the link too, but must not pin the header.
       onFocusCapture={(event) => setHasFocus((event.target as HTMLElement).matches(':focus-visible'))}
       onBlurCapture={() => setHasFocus(false)}
     >
       <Container data-el="header__container" className="flex items-center justify-between py-4">
         <div data-el="header__left" className="flex items-center gap-15">
-          <a href="/" aria-label="Velant Pay, home" data-el="header__logo" className="block shrink-0 text-typography-primary">
+          <Reveal as="a" variant="drop" atLoad delay={0.3} href="/" aria-label="Velant Pay, home" data-el="header__logo" className="block shrink-0 text-typography-primary">
             <Icon src={logo} width={97.4092} height={32} />
-          </a>
+          </Reveal>
 
           <nav aria-label="Main" data-el="header__menu" className="hidden items-center gap-2 desktop:flex">
-            {navItems.map((item) => (
-              <a
+            {navItems.map((item, index) => (
+              <Reveal
+                as="a"
+                variant="drop"
+                atLoad
+                delay={0.4 + index * 0.06}
                 key={item.id}
                 href={item.href}
                 aria-current={item.id === currentId ? 'true' : undefined}
@@ -120,12 +130,12 @@ export function Header({
                 className={`${linkBaseClasses} type-ui-sm ${item.id === currentId ? linkCurrentClasses : linkDefaultClasses}`}
               >
                 {item.label}
-              </a>
+              </Reveal>
             ))}
           </nav>
         </div>
 
-        <div data-el="header__actions" className="flex items-center gap-2 desktop:gap-6">
+        <Reveal variant="drop" atLoad delay={0.7} data-el="header__actions" className="flex items-center gap-2 desktop:gap-6">
           {/* max-desktop:hidden, not `hidden desktop:inline-flex`: the component's own display class would win over a bare `hidden`. */}
           <ThemeToggle data-el="header__theme-toggle" className="max-desktop:hidden" />
 
@@ -154,7 +164,7 @@ export function Header({
           >
             <MenuToggleIcon isOpen={isMenuOpen} />
           </IconButton>
-        </div>
+        </Reveal>
       </Container>
 
       {/* Dropdown for tablet and mobile; hidden on desktop where the full menu is in the bar. */}

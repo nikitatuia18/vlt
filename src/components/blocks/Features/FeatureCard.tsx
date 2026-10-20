@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import exportIconSrc from '../../../assets/icons/export.svg'
+import { Reveal } from '../../../motion/reveal'
 import { Badge } from '../../ui/Badge'
 import { Icon } from '../../ui/Icon'
 import { IconLink } from '../../ui/IconLink'
@@ -29,15 +30,20 @@ type FeatureCardProps = FeatureCardData & {
   illustration?: ReactNode
   className?: string
   textClassName?: string
+  /** Seconds the card waits after it has come into view (a step of the cascade). */
+  revealDelay?: number
 }
 
 /**
  * White card with a round "Learn more" link. Figma `features__card-{id}`.
  * Radius 40 and height 550 px are from the design; padding 24 below tablet and the same height on small screens are derived.
  */
-export function FeatureCard({ id, title, description, href, illustration, className = '', textClassName }: FeatureCardProps) {
+export function FeatureCard({ id, title, description, href, illustration, className = '', textClassName, revealDelay = 0 }: FeatureCardProps) {
   return (
-    <article
+    <Reveal
+      as="article"
+      variant="card"
+      delay={revealDelay}
       data-el={`features__card-${id}`}
       className={`relative flex h-137.5 flex-col justify-between overflow-clip rounded-40 bg-surface-subtle p-6 ring-1 ring-inset ring-border-subtle tablet:p-10 ${className}`}
     >
@@ -59,16 +65,19 @@ export function FeatureCard({ id, title, description, href, illustration, classN
           <Icon src={exportIconSrc} width={21.5} height={21.5} />
         </span>
       </IconLink>
-    </article>
+    </Reveal>
   )
 }
 
-type SoonCardProps = Omit<FeatureCardData, 'href'>
+type SoonCardProps = Omit<FeatureCardData, 'href'> & { revealDelay?: number }
 
 /** Grey "coming soon" card: text and a badge, no link. Figma `features__card-{id}` in the column `features__col-soon`. */
-export function SoonCard({ id, title, description }: SoonCardProps) {
+export function SoonCard({ id, title, description, revealDelay = 0 }: SoonCardProps) {
   return (
-    <article
+    <Reveal
+      as="article"
+      variant="card"
+      delay={revealDelay}
       data-el={`features__card-${id}`}
       className="flex flex-1 flex-col gap-8 overflow-clip rounded-40 bg-surface-hover p-6 tablet:p-10"
     >
@@ -76,6 +85,6 @@ export function SoonCard({ id, title, description }: SoonCardProps) {
       <Badge icon="clock" data-el={`features__card-${id}-badge`} className="self-start">
         Coming soon
       </Badge>
-    </article>
+    </Reveal>
   )
 }

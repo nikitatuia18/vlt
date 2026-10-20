@@ -1,4 +1,5 @@
 import { useRef } from 'react'
+import { Reveal } from '../../../motion/reveal'
 import { Container } from '../../ui/Container'
 import { LogoWave } from './LogoWave'
 
@@ -32,9 +33,9 @@ export function Logos() {
       className="overflow-x-clip py-12 tablet:py-20 desktop:py-35"
     >
       <Container data-el="logos__container">
-        <div data-el="logos__track-wrap" className="relative h-37.5 w-full">
+        <Reveal data-el="logos__track-wrap" className="relative h-37.5 w-full">
           <LogoWave wavePeriod={WAVE_PERIOD_SECONDS} drift={SCROLL_DRIFT} scrollTarget={sectionRef} />
-        </div>
+        </Reveal>
       </Container>
     </section>
   )
