@@ -16,20 +16,22 @@ export type Pin = {
   /** Payment rails shown under the code. */
   rails: string
   flag: string
-  /** Position of the card in the map artboard (1935 x 1202 px): left and top, px. */
-  left: number
-  top: number
+  /** Where the flag stands on the globe, degrees (a city or the middle of the country). */
+  lat: number
+  lon: number
+  /** Which way the text goes from the flag. Neighbours (Chile / Argentina) go in opposite directions so that their cards do not overlap. */
+  side: 'right' | 'left'
 }
 
-/** The nine cards of the map, in the order of the Figma layers. */
+/** The nine cards of the globe, in the order of the Figma layers. */
 export const pins: readonly Pin[] = [
-  { id: 'ca', code: 'CAD', rails: 'Interac e-Transfer / EFT', flag: ca, left: 285, top: 365 },
-  { id: 'us', code: 'USD', rails: 'ACH / Fedwire / FedNow', flag: us, left: 414, top: 608 },
-  { id: 'eu', code: 'EUR', rails: 'SEPA / INSTANT', flag: eu, left: 906, top: 503 },
-  { id: 'ge', code: 'GEL', rails: 'RTGS / RIPS', flag: ge, left: 1121, top: 554 },
-  { id: 'in', code: 'INR', rails: 'IMPS / NEFT / UPI', flag: india, left: 1240, top: 684 },
-  { id: 'br', code: 'BRL', rails: 'Pix / TED', flag: br, left: 594, top: 787 },
-  { id: 'cl', code: 'CLP', rails: 'TEF', flag: cl, left: 500, top: 936 },
-  { id: 'kg', code: 'KGS', rails: 'AZIPS / XKS', flag: kg, left: 1279, top: 493 },
-  { id: 'ar', code: 'ARS', rails: 'CBU / CVU', flag: ar, left: 664, top: 910 },
+  { id: 'ca', code: 'CAD', rails: 'Interac e-Transfer / EFT', flag: ca, lat: 51, lon: -100, side: 'right' },
+  { id: 'us', code: 'USD', rails: 'ACH / Fedwire / FedNow', flag: us, lat: 38, lon: -98, side: 'right' },
+  { id: 'eu', code: 'EUR', rails: 'SEPA / INSTANT', flag: eu, lat: 50, lon: 9, side: 'right' },
+  { id: 'ge', code: 'GEL', rails: 'RTGS / RIPS', flag: ge, lat: 42, lon: 44, side: 'right' },
+  { id: 'in', code: 'INR', rails: 'IMPS / NEFT / UPI', flag: india, lat: 22, lon: 79, side: 'right' },
+  { id: 'br', code: 'BRL', rails: 'Pix / TED', flag: br, lat: -12, lon: -52, side: 'right' },
+  { id: 'cl', code: 'CLP', rails: 'TEF', flag: cl, lat: -24, lon: -70, side: 'left' },
+  { id: 'kg', code: 'KGS', rails: 'AZIPS / XKS', flag: kg, lat: 41, lon: 74, side: 'right' },
+  { id: 'ar', code: 'ARS', rails: 'CBU / CVU', flag: ar, lat: -38, lon: -64, side: 'right' },
 ]

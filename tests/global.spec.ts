@@ -1,9 +1,9 @@
 ﻿import { expect, test, type Page } from '@playwright/test'
-import { FRAMES, pinTimelines, routeSource, routeTimelines } from '../src/components/blocks/Global/timeline'
+import { FRAMES, pinTimelines, routeSource, routeTarget, routeTimelines } from '../src/components/blocks/Global/timeline'
 
 const viewports = [
   { name: 'mobile-393', width: 393, height: 850 },
-  { name: 'tablet-768', width: 768, height: 900 },
+  { name: 'tablet-768', width: 768, height: 1000 },
   { name: 'tablet-1024', width: 1024, height: 800 },
   { name: 'desktop-1280', width: 1280, height: 800 },
   { name: 'desktop-1440', width: 1440, height: 900 },
@@ -11,24 +11,42 @@ const viewports = [
   { name: 'desktop-2560', width: 2560, height: 1200 },
 ]
 
-// Ids are listed here (not imported): the data modules import SVG files, which the test runner cannot load.
+// Ids are listed here (not imported): the data module imports SVG files, which the test runner cannot load.
 const pinIds = ['ca', 'us', 'eu', 'ge', 'in', 'br', 'cl', 'kg', 'ar']
 const routeIds = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
-const section = (page: Page) => page.locator('[data-el="global"]')
+const canvas = (page: Page) => page.locator('[data-el="global__globe"] canvas')
 
-const open = async (page: Page, width: number, height: number) => {
+/** Opens the page and scrolls the pinned section to `progress` (0 = just pinned, 1 = about to unpin; negative = still coming in). */
+const open = async (page: Page, width: number, height: number, progress = 0.97) => {
   await page.setViewportSize({ width, height })
   await page.goto('/')
   await page.evaluate(() => document.fonts.ready)
-  await section(page).scrollIntoViewIfNeeded()
-  await page.waitForTimeout(500)
+  await scrollTo(page, progress)
 }
+
+const scrollTo = async (page: Page, progress: number) => {
+  await page.evaluate((fraction) => {
+    const section = document.querySelector('[data-el="global"]') as HTMLElement
+    const top = section.getBoundingClientRect().top + window.scrollY
+    window.scrollTo(0, fraction < 0 ? top + fraction * window.innerHeight : top + fraction * (section.offsetHeight - window.innerHeight))
+  }, progress)
+  await page.waitForTimeout(1800)
+}
+
+const globe = (page: Page) =>
+  canvas(page).evaluate((element) => ({
+    radius: Number(element.dataset.radius),
+    x: Number(element.dataset.centerX),
+    y: Number(element.dataset.centerY),
+    cards: element.dataset.cards,
+  }))
 
 for (const viewport of viewports) {
   test(`global screenshot ${viewport.name}`, async ({ page }) => {
     await open(page, viewport.width, viewport.height)
-    await section(page).screenshot({ path: `tests/artifacts/global-${viewport.name}.png` })
+    await page.waitForTimeout(1500)
+    await page.screenshot({ path: `tests/artifacts/global-${viewport.name}.png` })
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)
     expect(overflow).toBe(0)
   })
@@ -41,45 +59,62 @@ test('global has the text, the numbers and the layers of the contract', async ({
   await expect(page.locator('[data-el="global__metric-uptime-value"]')).toHaveText('99.9%')
   await expect(page.locator('[data-el="global__metric-rails-value"]')).toHaveText('15+')
   await expect(page.locator('[data-el="global__metric-latency-value"]')).toHaveText('<1 sec')
-  // The signature dots are the lowest layer.
-  await expect(page.locator('[data-el="global__bg"] canvas')).toHaveCount(1)
-  await expect(page.locator('[data-el="global__map"]')).toHaveCount(1)
-  await expect(page.locator('[data-el^="global__route-"]')).toHaveCount(routeIds.length)
+  await expect(page.locator('[data-el="global__stage"]')).toHaveCount(1)
+  await expect(page.locator('[data-el="global__globe-slot"]')).toHaveCount(1)
+  await expect(canvas(page)).toHaveCount(1)
   await expect(page.locator('[data-el^="global__pin-"][data-el$="-label"]')).toHaveCount(pinIds.length)
 })
 
-test('global in wide layout: map behind the text, metrics left, message right', async ({ page }) => {
-  await open(page, 1920, 1080)
+test('scene: big globe without text, then it flies to its place, then text and cards appear', async ({ page }) => {
+  await open(page, 1440, 900, 0.05)
+  const big = await globe(page)
+  // Big: wider than the screen's half, in the middle, no text, no cards.
+  expect(big.radius).toBeGreaterThan(1440 * 0.55)
+  expect(Math.abs(big.x - 720)).toBeLessThan(2)
+  expect(big.cards).toBe('off')
+  expect(Number(await page.locator('[data-el="global__text-wrap"]').evaluate((el) => getComputedStyle(el).opacity))).toBe(0)
+
+  await scrollTo(page, 0.97)
+  const final = await globe(page)
+  const slot = (await page.locator('[data-el="global__globe-slot"]').boundingBox())!
+  expect(final.radius).toBeLessThan(big.radius / 1.5)
+  expect(Math.abs(final.radius - Math.min(slot.width, slot.height) / 2)).toBeLessThan(2)
+  expect(final.cards).toBe('on')
+  expect(Number(await page.locator('[data-el="global__text-wrap"]').evaluate((el) => getComputedStyle(el).opacity))).toBe(1)
+})
+
+test('global in wide layout: globe on the left, metrics under it, message on the right', async ({ page }) => {
+  await open(page, 1440, 900)
+  const slot = (await page.locator('[data-el="global__globe-slot"]').boundingBox())!
   const metrics = (await page.locator('[data-el="global__metrics"]').boundingBox())!
   const message = (await page.locator('[data-el="global__message"]').boundingBox())!
-  const map = (await page.locator('[data-el="global__map"]').boundingBox())!
-  expect(metrics.x).toBeLessThan(message.x)
+  expect(slot.x + slot.width).toBeLessThanOrEqual(message.x + 1)
+  expect(metrics.y).toBeGreaterThanOrEqual(slot.y + slot.height - 1)
+  expect(metrics.x + metrics.width).toBeLessThanOrEqual(message.x + 1)
   expect(Math.abs(metrics.y + metrics.height - (message.y + message.height))).toBeLessThan(2)
-  // The map is wider than the text columns: it lies behind them.
-  expect(map.width).toBeGreaterThan(metrics.width + message.width)
 })
 
-test('global in stacked layout: map above the text, no horizontal scroll', async ({ page }) => {
-  await open(page, 1024, 800)
-  const map = (await page.locator('[data-el="global__map"]').boundingBox())!
+test('global in stacked layout: globe above the text, all of it on the screen', async ({ page }) => {
+  await open(page, 393, 850)
+  const slot = (await page.locator('[data-el="global__globe-slot"]').boundingBox())!
   const message = (await page.locator('[data-el="global__message"]').boundingBox())!
-  expect(map.y + map.height).toBeLessThanOrEqual(message.y + 1)
-  expect(map.x).toBeGreaterThanOrEqual(-1)
-  expect(map.x + map.width).toBeLessThanOrEqual(1025)
+  const metrics = (await page.locator('[data-el="global__metrics"]').boundingBox())!
+  expect(slot.y + slot.height).toBeLessThanOrEqual(message.y + 1)
+  expect(slot.height).toBeGreaterThan(200)
+  expect(metrics.y + metrics.height).toBeLessThanOrEqual(850)
 })
 
-test('global map is animated: cards and routes change over time', async ({ page }) => {
+test('cards come and go over time while the globe turns', async ({ page }) => {
   await open(page, 1440, 900)
-  // Sample all cards every 300 ms for 4.5 s (the start of the loop depends on how fast the page loaded, so one pair of
-  // moments could fall in a pause of one card): at least one card must change a lot, and the cards are not all the same.
+  // Sample all cards every 300 ms for 5 s: a card must change a lot (the timeline plays and the turn changes who is seen).
   const samples = await page.evaluate(
     () =>
       new Promise<number[][]>((resolve) => {
         const cards = Array.from(document.querySelectorAll('[data-el^="global__pin-"]:not([data-el$="-label"]):not([data-el$="-desc"])'))
         const found: number[][] = []
         const timer = setInterval(() => {
-          found.push(cards.map((card) => Number(getComputedStyle(card).opacity)))
-          if (found.length >= 15) {
+          found.push(cards.map((card) => Number(getComputedStyle(card.parentElement!).opacity)))
+          if (found.length >= 17) {
             clearInterval(timer)
             resolve(found)
           }
@@ -93,32 +128,38 @@ test('global map is animated: cards and routes change over time', async ({ page 
   expect(Math.max(...spans)).toBeGreaterThan(0.5)
 })
 
-test('a card grows while it appears, and a route drawn from its far end keeps dash length and offset in step', async ({ page }) => {
+test('the globe can be grabbed only on the globe itself', async ({ page }) => {
   await open(page, 1440, 900)
-  await page.waitForFunction(
-    () => Number(getComputedStyle(document.querySelector('[data-el="global__pin-us"]')!).opacity) > 0.02,
-    undefined,
-    { polling: 16, timeout: 30000 },
-  )
-  // The USD card has just started to appear: it is still smaller than its final size.
-  const scale = await page.locator('[data-el="global__pin-us"]').evaluate((el) => new DOMMatrix(getComputedStyle(el).transform).a)
-  expect(scale).toBeLessThan(0.95)
-  // Route 2 grows from its far end: the offset is always (length - 1), so the drawn part ends at the end of the path.
-  await page.waitForTimeout(700)
-  const route = await page.locator('[data-el="global__route-2"] mask path').evaluate((el) => {
-    const style = getComputedStyle(el)
-    return { dash: parseFloat(style.strokeDasharray), offset: parseFloat(style.strokeDashoffset) }
-  })
-  expect(route.dash).toBeGreaterThan(0)
-  expect(route.dash).toBeLessThan(1)
-  expect(route.offset).toBeCloseTo(route.dash - 1, 1)
+  const { x, y, radius } = await globe(page)
+  await page.mouse.move(x, y)
+  await expect(canvas(page)).toHaveCSS('cursor', 'grab')
+  await page.mouse.move(x + radius * 1.3, y)
+  await expect(canvas(page)).toHaveCSS('cursor', 'auto')
 })
 
-test('a line never outlives the card it flies out of, and starts only after the card has begun to appear', () => {
+test('dark theme: the dots and the card follow the tokens', async ({ page }) => {
+  await open(page, 1440, 900)
+  await page.locator('[data-el="header"] [data-el="header__theme-toggle"]').click()
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
+  await scrollTo(page, 0.97)
+  await page.waitForTimeout(1500)
+  await page.screenshot({ path: 'tests/artifacts/global-desktop-1440-dark.png' })
+  // The dots take the light color of the dark theme: the page is dark, the dots are lighter than it.
+  const [dot, page_] = await page.evaluate(() => {
+    const probe = document.querySelector('[data-el="global__globe"] span.text-surface-dots') as HTMLElement
+    return [getComputedStyle(probe).color, getComputedStyle(document.body).backgroundColor]
+  })
+  expect(dot).not.toBe(page_)
+})
+
+test('every line flies from a country with a card to a different country, and never outlives the card', () => {
   const frame = (fraction: number) => fraction * FRAMES
   for (const id of routeIds) {
     const route = routeTimelines[id]
     const card = pinTimelines[routeSource[id]]
+    expect(pinIds, `route ${id} source`).toContain(routeSource[id])
+    expect(pinIds, `route ${id} target`).toContain(routeTarget[id])
+    expect(routeTarget[id], `route ${id} goes somewhere else`).not.toBe(routeSource[id])
     const cardShown = frame(card.opacity.times[1])
     const cardGone = frame(card.opacity.times[4])
     const drawStart = frame(route.draw.times[1])
@@ -126,21 +167,29 @@ test('a line never outlives the card it flies out of, and starts only after the 
     expect(drawStart, `route ${id} starts drawing`).toBeGreaterThanOrEqual(cardShown)
     // The line may fade out up to 6 frames (0.1 s) after the card.
     expect(lineGone, `route ${id} fades out`).toBeLessThanOrEqual(cardGone + 6)
-    // Nothing is left on the map at the end of the loop.
+    // Nothing is left at the end of the loop.
     expect(route.opacity.values.at(-1)).toBe(0)
   }
 })
 
 test.describe('reduced motion', () => {
   test.use({ reducedMotion: 'reduce' })
-  test('everything stands still in the final state: all cards and routes visible', async ({ page }) => {
-    await open(page, 1440, 900)
-    for (const id of pinIds) {
-      expect(await page.locator(`[data-el="global__pin-${id}"]`).evaluate((el) => Number(getComputedStyle(el).opacity))).toBe(1)
-    }
-    for (const id of routeIds) {
-      expect(await page.locator(`[data-el="global__route-${id}"]`).evaluate((el) => Number(getComputedStyle(el).opacity))).toBe(1)
-    }
+
+  test('no pinned scene: a still picture with the timeline frozen on a frame with three cards', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 })
+    await page.goto('/')
+    await page.evaluate(() => document.fonts.ready)
+    await page.locator('[data-el="global"]').scrollIntoViewIfNeeded()
+    await page.waitForTimeout(800)
+    await expect(page.locator('[data-el="global__stage"]')).toHaveCSS('position', 'relative')
+    const { radius, cards } = await globe(page)
+    const slot = (await page.locator('[data-el="global__globe-slot"]').boundingBox())!
+    expect(Math.abs(radius - slot.width / 2)).toBeLessThan(2)
+    expect(cards).toBe('on')
+    const opacity = (id: string) => page.locator(`[data-el="global__pin-${id}"]`).evaluate((el) => Number(getComputedStyle(el.parentElement!).opacity))
+    // The timeline stands at a frozen frame with EU, Chile and Argentina on; Europe faces us, Georgia is not on yet.
+    expect(await opacity('eu')).toBe(1)
+    expect(await opacity('ge')).toBe(0)
+    await page.locator('[data-el="global__stage"]').screenshot({ path: 'tests/artifacts/global-reduced-1440.png' })
   })
 })
-
