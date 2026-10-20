@@ -56,8 +56,15 @@ export function InteractiveDots({
   const canvasRef = useRef<HTMLCanvasElement>(null)
   // The ripple plays once, also when the effect restarts (a theme change).
   const rippled = useRef(false)
-  // The effect restarts on a theme change: the dot color is read again and the grid is rebuilt.
+  // A theme change only reads the dot color again and redraws; the grid and the listeners stay (rebuilding them was a visible cost).
   const { theme } = useTheme()
+  const colorRef = useRef('')
+  const redrawRef = useRef<(() => void) | null>(null)
+  useEffect(() => {
+    if (!canvasRef.current) return
+    colorRef.current = getComputedStyle(canvasRef.current).color
+    redrawRef.current?.()
+  }, [theme])
   const revealOn = useRevealOn()
   const rippleOn = revealOn && ripple !== undefined
   const rippleDelay = (ripple?.delay ?? 0) * 1000
@@ -75,7 +82,6 @@ export function InteractiveDots({
     let dots: Dot[] = []
     let width = 0
     let height = 0
-    let color = ''
     let frame = 0
     let running = false
     let isVisible = true
@@ -118,7 +124,7 @@ export function InteractiveDots({
 
     const draw = () => {
       context.clearRect(0, 0, width, height)
-      context.fillStyle = color
+      context.fillStyle = colorRef.current
       context.beginPath()
       if (!rippleDone) {
         if (rippleStart === null || performance.now() < rippleStart) return // not started: no dots yet
@@ -203,12 +209,14 @@ export function InteractiveDots({
     }
 
     const onScroll = () => {
-      // The canvas moves under a standing pointer: the pointer position inside it changes.
+      // The canvas moves under a standing pointer: the pointer position inside it changes (nothing to do while the pointer is outside).
+      if (pointer.x === OFFSCREEN) return
       updateMouse()
       start()
     }
 
-    color = getComputedStyle(canvas).color
+    colorRef.current = getComputedStyle(canvas).color
+    redrawRef.current = draw
     resize()
 
     const resizeObserver = new ResizeObserver(resize)
@@ -236,7 +244,7 @@ export function InteractiveDots({
       window.removeEventListener('scroll', onScroll)
       document.documentElement.removeEventListener('pointerleave', onPointerLeave)
     }
-  }, [theme, spacing, dotSize, radius, force, ease, rippleOn, rippleDelay, rippleDuration, rippleOriginX, rippleOriginY])
+  }, [spacing, dotSize, radius, force, ease, rippleOn, rippleDelay, rippleDuration, rippleOriginX, rippleOriginY])
 
   return <canvas ref={canvasRef} aria-hidden="true" className={`block size-full ${colorClass} ${className}`} />
 }

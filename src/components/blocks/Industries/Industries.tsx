@@ -1,10 +1,9 @@
-import { motion, useAnimationFrame, useMotionValueEvent, useReducedMotion, useScroll } from 'motion/react'
-import { useEffect, useRef, useState, type PointerEvent } from 'react'
+import { useAnimationFrame, useMotionValueEvent, useReducedMotion, useScroll } from 'motion/react'
+import { useRef, useState } from 'react'
 import { useForcedTheme } from '../../../lib/theme'
 import { RevealLines } from '../../../motion/reveal'
 import { ColumnFade } from '../../ui/ColumnFade'
 import { GlowBackdrop, type GlowHue } from '../../ui/GlowBackdrop'
-import { useGlowParallax } from '../../ui/useGlowParallax'
 import { Container } from '../../ui/Container'
 import { CornerDots } from '../../ui/CornerDots'
 import { DESIGN_ACTIVE_ID, industries } from './items'
@@ -57,15 +56,6 @@ export function Industries() {
   // The dark scenes darken the whole site (the header, the page), and the theme toggle is locked meanwhile.
   useForcedTheme(glow ? 'dark' : null)
 
-  // Parallax of the glow: it follows the pointer a little while the pointer is over the open card (docs/ui-kit.md).
-  const parallax = useGlowParallax(!reducedMotion)
-  const { reset: resetGlow } = parallax
-  useEffect(resetGlow, [glow, resetGlow])
-  const followPointer = (event: PointerEvent<HTMLElement>) => {
-    const card = glow ? itemRefs.current[shownIndex]?.querySelector<HTMLElement>('[data-el$="-inner"]') : null
-    parallax.follow(event, card?.getBoundingClientRect())
-  }
-
   // Keep the open item in the middle of the screen: the content slides inside the stage (the stage cuts it at the screen edges).
   useAnimationFrame((_, delta) => {
     const stage = stageRef.current
@@ -92,10 +82,8 @@ export function Industries() {
     <section
       data-el="industries"
       data-glow={glow}
-      onPointerMove={followPointer}
-      onPointerLeave={parallax.reset}
       aria-labelledby="industries-title"
-      className="relative border-b border-border-subtle bg-surface-page transition-[background-color,border-color] duration-700 ease-out"
+      className="relative border-b border-border-subtle bg-surface-page transition-[background-color,border-color] duration-500 ease-out"
     >
       {/*
         The glow lies behind the content, as wide as the screen (it goes beyond the column), and stays in the middle of the screen
@@ -106,22 +94,22 @@ export function Industries() {
         aria-hidden="true"
         className={`pointer-events-none overflow-hidden ${reducedMotion ? 'absolute inset-0' : 'sticky top-0 -mb-[100svh] h-svh'}`}
       >
-        <motion.div data-el="industries__glow-layers" className="absolute inset-0" style={{ x: parallax.x, y: parallax.y }}>
+        <div data-el="industries__glow-layers" className="absolute inset-0">
           {glowHues.map((hue) => (
             <GlowBackdrop
               key={hue}
               hue={hue}
               visible={glow === hue}
               data-el={`industries__glow-${hue}`}
-              className="absolute top-1/2 left-1/2 h-74 w-[max(166vw,70rem)] max-w-none -translate-x-1/2 -translate-y-1/2 max-tablet:h-[34svh]"
+              className="absolute top-1/2 left-1/2 h-[clamp(22rem,58svh,36rem)] w-[max(166vw,70rem)] max-w-none -translate-x-1/2 -translate-y-1/2 max-tablet:h-[52svh]"
             />
           ))}
-        </motion.div>
+        </div>
       </div>
       <Container ref={tallRef} className="relative z-10" style={reducedMotion ? undefined : { height: scrollLength }}>
         <div
           data-el="industries__container"
-          className="relative h-full shadow-[inset_1px_0_0_var(--color-border-subtle),inset_-1px_0_0_var(--color-border-subtle)] transition-shadow duration-700 ease-out"
+          className="relative h-full shadow-[inset_1px_0_0_var(--color-border-subtle),inset_-1px_0_0_var(--color-border-subtle)] transition-shadow duration-500 ease-out"
         >
           <div
             ref={stageRef}

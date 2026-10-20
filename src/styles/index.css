@@ -8,18 +8,18 @@
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 /*
- * A short color fade of the whole page when the theme changes (src/lib/theme.ts adds the class for 0.8 s). It is in the base layer
+ * A short color fade of the whole page when the theme changes (src/lib/theme.ts adds the class for 0.6 s). It is in the base layer
  * on purpose: elements with their own transition (utility classes) keep it, the others get the fade.
  */
 @layer base {
   html.theme-fading :where(*, *::before, *::after) {
     transition:
-      background-color 0.7s ease-out,
-      border-color 0.7s ease-out,
-      color 0.7s ease-out,
-      fill 0.7s ease-out,
-      stroke 0.7s ease-out,
-      box-shadow 0.7s ease-out;
+      background-color 0.5s ease-out,
+      border-color 0.5s ease-out,
+      color 0.5s ease-out,
+      fill 0.5s ease-out,
+      stroke 0.5s ease-out,
+      box-shadow 0.5s ease-out;
   }
 }
 

@@ -1,17 +1,14 @@
-import { motion } from 'motion/react'
 import { useState, type ReactNode } from 'react'
 import { ButtonLink } from '../components/ui/ButtonLink'
-import { GlassSurface } from '../components/ui/GlassSurface'
 import { GlowBackdrop, type GlowHue } from '../components/ui/GlowBackdrop'
 import { InteractiveDots } from '../components/ui/InteractiveDots'
-import { useGlowParallax } from '../components/ui/useGlowParallax'
 import { useForcedTheme, useTheme } from '../lib/theme'
 import { CountUp, Reveal, RevealLines } from '../motion/reveal'
 import { useRevealOn } from '../motion/useReveal'
 import { Section } from './Section'
 
 /*
- * The living part of the UI Kit about movement and surfaces: how things appear, the dot ripple, glass, glow, depth, theme scenes.
+ * The living part of the UI Kit about movement and surfaces: how things appear, the dot ripple, glow, theme scenes.
  * Every tile has a short "when to use" text; the full rules are in docs/ui-kit.md. Replay plays a tile again (it is mounted anew).
  */
 
@@ -174,117 +171,32 @@ function DarkPanel({ className = '', children, ...rest }: { className?: string; 
   )
 }
 
-function ParallaxPanel() {
-  const parallax = useGlowParallax(true)
-  const [hue, setHue] = useState<GlowHue>('pink')
-  return (
-    <div className="flex flex-col gap-3">
-      <DarkPanel className="h-72">
-        <div
-          data-el="ui-kit__glow-parallax"
-          className="absolute inset-0 flex items-center justify-center"
-          onPointerMove={(event) => parallax.follow(event, event.currentTarget.querySelector('[data-glass-card]')?.getBoundingClientRect())}
-          onPointerLeave={parallax.reset}
-        >
-          <motion.div data-el="ui-kit__glow-parallax-layers" className="absolute inset-0" style={{ x: parallax.x, y: parallax.y }}>
-            {glowHues.map((value) => (
-              <GlowBackdrop
-                key={value}
-                hue={value}
-                visible={value === hue}
-                className="absolute top-1/2 left-1/2 h-40 w-[90%] -translate-x-1/2 -translate-y-1/2"
-              />
-            ))}
-          </motion.div>
-          <GlassSurface data-glass-card="" className="flex flex-col items-center gap-3 px-10 py-8 text-center">
-            <p className="type-heading-md text-typography-primary">Move the pointer over me</p>
-            <p className="type-body-md text-typography-secondary">The glow behind follows a little.</p>
-          </GlassSurface>
-        </div>
-      </DarkPanel>
-      <div className="flex flex-wrap gap-2">
-        {glowHues.map((value) => (
-          <button
-            key={value}
-            type="button"
-            data-el={`ui-kit__glow-parallax-${value}`}
-            aria-pressed={value === hue}
-            onClick={() => setHue(value)}
-            className="type-ui-sm rounded-pill px-3 py-1.5 text-typography-primary ring-1 ring-border-medium ring-inset transition-colors hover:bg-surface-hover aria-pressed:bg-surface-hover"
-          >
-            {value}
-          </button>
-        ))}
-      </div>
-    </div>
-  )
-}
-
-export function GlassAndGlowSections() {
+export function GlowSection() {
   return (
     <>
       <Section
-        id="glass"
-        title="Glass"
-        note="GlassSurface: a pane of glass for a card that lies over a colored background. It is the Figma Glass effect of the Industries card (frost 6, refraction 1, depth 100, dispersion 0.4, light -45 at 0.8), built from layers. The box (size, padding, flex) is yours: put the classes on it like on a div."
-      >
-        <ul className="grid grid-cols-1 gap-4 desktop:grid-cols-2">
-          <li>
-            <DarkPanel data-el="ui-kit__glass-on-glow" className="h-64">
-              <GlowBackdrop hue="violet" visible className="absolute top-1/2 left-1/2 h-36 w-[110%] -translate-x-1/2 -translate-y-1/2" />
-              <GlassSurface className="flex flex-col items-center gap-3 px-10 py-6 text-center">
-                <p className="type-heading-md text-typography-primary">On a glow</p>
-                <ButtonLink href="#glass" variant="inverse" icon="export" onClick={(event) => event.preventDefault()}>
-                  Book a demo
-                </ButtonLink>
-              </GlassSurface>
-            </DarkPanel>
-          </li>
-          <li>
-            <DarkPanel data-el="ui-kit__glass-on-dots" className="h-64">
-              <InteractiveDots />
-              <GlassSurface className="flex flex-col items-center gap-3 px-10 py-6 text-center">
-                <p className="type-heading-md text-typography-primary">On the dots</p>
-                <p className="type-body-md text-typography-secondary">The dots bend at the edge.</p>
-              </GlassSurface>
-            </DarkPanel>
-          </li>
-        </ul>
-        <Dl
-          items={[
-            ['Layers', 'Backdrop (blur 6, saturation, tint surface-white-16, bent edge in Chrome and Edge, color fringe) · diagonal sheen · 1 px rim, bright at the upper left · inner light · a bright spot that follows the pointer · a trace of grain.'],
-            ['Other browsers', 'Safari and Firefox cannot bend a backdrop with an SVG filter: they get the frost, the rim, the light and the spot, without the bent edge.'],
-            ['Props', 'radius (default 32), active (false fades the glass away and drops the costly filter; the box stays). Constants for the look: top of GlassSurface.tsx.'],
-            ['Where', 'Over a colored or moving background only. On a flat light card use the usual surface-subtle.'],
-          ]}
-        />
-      </Section>
-
-      <Section
         id="glow"
-        title="Glow and depth"
-        note="GlowBackdrop: a soft blurred ellipse of colored light behind a card (Figma layer Ellipse 215: a radial gradient from the color to nothing, blur 100). Hues are the tokens surface-glow-*. Several glows on top of each other cross-fade when you show one. useGlowParallax makes the glow follow the pointer a little over the card."
+        title="Glow"
+        note="GlowBackdrop: a soft ellipse of colored light behind a card (Figma layer Ellipse 215: a radial gradient from the color to nothing). Hues are the tokens surface-glow-*. Several glows on top of each other cross-fade when you show one. The card over it is a faint see-through fill (surface-white-16) with a thin ring, no blur: it is cheap on a weak computer."
       >
         <ul className="grid grid-cols-1 gap-4 tablet:grid-cols-2 desktop:grid-cols-3">
           {glowHues.map((hue) => (
             <li key={hue} data-el={`ui-kit__glow-demo-${hue}`}>
               <DarkPanel className="h-56">
-                <GlowBackdrop hue={hue} visible className="absolute top-1/2 left-1/2 h-40 w-[130%] -translate-x-1/2 -translate-y-1/2" />
-                <GlassSurface className="flex flex-col items-center gap-3 px-8 py-6 text-center">
+                <GlowBackdrop hue={hue} visible className="absolute top-1/2 left-1/2 h-52 w-[130%] -translate-x-1/2 -translate-y-1/2" />
+                <div className="relative flex flex-col items-center gap-3 rounded-32 bg-surface-white-16 px-8 py-6 text-center ring-1 ring-border-subtle ring-inset">
                   <p className="type-heading-md text-typography-primary">{hue}</p>
                   <ButtonLink href="#glow" variant="inverse" icon="export" onClick={(event) => event.preventDefault()}>
                     Book a demo
                   </ButtonLink>
-                </GlassSurface>
+                </div>
               </DarkPanel>
             </li>
           ))}
         </ul>
-        <ParallaxPanel />
         <Dl
           items={[
-            ['GlowBackdrop', 'hue, visible, className (size and place: a positioned parent is needed). The cross-fade takes 0.7 s.'],
-            ['Depth', 'useGlowParallax(enabled): returns x and y (spring motion values) for a motion element holding the glows, and follow(event, cardRect) / reset(). ±28 px by x and ±14 px by y at the edge of the card (GLOW_PARALLAX). Mouse and pen only, never with reduced motion.'],
+            ['GlowBackdrop', 'hue, visible, className (size and place: a positioned parent is needed). The cross-fade takes 0.7 s. It has no blur filter on purpose: the soft edge is in the gradient (a blurred layer 2400 px wide is heavy to repaint).'],
             ['Colors', 'No Figma variables yet (an exception, see docs/tokens-map.md): pink is the color of the design, violet and blue were chosen, orange and green are brand/400 and green/500.'],
           ]}
         />

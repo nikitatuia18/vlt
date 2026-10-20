@@ -259,7 +259,7 @@ const scenes: Record<string, string | null> = {
 }
 
 for (const [index, id] of ids.entries()) {
-  test(`scene of "${id}": ${scenes[id] ? `dark with a ${scenes[id]} glow, glass card, white button` : 'light, brand button, no glow'}`, async ({ page }) => {
+  test(`scene of "${id}": ${scenes[id] ? `dark with a ${scenes[id]} glow, see-through card, white button` : 'light, brand button, no glow'}`, async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 })
     await page.goto('/')
     await page.evaluate(() => document.fonts.ready)
@@ -284,10 +284,9 @@ for (const [index, id] of ids.entries()) {
     const cardBackground = await card.evaluate((el) => getComputedStyle(el).backgroundColor)
     const buttonBackground = await button.evaluate((el) => getComputedStyle(el).backgroundColor)
     if (hue) {
-      // Glass: the fill is see-through, the backdrop is blurred; the button is the white inverse one with dark text.
+      // The card is a faint see-through fill and costs nothing to draw (no backdrop filter); the button is the white inverse one with dark text.
       expect(cardBackground).toMatch(/rgba\(|color\(srgb/)
-      expect(await card.locator('[data-glass="backdrop"]').evaluate((el) => getComputedStyle(el).backdropFilter)).toContain('blur')
-      await expect(card.locator('[data-glass="rim"]')).toHaveCount(1)
+      expect(await card.evaluate((el) => getComputedStyle(el).backdropFilter)).toBe('none')
       expect(buttonBackground).toBe('rgb(255, 255, 255)')
       await expect(button).toHaveCSS('color', 'rgb(24, 24, 24)')
       // Title and page are on the dark side of the tokens.
@@ -355,50 +354,3 @@ test('reduced motion: the static design state is the dark pink scene of Startups
   await context.close()
 })
 
-// Depth: the glow behind the open card follows the pointer a little while it is over the card, and comes back when it leaves.
-const glowShift = (page: Page) =>
-  page.locator('[data-el="industries__glow-layers"]').evaluate((el) => {
-    const matrix = new DOMMatrix(getComputedStyle(el).transform)
-    return { x: matrix.m41, y: matrix.m42 }
-  })
-
-test('parallax: the glow follows the pointer over the open card, within a few dozen px, and returns', async ({ page }) => {
-  await page.setViewportSize({ width: 1440, height: 900 })
-  await page.goto('/')
-  await page.evaluate(() => document.fonts.ready)
-  await scrollToProgress(page, 0.4) // Startups
-  const card = (await box(page, '[data-el="industries__item-startups-inner"]'))
-  expect(Math.abs((await glowShift(page)).x)).toBeLessThan(0.5)
-
-  await page.mouse.move(card.x + card.width * 0.9, card.y + card.height * 0.2, { steps: 5 })
-  await page.waitForTimeout(1500)
-  const right = await glowShift(page)
-  expect(right.x).toBeGreaterThan(10)
-  expect(right.x).toBeLessThanOrEqual(28.5)
-  expect(right.y).toBeLessThan(0)
-
-  await page.mouse.move(card.x + card.width * 0.1, card.y + card.height * 0.8, { steps: 5 })
-  await page.waitForTimeout(1500)
-  const left = await glowShift(page)
-  expect(left.x).toBeLessThan(-10)
-  expect(left.y).toBeGreaterThan(0)
-
-  // Away from the card: back in the middle.
-  await page.mouse.move(40, 450, { steps: 5 })
-  await page.waitForTimeout(1800)
-  const away = await glowShift(page)
-  expect(Math.abs(away.x)).toBeLessThan(1)
-  expect(Math.abs(away.y)).toBeLessThan(1)
-})
-
-test('parallax: in a light scene nothing moves, with reduced motion neither', async ({ browser }) => {
-  const context = await browser.newContext({ viewport: { width: 1440, height: 900 }, reducedMotion: 'reduce' })
-  const page = await context.newPage()
-  await page.goto('/')
-  await section(page).scrollIntoViewIfNeeded()
-  const card = await box(page, '[data-el="industries__item-startups-inner"]')
-  await page.mouse.move(card.x + card.width * 0.9, card.y + card.height * 0.2, { steps: 5 })
-  await page.waitForTimeout(800)
-  expect(Math.abs((await glowShift(page)).x)).toBeLessThan(0.5)
-  await context.close()
-})

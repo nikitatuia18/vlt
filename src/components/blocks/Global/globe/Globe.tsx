@@ -124,8 +124,14 @@ export function Globe({ progress, appear, slotRef, frameRef, reduced }: GlobePro
   const pinElements = useRef<(HTMLDivElement | null)[]>([])
   // Survives a theme change: the globe must not jump back to its start angle.
   const motionState = useRef({ spinAngle: 0, dragLongitude: 0, dragLatitude: 0, longitudeSpeed: 0, latitudeSpeed: 0, cardsOn: 0, cardsClock: 0 })
-  // The effect restarts on a theme change: both colors are read again.
+  // A theme change only refreshes the two colors; it must not rebuild the globe (60 thousand lattice points) and its listeners.
   const { theme } = useTheme()
+  const colorsStale = useRef(true)
+  const redrawStill = useRef<(() => void) | null>(null)
+  useEffect(() => {
+    colorsStale.current = true
+    redrawStill.current?.()
+  }, [theme])
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -211,6 +217,10 @@ export function Globe({ progress, appear, slotRef, frameRef, reduced }: GlobePro
 
     /** Draws one frame. `delta` is the time since the last frame in seconds (0 for a still picture). */
     const render = (delta: number) => {
+      if (colorsStale.current) {
+        readColors()
+        colorsStale.current = false
+      }
       const scroll = reduced ? 1 : progress.get()
       const appearance = reduced ? 1 : smoothstep(0, 1, appear.get())
 
@@ -420,9 +430,10 @@ export function Globe({ progress, appear, slotRef, frameRef, reduced }: GlobePro
       pointer = { x: -1000, y: -1000 }
     }
 
-    readColors()
     measure()
     render(0)
+    // With reduced motion nothing redraws by itself: a theme change asks for one more picture.
+    redrawStill.current = reduced ? () => render(0) : null
 
     const resizeObserver = new ResizeObserver(() => {
       measure()
@@ -459,7 +470,7 @@ export function Globe({ progress, appear, slotRef, frameRef, reduced }: GlobePro
       window.removeEventListener('pointercancel', onPointerEnd)
       document.documentElement.removeEventListener('pointerleave', onPointerLeave)
     }
-  }, [theme, progress, appear, slotRef, frameRef, reduced])
+  }, [progress, appear, slotRef, frameRef, reduced])
 
   return (
     <div data-el="global__globe" aria-hidden="true" className="absolute inset-0">

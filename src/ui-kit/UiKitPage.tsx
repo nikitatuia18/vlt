@@ -15,7 +15,7 @@ import { IconLink } from '../components/ui/IconLink'
 import { InteractiveDots } from '../components/ui/InteractiveDots'
 import { ThemeToggle } from '../components/ui/ThemeToggle'
 import { useTheme } from '../lib/theme'
-import { AppearanceSections, GlassAndGlowSections, ThemeSceneSection } from './MotionShowcase'
+import { AppearanceSections, GlowSection, ThemeSceneSection } from './MotionShowcase'
 import { Section } from './Section'
 import tokensCss from '../styles/tokens.css?raw'
 
@@ -281,7 +281,7 @@ export default function UiKitPage() {
         </Section>
 
         <AppearanceSections />
-        <GlassAndGlowSections />
+        <GlowSection />
         <ThemeSceneSection />
 
         <Section

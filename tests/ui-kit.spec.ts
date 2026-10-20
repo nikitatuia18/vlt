@@ -75,7 +75,7 @@ test('UI Kit screenshots, no sideways scroll', async ({ page }) => {
   }
 })
 
-test('UI Kit shows the glow hues: a dark panel, a glow behind a glass card and the white button, for every hue', async ({ page }) => {
+test('UI Kit shows the glow hues: a dark panel, a glow behind a see-through card and the white button, for every hue', async ({ page }) => {
   await page.goto('/ui-kit')
   for (const hue of ['violet', 'pink', 'orange', 'blue', 'green']) {
     const demo = page.locator(`[data-el="ui-kit__glow-demo-${hue}"]`)
@@ -83,13 +83,12 @@ test('UI Kit shows the glow hues: a dark panel, a glow behind a glass card and t
     await expect(demo.locator('[data-theme="dark"]')).toHaveCount(1)
     await expect(demo.locator(`[data-hue="${hue}"]`)).toHaveAttribute('data-visible', 'true')
     await expect(demo.locator('a')).toHaveCSS('background-color', 'rgb(255, 255, 255)')
-    await expect(demo.locator('[data-glass="backdrop"]')).toHaveCount(1)
   }
 })
 
 test('UI Kit is the knowledge base of movement: every way to appear has a tile with a Replay button', async ({ page }) => {
   await page.goto('/ui-kit')
-  for (const id of ['appearance', 'glass', 'glow', 'theme-scenes']) await expect(page.locator(`[data-el="ui-kit__${id}"]`)).toBeVisible()
+  for (const id of ['appearance', 'glow', 'theme-scenes']) await expect(page.locator(`[data-el="ui-kit__${id}"]`)).toBeVisible()
   for (const name of ['lines', 'up', 'drop', 'card', 'fade', 'rise', 'pop', 'spring', 'shutter', 'line-x', 'count', 'ripple']) {
     await expect(page.locator(`[data-el="ui-kit__reveal-${name}"]`), name).toBeVisible()
     await page.locator(`[data-el="ui-kit__reveal-${name}-replay"]`).click()
@@ -99,7 +98,7 @@ test('UI Kit is the knowledge base of movement: every way to appear has a tile w
   await expect(page.locator('[data-el="ui-kit__reveal-off"]')).toBeVisible()
 })
 
-test('UI Kit: a held scene darkens the page and locks the toggle; the glow of the demo follows the pointer', async ({ page }) => {
+test('UI Kit: a held scene darkens the page and locks the toggle', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
   await page.goto('/ui-kit')
   const hold = page.locator('[data-el="ui-kit__theme-scene-hold"]')
@@ -110,12 +109,4 @@ test('UI Kit: a held scene darkens the page and locks the toggle; the glow of th
   await expect(page.locator('[data-el="ui-kit__theme-scene-state"]')).toContainText('locked')
   await hold.click()
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light')
-
-  const panel = page.locator('[data-el="ui-kit__glow-parallax"]')
-  await panel.scrollIntoViewIfNeeded()
-  const card = (await panel.locator('[data-glass-card]').boundingBox())!
-  await page.mouse.move(card.x + card.width * 0.9, card.y + card.height * 0.5, { steps: 5 })
-  await page.waitForTimeout(1500)
-  const shift = await page.locator('[data-el="ui-kit__glow-parallax-layers"]').evaluate((el) => new DOMMatrix(getComputedStyle(el).transform).m41)
-  expect(shift).toBeGreaterThan(10)
 })

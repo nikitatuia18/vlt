@@ -2,7 +2,6 @@ import { motion } from 'motion/react'
 import { Reveal } from '../../../motion/reveal'
 import { duration, easeOut } from '../../../motion/tokens'
 import { ButtonLink } from '../../ui/ButtonLink'
-import { GlassSurface } from '../../ui/GlassSurface'
 import type { IndustryItemData } from './items'
 
 type IndustryItemProps = {
@@ -26,10 +25,10 @@ const titleClasses = 'type-heading-lg tablet:type-heading-xl min-[64rem]:type-di
 export function IndustryItem({ item, isActive, index, setRef }: IndustryItemProps) {
   const { id, title, description, cta, glow } = item
 
-  // The box of the card. Open: padding and a fill (light card) or the glass layers (dark scene, see GlassSurface); closed: nothing.
+  // The box of the card. Open: padding and a fill (a white card; in a dark scene a faint see-through one, the glow shows through); closed: nothing.
   const boxClasses = `flex flex-col items-center rounded-32 text-center ring-1 ring-inset transition-[background-color,box-shadow,padding] duration-700 ease-out ${
     isActive
-      ? `px-6 py-6 tablet:px-10 tablet:py-8 desktop:px-15 desktop:py-10 ${glow ? 'ring-transparent' : 'bg-surface-subtle ring-border-subtle'}`
+      ? `px-6 py-6 ring-border-subtle tablet:px-10 tablet:py-8 desktop:px-15 desktop:py-10 ${glow ? 'bg-surface-white-16' : 'bg-surface-subtle'}`
       : 'bg-transparent px-0 py-0 ring-transparent'
   }`
 
@@ -37,7 +36,7 @@ export function IndustryItem({ item, isActive, index, setRef }: IndustryItemProp
     <>
       <h3
         data-el={`industries__item-${id}-title`}
-        className={`${titleClasses} transition-colors duration-700 desktop:whitespace-nowrap ${
+        className={`${titleClasses} transition-colors duration-400 ease-out desktop:whitespace-nowrap ${
           isActive ? 'text-typography-primary' : 'text-typography-tertiary'
         }`}
       >
@@ -91,16 +90,9 @@ export function IndustryItem({ item, isActive, index, setRef }: IndustryItemProp
       data-active={isActive}
       className="flex justify-center"
     >
-      {glow ? (
-        // The cards of the dark scenes are glass; the glass layers fade in and out with the card.
-        <GlassSurface data-el={`industries__item-${id}-inner`} className={boxClasses} active={isActive}>
-          {content}
-        </GlassSurface>
-      ) : (
-        <div data-el={`industries__item-${id}-inner`} className={boxClasses}>
-          {content}
-        </div>
-      )}
+      <div data-el={`industries__item-${id}-inner`} className={boxClasses}>
+        {content}
+      </div>
     </Reveal>
   )
 }

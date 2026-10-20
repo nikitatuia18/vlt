@@ -23,7 +23,7 @@ const forced = new Map<symbol, Theme>()
 
 /** A short color fade of the whole page while the theme changes (the rule `theme-fading` is in index.css). */
 const FADE_CLASS = 'theme-fading'
-const FADE_MS = 800
+const FADE_MS = 600
 let fadeTimer: ReturnType<typeof setTimeout> | undefined
 
 /** What the visitor chose; before anybody chose, what <html> shows now. It must be read BEFORE a scene forces its theme. */
