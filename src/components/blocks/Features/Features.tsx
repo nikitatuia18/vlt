@@ -1,4 +1,4 @@
-import { Reveal, RevealLines } from '../../../motion/reveal'
+import { RevealLines } from '../../../motion/reveal'
 import { ColumnFade } from '../../ui/ColumnFade'
 import { Container } from '../../ui/Container'
 import { CornerDots } from '../../ui/CornerDots'
@@ -29,15 +29,15 @@ export function Features() {
             data-el="features__header"
             className="flex flex-col items-center gap-4 text-center tablet:gap-6 desktop:px-10"
           >
-            <Reveal
+            <RevealLines
               as="p"
+              step={0.06}
               data-el="features__eyebrow"
               className="type-heading-sm max-w-120 text-typography-secondary tablet:type-heading-md desktop:type-heading-lg"
-            >
-              Accept. Move. Hold. Pay out.
-            </Reveal>
+              lines={['Accept. Move. Hold. Pay out.']}
+            />
             <RevealLines
-              delay={0.15}
+              delay={0.3}
               id="features-title"
               data-el="features__title"
               className="type-heading-lg max-w-156 text-typography-primary tablet:type-heading-xl min-[64rem]:type-display-sm"

@@ -23,7 +23,9 @@ export const appear = {
   /** One line of a heading rises from under its mask. */
   line: { duration: 0.9, step: 0.09 },
   /** One word of a heading or a text rises from under its mask; the words follow one another (heading by words). */
-  word: { duration: 0.85, step: 0.07 },
+  word: { duration: 0.85, step: 0.07, paragraphStep: 0.03 },
+  /** While a word (or a line) is under its mask it is a little smaller, and grows to full size as it rises (origin: the lower left). */
+  mask: { scaleFrom: 0.82 },
   /** Text and buttons: rise, clear up from a light blur. */
   up: { duration: 0.8, y: 24, blur: 6 },
   /** Small things that come down into place (the parts of the header). */

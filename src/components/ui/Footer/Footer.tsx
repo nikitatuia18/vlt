@@ -1,5 +1,5 @@
 import logo from '../../../assets/brand/logo-velant-pay-footer.svg'
-import { Reveal } from '../../../motion/reveal'
+import { Reveal, RevealLines } from '../../../motion/reveal'
 import { Container } from '../Container'
 import { CornerDots } from '../CornerDots'
 import { Icon } from '../Icon'
@@ -52,15 +52,13 @@ export function Footer({ columns = footerColumns, legalLinks = siteLegalLinks, y
             data-el="footer__container"
             className={`relative flex flex-col gap-10 px-4 py-12 tablet:px-8 tablet:py-16 desktop:gap-12 desktop:px-10 desktop:py-20 min-[100rem]:flex-row min-[100rem]:justify-between min-[100rem]:py-30 ${columnLines}`}
           >
-            <Reveal data-el="footer__brand" className="flex flex-col items-start gap-4">
+            <Reveal variant="fade" data-el="footer__brand" className="flex flex-col items-start gap-4">
               <a href="/" aria-label="Velant Pay, home" className="flex text-typography-primary">
                 <span data-el="img-logo-velant-pay" className="flex">
                   <Icon src={logo} width={271} height={65.6985} />
                 </span>
               </a>
-              <p data-el="footer__brand-desc" className="type-body-md text-typography-secondary">
-                {brandDescription}
-              </p>
+              <RevealLines as="p" delay={0.2} data-el="footer__brand-desc" className="type-body-md text-typography-secondary" lines={[brandDescription]} />
             </Reveal>
 
             <nav
@@ -69,10 +67,14 @@ export function Footer({ columns = footerColumns, legalLinks = siteLegalLinks, y
               className="grid grid-cols-2 gap-x-6 gap-y-8 tablet:grid-cols-3 desktop:flex desktop:items-start desktop:gap-10"
             >
               {columns.map((column, index) => (
-                <Reveal key={column.id} delay={0.1 + index * 0.08} data-el={`footer__col-${column.id}`} className="flex flex-col gap-2">
-                  <h3 data-el={`footer__col-${column.id}-title`} className="type-heading-md text-typography-primary">
-                    {column.title}
-                  </h3>
+                <Reveal variant="fade" key={column.id} delay={0.1 + index * 0.08} data-el={`footer__col-${column.id}`} className="flex flex-col gap-2">
+                  <RevealLines
+                    as="h3"
+                    delay={0.2 + index * 0.08}
+                    data-el={`footer__col-${column.id}-title`}
+                    className="type-heading-md text-typography-primary"
+                    lines={[column.title]}
+                  />
                   <ul data-el={`footer__col-${column.id}-list`} className="flex flex-col gap-2">
                     {column.links.map((link) => (
                       <li key={link.id}>

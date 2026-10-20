@@ -154,7 +154,7 @@ export function Reveal({ variant = 'up', as = 'div', delay = 0, when, atLoad, at
 type RevealLinesProps = Trigger & {
   lines: readonly string[]
   as?: 'h1' | 'h2' | 'h3' | 'p'
-  /** `line` (default): a line rises as a whole. `word`: every word rises from its own mask, one after another (a phrase "unrolls"). */
+  /** `word` (default): every word rises from its own mask, one after another (a phrase "unrolls"). `line`: a line rises as a whole. */
   by?: 'line' | 'word'
   /** Seconds between neighbours (lines or words); the default comes from `appear`. */
   step?: number
@@ -164,28 +164,31 @@ type RevealLinesProps = Trigger & {
   'data-el'?: string
 }
 
+// A word or a line is a little smaller while it is under the mask and grows to full size as it rises; it grows from its lower left.
 const lineVariants: Variants = {
-  hidden: { y: '110%' },
-  shown: (delay: number) => ({ y: '0%', transition: { duration: appear.line.duration, ease: easeOut, delay } }),
+  hidden: { y: '110%', scale: appear.mask.scaleFrom },
+  shown: (delay: number) => ({ y: '0%', scale: 1, transition: { duration: appear.line.duration, ease: easeOut, delay } }),
 }
+const growFrom = { transformOrigin: '0% 100%' } as const
 
 const wordVariants: Variants = {
-  hidden: { y: '110%' },
-  shown: (delay: number) => ({ y: '0%', transition: { duration: appear.word.duration, ease: easeOut, delay } }),
+  hidden: { y: '110%', scale: appear.mask.scaleFrom },
+  shown: (delay: number) => ({ y: '0%', scale: 1, transition: { duration: appear.word.duration, ease: easeOut, delay } }),
 }
 
 /**
- * A heading whose lines rise from under a mask, one after another. The lines are given as an array (the page breaks them
- * with `<br />` anyway); the heading reads and copies as one text.
- * With `by="word"` the words rise one after another instead (each from its own mask): the phrase unrolls. The words wrap as the text
- * wraps, so it also suits a paragraph; the lines of the array are still separate blocks.
+ * A heading or a text whose words rise from under their masks, one after another (each word a little smaller under the mask and
+ * full size when it is out): the phrase unrolls. The words wrap as the text wraps, so it suits headings and paragraphs alike;
+ * the strings of `lines` are separate blocks (forced line breaks). The text reads and copies as one text.
+ * With `by="line"` whole lines rise instead, one after another.
  */
-export function RevealLines({ lines, as = 'h2', by = 'line', step, className, delay = 0, when, atLoad, ...rest }: RevealLinesProps) {
+export function RevealLines({ lines, as = 'h2', by = 'word', step, className, delay = 0, when, atLoad, ...rest }: RevealLinesProps) {
   const on = useRevealOn()
   const trigger = useTriggerProps({ when, atLoad })
   const Element = motionTags[as] as typeof motion.div
 
-  const gap = step ?? (by === 'word' ? appear.word.step : appear.line.step)
+  // Headings go a word at a time at 0.07 s, a paragraph (many words) faster, at 0.03 s.
+  const gap = step ?? (by === 'word' ? (as === 'p' ? appear.word.paragraphStep : appear.word.step) : appear.line.step)
 
   if (!on) {
     return createElement(
@@ -212,7 +215,7 @@ export function RevealLines({ lines, as = 'h2', by = 'line', step, className, de
                 {wordIndex > 0 ? ' ' : null}
                 {/* Every word has its own mask (a little taller below and wider at the sides, so the tails of g, y are not cut). */}
                 <span className="-mx-[0.06em] -mb-[0.16em] inline-block overflow-hidden px-[0.06em] pb-[0.16em] align-top">
-                  <motion.span className="inline-block" variants={wordVariants} custom={delay + counted++ * gap}>
+                  <motion.span className="inline-block" style={growFrom} variants={wordVariants} custom={delay + counted++ * gap}>
                     {word}
                   </motion.span>
                 </span>
@@ -231,7 +234,7 @@ export function RevealLines({ lines, as = 'h2', by = 'line', step, className, de
         // The mask: a little taller below and wider at the sides, so that the tails of g, y and the side bearings are not cut;
         // the negative margins give it back, so the layout is the same as without the mask.
         <span key={line} className="-mx-[0.06em] -mb-[0.16em] block overflow-hidden px-[0.06em] pb-[0.16em]">
-          <motion.span className="block" variants={lineVariants} custom={delay + index * gap}>
+          <motion.span className="block" style={growFrom} variants={lineVariants} custom={delay + index * gap}>
             {line}
           </motion.span>
           {index < lines.length - 1 ? ' ' : null}

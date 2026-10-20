@@ -1,7 +1,7 @@
 import { useMotionValueEvent, useReducedMotion, useScroll } from 'motion/react'
 import { useLayoutEffect, useRef, useState } from 'react'
 import { shiftScroll } from '../../../lib/smoothScroll'
-import { CountUp, Reveal, RevealLines } from '../../../motion/reveal'
+import { CountUp, RevealLines } from '../../../motion/reveal'
 import { Container } from '../../ui/Container'
 import { Globe } from './globe/Globe'
 
@@ -111,15 +111,15 @@ export function Global() {
                     data-el={`global__metric-${metric.id}-value`}
                     className="type-heading-lg text-typography-primary tablet:type-heading-xl min-[90rem]:type-display-sm"
                   />
-                  <Reveal
+                  <RevealLines
                     as="p"
                     when={textOn}
+                    step={0.05}
                     delay={0.6 + index * 0.15}
                     data-el={`global__metric-${metric.id}-label`}
                     className="type-body-md text-typography-secondary tablet:type-body-lead"
-                  >
-                    {metric.label}
-                  </Reveal>
+                    lines={[metric.label]}
+                  />
                 </li>
               ))}
             </ul>
@@ -136,15 +136,14 @@ export function Global() {
                 lines={['Go global without', 'rebuilding your', 'payments stack.']}
               />
               {/* As wide as the title above it, not wider (w-0 + min-w-full). */}
-              <Reveal
+              <RevealLines
                 as="p"
                 when={textOn}
-                delay={0.45}
+                delay={0.55}
                 data-el="global__desc"
                 className="type-body-md w-0 min-w-full text-typography-secondary tablet:type-body-lead"
-              >
-                Connect local payment methods, international rails and crypto through one integration.
-              </Reveal>
+                lines={['Connect local payment methods, international rails and crypto through one integration.']}
+              />
             </div>
           </div>
         </Container>

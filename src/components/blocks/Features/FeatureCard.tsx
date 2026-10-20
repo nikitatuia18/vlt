@@ -1,26 +1,35 @@
 import type { ReactNode } from 'react'
 import exportIconSrc from '../../../assets/icons/export.svg'
-import { Reveal } from '../../../motion/reveal'
+import { Reveal, RevealLines } from '../../../motion/reveal'
 import { Badge } from '../../ui/Badge'
 import { Icon } from '../../ui/Icon'
 import { IconLink } from '../../ui/IconLink'
 import type { FeatureCardData } from './cards'
 
-type CardTextProps = Pick<FeatureCardData, 'id' | 'title' | 'description'> & { className?: string }
+type CardTextProps = Pick<FeatureCardData, 'id' | 'title' | 'description'> & {
+  className?: string
+  /** Seconds the words wait after the text has come into view (the card rises first). */
+  delay?: number
+}
 
 /** Title and description of a card. Layers `features__card-{id}-text`, `-title`, `-desc`. */
-function CardText({ id, title, description, className = '' }: CardTextProps) {
+function CardText({ id, title, description, className = '', delay = 0 }: CardTextProps) {
   return (
     <div data-el={`features__card-${id}-text`} className={`relative flex flex-col gap-2 ${className}`}>
-      <h3
+      <RevealLines
+        as="h3"
+        delay={delay}
         data-el={`features__card-${id}-title`}
         className="type-heading-lg text-typography-primary tablet:type-heading-xl"
-      >
-        {title}
-      </h3>
-      <p data-el={`features__card-${id}-desc`} className="type-body-md max-w-75 text-typography-secondary">
-        {description}
-      </p>
+        lines={[title]}
+      />
+      <RevealLines
+        as="p"
+        delay={delay + 0.25}
+        data-el={`features__card-${id}-desc`}
+        className="type-body-md max-w-75 text-typography-secondary"
+        lines={[description]}
+      />
     </div>
   )
 }
@@ -52,7 +61,7 @@ export function FeatureCard({ id, title, description, href, illustration, classN
           {illustration}
         </div>
       )}
-      <CardText id={id} title={title} description={description} className={textClassName} />
+      <CardText id={id} title={title} description={description} className={textClassName} delay={revealDelay + 0.2} />
       {/* The "Learn more" text of the design is hidden (a 2 px wide clipped box): it is the accessible name. */}
       <IconLink
         href={href}
@@ -81,7 +90,7 @@ export function SoonCard({ id, title, description, revealDelay = 0 }: SoonCardPr
       data-el={`features__card-${id}`}
       className="flex flex-1 flex-col gap-8 overflow-clip rounded-40 bg-surface-hover p-6 tablet:p-10"
     >
-      <CardText id={id} title={title} description={description} />
+      <CardText id={id} title={title} description={description} delay={revealDelay + 0.2} />
       <Badge icon="clock" data-el={`features__card-${id}-badge`} className="self-start">
         Coming soon
       </Badge>

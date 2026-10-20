@@ -72,13 +72,12 @@ export function AppearanceSections() {
           </p>
         )}
         <ul className="grid grid-cols-1 gap-4 tablet:grid-cols-2 desktop:grid-cols-3">
-          <Tile name="lines" usage="RevealLines: headings. Every line rises from under a mask, one after another. Give the lines as an array.">
-            <RevealLines as="h3" lines={['Everything you need', 'to move money.']} className="type-heading-md text-center text-typography-primary" />
+          <Tile name="lines" usage="RevealLines by=&quot;line&quot;: a whole line rises (the earlier way; every text uses by word now). Give the lines as an array.">
+            <RevealLines as="h3" by="line" lines={['Everything you need', 'to move money.']} className="type-heading-md text-center text-typography-primary" />
           </Tile>
-          <Tile name="words" usage='RevealLines by="word": every word rises from its own mask, one after another (step 0.07 s); the phrase unrolls. Wraps like text, so it suits a paragraph too (step={0.04}).'>
+          <Tile name="words" usage='RevealLines (the way for all headings and texts): every word rises from its own mask, one after another (0.07 s for a heading, 0.03 s for a paragraph); under the mask a word is a little smaller and grows to full size. Wraps like text.'>
             <RevealLines
               as="h3"
-              by="word"
               lines={['What are our next steps?']}
               className="type-heading-md max-w-64 text-center text-typography-primary"
             />

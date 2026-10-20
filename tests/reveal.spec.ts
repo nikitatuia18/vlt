@@ -17,10 +17,10 @@ const scrollToSection = async (page: Page, name: string, fraction = 0) => {
   )
 }
 
-/** Vertical shift of the first line of a heading (px): positive while the line is still below its mask. */
+/** Vertical shift of the first word (or line) of a text (px): positive while it is still below its mask. */
 const lineShift = (page: Page, heading: string) =>
   page
-    .locator(`[data-el="${heading}"] > span > span`)
+    .locator(`[data-el="${heading}"] .overflow-hidden > span`)
     .first()
     .evaluate((line) => new DOMMatrix(getComputedStyle(line).transform).m42)
 
@@ -106,7 +106,7 @@ test('global: the text waits for the globe, then the figures count up', async ({
   await scrollToSection(page, 'global', 0.2)
   await page.waitForTimeout(1500)
   expect(await lineShift(page, 'global__title')).toBeGreaterThan(10)
-  expect(await opacityOf(page, '[data-el="global__desc"]')).toBe(0)
+  expect(await lineShift(page, 'global__desc')).toBeGreaterThan(10)
   // The figures are not there before their turn (they must not stand as zeros).
   for (const metric of ['uptime', 'rails', 'latency']) {
     expect(await opacityOf(page, `[data-el="global__metric-${metric}-value"]`), metric).toBe(0)
@@ -115,7 +115,7 @@ test('global: the text waits for the globe, then the figures count up', async ({
   await scrollToSection(page, 'global', 0.7)
   await page.waitForTimeout(3500)
   expect(await lineShift(page, 'global__title')).toBeCloseTo(0, 1)
-  expect(await opacityOf(page, '[data-el="global__desc"]')).toBe(1)
+  expect(await lineShift(page, 'global__desc')).toBeCloseTo(0, 1)
   const counted = (metric: string) => page.locator(`[data-el="global__metric-${metric}-value"] > span > span[aria-hidden="true"]:not(.invisible)`)
   await expect(counted('uptime')).toHaveText('99.9%')
   await expect(counted('rails')).toHaveText('15+')
@@ -208,3 +208,50 @@ test.describe('reduced motion', () => {
     await expect(page.locator('[data-el="hero__title"]')).toBeVisible()
   })
 })
+
+// The words and masks must not change the layout: every converted text has the same size and the same place in its block
+// with the appearance on (after it has played) as with it off.
+for (const viewport of [
+  { name: 'desktop-1440', width: 1440, height: 900 },
+  { name: 'mobile-393', width: 393, height: 850 },
+]) {
+  test(`the word reveal keeps the layout of every text (${viewport.name})`, async ({ browser }) => {
+    const measure = async (revealOff: boolean) => {
+      const context = await browser.newContext({ viewport: { width: viewport.width, height: viewport.height } })
+      if (revealOff) await context.addInitScript(() => localStorage.setItem('velant-reveal', 'off'))
+      const page = await context.newPage()
+      await page.goto('/')
+      await page.evaluate(() => document.fonts.ready)
+      // Walk down the page so that everything comes into view, then wait for the longest run.
+      for (let y = 0; y < 16000; y += 600) {
+        await page.evaluate((top) => window.scrollTo(0, top), y)
+        await page.waitForTimeout(90)
+      }
+      await page.waitForTimeout(3500)
+      const rects = await page.evaluate(() => {
+        const selector = 'h1, h2, [data-el$="__desc"], [data-el$="__subtitle"], [data-el$="__eyebrow"], [data-el$="-desc"], [data-el$="-label"], [data-el^="footer__col-"][data-el$="-title"]'
+        const found: Record<string, number[]> = {}
+        for (const element of document.querySelectorAll<HTMLElement>(selector)) {
+          // Skip the texts inside the cards that open and close by themselves (their size depends on the moment).
+          if (element.closest('[data-el="industries__slider"], [data-el^="global__pin"], [data-el^="industries__item"], [data-el^="next-steps__card"], [data-el^="faq__item"]')) continue
+          const block = element.closest('section, footer') as HTMLElement | null
+          const box = element.getBoundingClientRect()
+          const blockTop = block ? block.getBoundingClientRect().top : 0
+          const key = element.getAttribute('data-el') ?? element.id ?? element.tagName
+          found[key] = [Math.round(box.width), Math.round(box.height), Math.round(box.top - blockTop), Math.round(box.left)]
+        }
+        return found
+      })
+      await context.close()
+      return rects
+    }
+    const off = await measure(true)
+    const on = await measure(false)
+    const keys = Object.keys(off)
+    expect(keys.length).toBeGreaterThan(12)
+    for (const key of keys) {
+      expect(on[key], key).toBeDefined()
+      off[key].forEach((value, index) => expect(Math.abs(on[key][index] - value), `${key} [width, height, top, left][${index}]`).toBeLessThanOrEqual(2))
+    }
+  })
+}

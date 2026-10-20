@@ -64,16 +64,15 @@ export function Cta() {
                     className="type-heading-xl tablet:type-display-sm desktop:type-display-lg min-[100rem]:type-display-xl"
                     lines={["Tell us what you're building."]}
                   />
-                  <Reveal
+                  <RevealLines
                     as="p"
-                    delay={0.9}
+                    delay={1}
                     data-el="cta__subtitle"
                     className="type-body-md max-w-107 tablet:type-body-lead desktop:type-heading-md"
-                  >
-                    We&apos;ll map your payment flow and show you how Velant can handle it.
-                  </Reveal>
+                    lines={["We'll map your payment flow and show you how Velant can handle it."]}
+                  />
                 </div>
-                <Reveal delay={1.05}>
+                <Reveal delay={1.5}>
                   <ButtonLink href="#book-a-demo" variant="inverse" size="lg" icon="export" data-el="cta__cta-primary">
                     Book a demo
                   </ButtonLink>

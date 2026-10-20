@@ -38,20 +38,18 @@ export function Hero() {
               className="type-heading-lg text-typography-primary tablet:type-heading-xl min-[64rem]:type-display-sm desktop:type-display-xl"
               lines={['Banking for today.', 'Clients pay their way.', 'You settle yours.']}
             />
-            <Reveal
+            <RevealLines
               as="p"
               atLoad
               delay={0.85}
               data-el="hero__subtitle"
               className="type-body-md max-w-175 text-typography-secondary tablet:type-body-lead"
-            >
-              One API for payments, crypto, payouts and financial operations — built for companies moving money across
-              borders.
-            </Reveal>
+              lines={['One API for payments, crypto, payouts and financial operations — built for companies moving money across borders.']}
+            />
           </div>
 
           <div data-el="hero__actions" className="flex w-full flex-col gap-4 tablet:w-auto tablet:flex-row">
-            <Reveal atLoad delay={1} className="w-full tablet:w-auto">
+            <Reveal atLoad delay={1.35} className="w-full tablet:w-auto">
               <ButtonLink
                 href="#book-a-demo"
                 size="lg"
@@ -62,7 +60,7 @@ export function Hero() {
                 Book a demo
               </ButtonLink>
             </Reveal>
-            <Reveal atLoad delay={1.1} className="w-full tablet:w-auto">
+            <Reveal atLoad delay={1.45} className="w-full tablet:w-auto">
               <ButtonLink
                 href="#products"
                 size="lg"
@@ -84,7 +82,7 @@ export function Hero() {
         <Reveal
           variant="card"
           atLoad
-          delay={1.2}
+          delay={1.55}
           data-el="hero__media"
           className="mt-12 aspect-[1440/800] w-full overflow-hidden rounded-32 bg-surface-subtle ring-1 ring-inset ring-border-subtle tablet:mt-16 desktop:mt-20 desktop:rounded-48"
         />
