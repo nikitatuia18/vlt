@@ -215,3 +215,27 @@ test('dark theme: tiles are dark and the logos turn light (invert + screen)', as
   await page.waitForTimeout(300)
   await section(page).screenshot({ path: 'tests/artifacts/logos-desktop-1440-dark.png' })
 })
+
+test('on a phone the strip is drawn at 0.6 of the design: 48 px tiles, a 90 px strip, more than four logos on the screen', async ({ page }) => {
+  await page.setViewportSize({ width: 393, height: 800 })
+  await page.goto('/')
+  await section(page).scrollIntoViewIfNeeded()
+  const first = (await tiles(page).first().boundingBox())!
+  expect(first.width).toBeCloseTo(48, 0)
+  expect(first.height).toBeCloseTo(48, 0)
+  expect((await page.locator('[data-el="logos__track-wrap"]').boundingBox())!.height).toBeCloseTo(90, 0)
+  // Tiles that stand fully inside the screen (the wave and the scroll shift move them, so count with a margin).
+  const inside = await tiles(page).evaluateAll((elements) =>
+    elements.filter((element) => {
+      const box = element.getBoundingClientRect()
+      return box.left >= 0 && box.right <= window.innerWidth
+    }).length,
+  )
+  expect(inside).toBeGreaterThanOrEqual(4)
+})
+
+test('tablet keeps the full size of the design (80 px tiles)', async ({ page }) => {
+  await page.setViewportSize({ width: 768, height: 900 })
+  await page.goto('/')
+  expect((await tiles(page).first().boundingBox())!.width).toBeCloseTo(80, 0)
+})

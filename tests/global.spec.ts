@@ -116,6 +116,16 @@ test('global in stacked layout: globe above the text, all of it on the screen', 
   expect(metrics.y + metrics.height).toBeLessThanOrEqual(850)
 })
 
+test('on a phone the globe is big: it uses the full width of the screen when the height allows it, and is not smaller than 2/5 of the width', async ({ page }) => {
+  await open(page, 393, 852)
+  const { radius } = await globe(page)
+  // Before: 166 px at this size. The slot goes to the edges of the screen and takes the room that the gaps and paddings gave back.
+  expect(radius).toBeGreaterThanOrEqual(185)
+  expect(radius).toBeLessThanOrEqual(197)
+  await open(page, 393, 740)
+  expect((await globe(page)).radius).toBeGreaterThanOrEqual(130)
+})
+
 test('on a phone: the card of a country is a round flag (not squeezed), the text is close to the heading', async ({ page }) => {
   await open(page, 393, 850)
   // offsetWidth / offsetHeight ignore the scale the globe loop puts on the card.

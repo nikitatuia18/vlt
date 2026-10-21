@@ -46,8 +46,11 @@ export function waveY(x: number): number {
   )
 }
 
-/** x of the tile in slot `slot`. Tiles never move along x by themselves. */
-export const tileX = (slot: number) => GRID_ORIGIN + slot * SPACING
+/**
+ * x of the tile in slot `slot`. Tiles never move along x by themselves.
+ * `scale` shrinks the whole picture (positions, heights, tile size) for a phone; the curve and the speed of the wave stay the same.
+ */
+export const tileX = (slot: number, scale = 1) => (GRID_ORIGIN + slot * SPACING) * scale
 
 /** Which brand (index in `brands`) stands in slot `slot`. */
 export const tileBrand = (slot: number) => mod(slot, BRAND_COUNT)
@@ -56,15 +59,16 @@ export const tileBrand = (slot: number) => mod(slot, BRAND_COUNT)
  * Height of the tile in slot `slot` while the wave is at `phase` px. The wave runs from right to left:
  * a crest that was at x is at x - phase later. After WAVELENGTH px the picture repeats exactly.
  */
-export const tileY = (slot: number, phase: number) => waveY(tileX(slot) + phase)
+export const tileY = (slot: number, phase: number, scale = 1) => waveY(GRID_ORIGIN + slot * SPACING + phase) * scale
 
 /**
  * Which slots must exist so that the screen is always full while the strip drifts left by 0..`drift` px
- * (the scroll shift). `columnLeft` is the x of the content column on the screen, `viewportWidth` the screen width.
+ * (the scroll shift). `columnLeft` is the x of the content column on the screen, `viewportWidth` the screen width,
+ * `drift` and `columnLeft` are in screen px, `scale` is the same as in `tileX`.
  */
-export function slotRange(columnLeft: number, viewportWidth: number, drift: number) {
-  const leftEdge = -columnLeft - TILE_SIZE
-  const rightEdge = viewportWidth - columnLeft + drift
+export function slotRange(columnLeft: number, viewportWidth: number, drift: number, scale = 1) {
+  const leftEdge = (-columnLeft - TILE_SIZE * scale) / scale
+  const rightEdge = (viewportWidth - columnLeft + drift) / scale
   return {
     first: Math.ceil((leftEdge - GRID_ORIGIN) / SPACING),
     last: Math.floor((rightEdge - GRID_ORIGIN) / SPACING),

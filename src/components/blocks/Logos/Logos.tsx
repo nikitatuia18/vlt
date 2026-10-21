@@ -21,6 +21,8 @@ const SCROLL_DRIFT = 250
  * The wave starts at the left edge of the content column and runs over the whole screen width.
  *
  * Section padding: 140 px on desktop (design); 80 and 48 px below it are derived, like in the hero.
+ * On a phone (below 768 px) the strip is drawn at 0.6 of the design size (tiles 48 px, strip 90 px high): at full size only
+ * two and a half logos fit the screen.
  */
 export function Logos() {
   const sectionRef = useRef<HTMLElement>(null)
@@ -33,7 +35,11 @@ export function Logos() {
       className="overflow-x-clip py-12 tablet:py-20 desktop:py-35"
     >
       <Container data-el="logos__container">
-        <Reveal data-el="logos__track-wrap" className="relative h-37.5 w-full">
+        {/* --logos-scale: the size of the picture against the design; LogoWave reads it. A phone gets a smaller strip (more logos fit). */}
+        <Reveal
+          data-el="logos__track-wrap"
+          className="relative h-[calc(150px*var(--logos-scale))] w-full [--logos-scale:0.6] tablet:[--logos-scale:1]"
+        >
           <LogoWave wavePeriod={WAVE_PERIOD_SECONDS} drift={SCROLL_DRIFT} scrollTarget={sectionRef} />
         </Reveal>
       </Container>

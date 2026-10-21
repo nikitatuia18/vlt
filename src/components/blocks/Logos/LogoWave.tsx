@@ -1,7 +1,7 @@
 import { motion, useAnimationFrame, useReducedMotion, useScroll, useTransform } from 'motion/react'
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type RefObject } from 'react'
 import { brands } from './brands'
-import { WAVELENGTH, slotRange, tileBrand, tileX, tileY } from './wave'
+import { TILE_SIZE, WAVELENGTH, slotRange, tileBrand, tileX, tileY } from './wave'
 
 type LogoWaveProps = {
   /** Seconds the wave needs to run one full wavelength (861 px). */
@@ -18,7 +18,8 @@ const MAX_FRAME_MS = 100
 const EASE_MS = 200
 
 const tileClasses =
-  'absolute top-0 left-0 isolate grid size-20 place-items-center rounded-pill bg-surface-subtle ring-1 ring-inset ring-border-subtle will-change-transform'
+  'absolute top-0 left-0 isolate grid place-items-center rounded-pill bg-surface-subtle ring-1 ring-inset ring-border-subtle will-change-transform'
+const ICON_SIZE = 48
 const linkClasses =
   'transition-colors hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-brand'
 
@@ -37,6 +38,9 @@ const linkClasses =
  */
 export function LogoWave({ wavePeriod, drift, scrollTarget }: LogoWaveProps) {
   const stripRef = useRef<HTMLDivElement>(null)
+  // Size of the picture against the design (1 on desktop and tablet, smaller on a phone): read from `--logos-scale` of the column.
+  const scaleRef = useRef(1)
+  const [scale, setScale] = useState(1)
   const tileRefs = useRef(new Map<number, HTMLElement>())
   const columnLeftRef = useRef(0)
   const phaseRef = useRef(0)
@@ -48,7 +52,7 @@ export function LogoWave({ wavePeriod, drift, scrollTarget }: LogoWaveProps) {
   const [range, setRange] = useState<{ first: number; last: number } | null>(null)
 
   const { scrollYProgress } = useScroll({ target: scrollTarget, offset: ['start end', 'end start'] })
-  const shift = useTransform(scrollYProgress, [0, 1], reducedMotion ? [0, 0] : [0, -drift])
+  const shift = useTransform(scrollYProgress, [0, 1], reducedMotion ? [0, 0] : [0, -drift * scale])
 
   // The strip is as wide as the screen and starts at its left edge; the column may be narrower than the screen.
   useEffect(() => {
@@ -58,10 +62,14 @@ export function LogoWave({ wavePeriod, drift, scrollTarget }: LogoWaveProps) {
     const measure = () => {
       const columnLeft = column.getBoundingClientRect().left
       const viewportWidth = document.documentElement.clientWidth
+      const scaleNow = Number.parseFloat(getComputedStyle(column).getPropertyValue('--logos-scale')) || 1
+      const driftNow = drift * scaleNow
+      scaleRef.current = scaleNow
       columnLeftRef.current = columnLeft
       strip.style.left = `${-columnLeft}px`
-      strip.style.width = `${viewportWidth + drift}px`
-      setRange(slotRange(columnLeft, viewportWidth, drift))
+      strip.style.width = `${viewportWidth + driftNow}px`
+      setScale(scaleNow)
+      setRange(slotRange(columnLeft, viewportWidth, driftNow, scaleNow))
     }
     measure()
     const observer = new ResizeObserver(measure)
@@ -85,13 +93,13 @@ export function LogoWave({ wavePeriod, drift, scrollTarget }: LogoWaveProps) {
 
   const place = useCallback(() => {
     tileRefs.current.forEach((element, slot) => {
-      const x = columnLeftRef.current + tileX(slot)
-      element.style.transform = `translate3d(${x}px, ${tileY(slot, phaseRef.current)}px, 0)`
+      const x = columnLeftRef.current + tileX(slot, scaleRef.current)
+      element.style.transform = `translate3d(${x}px, ${tileY(slot, phaseRef.current, scaleRef.current)}px, 0)`
     })
   }, [])
 
   // New tiles appear with the right position at once.
-  useLayoutEffect(place, [place, range])
+  useLayoutEffect(place, [place, range, scale])
 
   useAnimationFrame((_, delta) => {
     if (reducedMotion || !isVisibleRef.current) return
@@ -103,6 +111,7 @@ export function LogoWave({ wavePeriod, drift, scrollTarget }: LogoWaveProps) {
     place()
   })
 
+  const tileSize = { width: TILE_SIZE * scale, height: TILE_SIZE * scale }
   const slots = range ? Array.from({ length: range.last - range.first + 1 }, (_, index) => range.first + index) : []
 
   return (
@@ -131,14 +140,19 @@ export function LogoWave({ wavePeriod, drift, scrollTarget }: LogoWaveProps) {
           else tileRefs.current.delete(slot)
         }
         const icon = (
-          <div data-el={`logos__item-${brand.slug}-icon`} className="relative size-12">
+          <div data-el={`logos__item-${brand.slug}-icon`} className="relative" style={{ width: ICON_SIZE * scale, height: ICON_SIZE * scale }}>
             {/* Logos are drawn in #181818 on a transparent or white box. Dark theme: invert, and screen drops the white box. */}
             <img
               src={brand.src}
               alt=""
               draggable={false}
               className="absolute max-w-none dark:mix-blend-screen dark:invert"
-              style={brand.box}
+              style={{
+                left: brand.box.left * scale,
+                top: brand.box.top * scale,
+                width: brand.box.width * scale,
+                height: brand.box.height * scale,
+              }}
             />
           </div>
         )
@@ -152,13 +166,14 @@ export function LogoWave({ wavePeriod, drift, scrollTarget }: LogoWaveProps) {
             aria-label={brand.name}
             data-el={`logos__item-${brand.slug}`}
             className={`${tileClasses} ${linkClasses}`}
+            style={tileSize}
           >
             {icon}
           </a>
         ) : (
           // A div with an inline SVG inside, so it cannot be an <img>.
           // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role
-          <div key={slot} ref={setRef} role="img" aria-label={brand.name} data-el={`logos__item-${brand.slug}`} className={tileClasses}>
+          <div key={slot} ref={setRef} role="img" aria-label={brand.name} data-el={`logos__item-${brand.slug}`} className={tileClasses} style={tileSize}>
             {icon}
           </div>
         )

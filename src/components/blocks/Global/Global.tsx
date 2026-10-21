@@ -90,17 +90,17 @@ export function Global() {
           <div
             ref={frameRef}
             data-el="global__content"
-            className="relative flex h-full flex-col justify-between gap-8 pt-8 pb-12 tablet:pt-12 tablet:pb-20 min-[64rem]:grid min-[64rem]:grid-cols-[minmax(0,1fr)_auto] min-[64rem]:grid-rows-[1fr_auto] min-[64rem]:gap-x-0 min-[64rem]:gap-y-1 min-[64rem]:pt-[clamp(4rem,12svh,8.75rem)] min-[64rem]:pr-0 min-[64rem]:pb-[clamp(4rem,12svh,8.75rem)] min-[64rem]:pl-[8%]"
+            className="relative flex h-full flex-col justify-between gap-4 pt-4 pb-8 tablet:gap-8 tablet:pt-12 tablet:pb-20 min-[64rem]:grid min-[64rem]:grid-cols-[minmax(0,1fr)_auto] min-[64rem]:grid-rows-[1fr_auto] min-[64rem]:gap-x-0 min-[64rem]:gap-y-1 min-[64rem]:pt-[clamp(4rem,12svh,8.75rem)] min-[64rem]:pr-0 min-[64rem]:pb-[clamp(4rem,12svh,8.75rem)] min-[64rem]:pl-[8%]"
           >
             <div
               ref={slotRef}
               data-el="global__globe-slot"
-              className="min-h-0 w-full flex-1 min-[64rem]:aspect-square min-[64rem]:h-full min-[64rem]:w-auto min-[64rem]:max-w-full min-[64rem]:flex-none min-[64rem]:self-end"
+              className="min-h-0 w-full flex-1 max-tablet:-mx-(--gutter) max-tablet:w-[calc(100%+2*var(--gutter))] min-[64rem]:aspect-square min-[64rem]:h-full min-[64rem]:w-auto min-[64rem]:max-w-full min-[64rem]:flex-none min-[64rem]:self-end"
             />
 
             <ul
               data-el="global__metrics"
-              className="order-3 flex flex-wrap gap-x-8 gap-y-6 whitespace-nowrap min-[64rem]:order-none min-[64rem]:col-start-1 min-[64rem]:row-start-2"
+              className="order-3 flex max-tablet:mt-2 flex-wrap gap-x-8 gap-y-6 whitespace-nowrap min-[64rem]:order-none min-[64rem]:col-start-1 min-[64rem]:row-start-2"
             >
               {metrics.map((metric, index) => (
                 <li key={metric.id} data-el={`global__metric-${metric.id}`} className="flex flex-col gap-2">
