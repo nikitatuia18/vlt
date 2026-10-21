@@ -24,7 +24,7 @@ export const mainCards: readonly FeatureCardData[] = [
   {
     id: 'ramp',
     title: 'Crypto on- and off-ramp',
-    description: 'Convert seamlessly between fiat and crypto with rates from 0.05%.',
+    description: 'Convert seamlessly between fiat and crypto with rates from 0.5%.',
     href: '#crypto-ramp',
   },
   {
