@@ -1,5 +1,6 @@
 import { useInView, useReducedMotion } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
+import { cornerAlpha, cornerRadius, edgeAlpha, edgeWidth, hypercube, PLANE, project, type Turn } from '../../../../lib/hypercube'
 import { useTheme } from '../../../../lib/theme'
 import { useRevealOn } from '../../../../motion/useReveal'
 
@@ -10,39 +11,13 @@ import { useRevealOn } from '../../../../motion/useReveal'
  * it follows the theme, and it weighs nothing. Spec: docs/blocks/features.motion.md.
  */
 
-const CORNERS = Array.from({ length: 16 }, (_, index) => [index & 1 ? 1 : -1, index & 2 ? 1 : -1, index & 4 ? 1 : -1, index & 8 ? 1 : -1])
-// Two corners are joined when they differ in exactly one coordinate: 32 edges.
-const EDGES = CORNERS.flatMap((_, from) =>
-  CORNERS.slice(from + 1).flatMap((_, offset) => {
-    const to = from + 1 + offset
-    const difference = from ^ to
-    return difference && (difference & (difference - 1)) === 0 ? [[from, to] as const] : []
-  }),
-)
+const { corners: CORNERS, edges: EDGES } = hypercube(4)
 
 /** Radians per second of the four turns (planes XW, YW, XZ, YZ). The first two are the "fourth dimension" that makes the inner cube swap places with the outer one. */
 const SPEEDS = [0.26, 0.17, 0.11, 0.07] as const
 /** The angles of the still picture (reduced motion): like the design, the inner cube stands inside the outer one. */
 const REST = [0.05, 0, 0.35, 0.5] as const
-
-const HALF = 0.8 // half of the edge of the hypercube
-const DISTANCE_W = 2.6 // the eye is this far from the hypercube along the fourth axis
-const DISTANCE_Z = 6.5 // and along the depth of the picture
-
-type Projected = { x: number; y: number; near: number }
-
-/** One corner: turned by the four angles, then projected from 4D to 3D and from 3D to the picture. `near` is 0 (far) to 1 (near). */
-function project(corner: number[], angles: readonly number[]): Projected {
-  let [x, y, z, w] = corner.map((value) => value * HALF)
-  const turn = (a: number, b: number, angle: number): [number, number] => [a * Math.cos(angle) - b * Math.sin(angle), a * Math.sin(angle) + b * Math.cos(angle)]
-  ;[x, w] = turn(x, w, angles[0])
-  ;[y, w] = turn(y, w, angles[1])
-  ;[x, z] = turn(x, z, angles[2])
-  ;[y, z] = turn(y, z, angles[3])
-  const k = DISTANCE_W / (DISTANCE_W - w)
-  const s = DISTANCE_Z / (DISTANCE_Z - z * k)
-  return { x: x * k * s, y: y * k * s, near: Math.min(1, Math.max(0, (k * s - 0.55) / 1.6)) }
-}
+const PLANES = [PLANE.XW, PLANE.YW, PLANE.XZ, PLANE.YZ] as const
 
 /** The size of the picture for a card of this width: the design size on wide cards (509 px, flush to the lower right), smaller on narrow ones. */
 const sizeFor = (cardWidth: number) => (cardWidth >= 800 ? 509 : cardWidth < 500 ? Math.round(cardWidth * 0.95) : Math.round(cardWidth * 0.62))
@@ -84,7 +59,8 @@ export function TesseractIllustration() {
 
     const draw = () => {
       const angles = animated ? SPEEDS.map((rate) => rate * time.current) : REST
-      const points = CORNERS.map((corner) => project(corner, angles))
+      const turns = PLANES.map((plane, index): Turn => [plane, angles[index]])
+      const points = CORNERS.map((corner) => project(corner, turns))
       context.clearRect(0, 0, size, size)
       context.lineCap = 'round'
       context.fillStyle = color
@@ -94,17 +70,17 @@ export function TesseractIllustration() {
       const edges = EDGES.map(([from, to]) => ({ from: points[from], to: points[to] })).sort((a, b) => a.from.near + a.to.near - (b.from.near + b.to.near))
       for (const edge of edges) {
         const near = (edge.from.near + edge.to.near) / 2
-        context.globalAlpha = 0.28 + 0.72 * near
-        context.lineWidth = (0.7 + 1.5 * near) * detail * 1.4
+        context.globalAlpha = edgeAlpha(near)
+        context.lineWidth = edgeWidth(near, detail)
         context.beginPath()
         context.moveTo(size / 2 + edge.from.x * unit, size / 2 + edge.from.y * unit)
         context.lineTo(size / 2 + edge.to.x * unit, size / 2 + edge.to.y * unit)
         context.stroke()
       }
       for (const point of [...points].sort((a, b) => a.near - b.near)) {
-        context.globalAlpha = 0.45 + 0.55 * point.near
+        context.globalAlpha = cornerAlpha(point.near)
         context.beginPath()
-        context.arc(size / 2 + point.x * unit, size / 2 + point.y * unit, (3.2 + 7.5 * point.near) * detail * 1.15, 0, Math.PI * 2)
+        context.arc(size / 2 + point.x * unit, size / 2 + point.y * unit, cornerRadius(point.near, detail), 0, Math.PI * 2)
         context.fill()
       }
       context.globalAlpha = 1

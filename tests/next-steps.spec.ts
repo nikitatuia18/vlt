@@ -217,3 +217,115 @@ test('keyboard focus on a card holds the time; a mouse click does not', async ({
   await page.waitForTimeout(1200)
   expect(await barShare(page, 'pass-kyb'), 'the line runs after a mouse click').toBeGreaterThan(afterClick + 0.1)
 })
+
+// The pictures of the steps (a ladder of dimensions, docs/blocks/next-steps.motion.md): a canvas in every card, drawn only in the open one.
+const picture = (id: string) => `[data-el="next-steps__illustration-${id}"]`
+/** A fingerprint of the pixels of a picture: it changes while the picture is built and stands while the time is held. */
+const fingerprint = (page: Page, id: string) =>
+  page.locator(picture(id)).evaluateAll((canvases) => {
+    // Every card has two pictures (one for the row, one inside the text); the one that has a size is the one that is drawn.
+    const canvas = canvases.map((element) => element as HTMLCanvasElement).find((element) => element.getBoundingClientRect().width > 0)!
+    const data = canvas.getContext('2d')!.getImageData(0, 0, canvas.width, canvas.height).data
+    let sum = 0
+    let ink = 0
+    for (let index = 3; index < data.length; index += 4) {
+      if (data[index] > 0) {
+        ink++
+        sum = (sum * 31 + index) % 1000003
+      }
+    }
+    return { sum, ink }
+  })
+
+test('row layout (1600 px): the picture of the open step lies between the number and the title, closed cards show none', async ({ page }) => {
+  await open(page, 1600, 1000)
+  await page.waitForTimeout(700)
+  const open01 = await activeId(page)
+  const cardBox = (await card(page, open01).boundingBox())!
+  const number = (await page.locator(`[data-el="next-steps__card-${open01}-number"]`).boundingBox())!
+  const title = (await page.locator(`[data-el="next-steps__card-${open01}-title"]`).boundingBox())!
+  const canvas = (await page.locator(`${picture(open01)}`).first().boundingBox())!
+  expect(canvas.y).toBeGreaterThanOrEqual(number.y + number.height - 1)
+  expect(canvas.y + canvas.height).toBeLessThanOrEqual(title.y + 1)
+  expect(canvas.width).toBeGreaterThan(300)
+  expect(canvas.x + canvas.width).toBeLessThanOrEqual(cardBox.x + cardBox.width + 1)
+  expect((await fingerprint(page, open01)).ink).toBeGreaterThan(20)
+  for (const id of ids.filter((other) => other !== open01)) {
+    const wrapper = page.locator(picture(id)).first().locator('xpath=ancestor::div[contains(@class,"opacity-")][1]')
+    expect(await wrapper.evaluate((element) => Number(getComputedStyle(element).opacity)), id).toBe(0)
+  }
+})
+
+test('the picture is built while the line fills and every step has its own', async ({ page }) => {
+  await open(page, 1600, 1000)
+  const seen = new Set<string>()
+  for (const id of ids) {
+    await card(page, id).locator(`[data-el="next-steps__card-${id}-title"]`).click()
+    await page.waitForTimeout(900)
+    const early = await fingerprint(page, id)
+    await page.waitForTimeout(2600)
+    const late = await fingerprint(page, id)
+    expect(late.sum, `${id} changes with the line`).not.toBe(early.sum)
+    expect(late.ink, `${id} is drawn`).toBeGreaterThan(40)
+    seen.add(String(late.sum))
+  }
+  expect(seen.size).toBe(4)
+})
+
+test('a pressed card holds the picture still together with the line', async ({ page }) => {
+  await open(page, 1600, 1000)
+  await card(page, 'go-live').locator('[data-el="next-steps__card-go-live-title"]').click()
+  await page.waitForTimeout(700)
+  const box = (await card(page, 'go-live').boundingBox())!
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2)
+  await page.mouse.down()
+  await page.waitForTimeout(300)
+  const held = await fingerprint(page, 'go-live')
+  await page.waitForTimeout(900)
+  expect((await fingerprint(page, 'go-live')).sum).toBe(held.sum)
+  await page.mouse.up()
+})
+
+test('stacked layout (tablet and phone): the picture is inside the open step, above the text, and folds with it', async ({ page }) => {
+  for (const width of [768, 393]) {
+    await open(page, width, 900)
+    const active = await activeId(page)
+    await page.waitForTimeout(700)
+    const canvas = (await page.locator(picture(active)).evaluateAll((elements) => elements.map((element) => element.getBoundingClientRect()).find((rect) => rect.width > 0)))!
+    const desc = (await page.locator(`[data-el="next-steps__card-${active}-desc"]`).boundingBox())!
+    expect(canvas.height, `${width}`).toBeGreaterThan(150)
+    expect(canvas.y + canvas.height, `${width}`).toBeLessThanOrEqual(desc.y + 1)
+    for (const id of ids.filter((other) => other !== active)) expect(await foldedHeight(page, id), id).toBeLessThan(2)
+  }
+})
+
+test.describe('reduced motion: the pictures', () => {
+  test.use({ reducedMotion: 'reduce' })
+  test('the picture shows one still frame (the line of the design) and does not change', async ({ page }) => {
+    await open(page, 1600, 1000)
+    const first = await fingerprint(page, 'book-demo')
+    expect(first.ink).toBeGreaterThan(40)
+    await page.waitForTimeout(1500)
+    expect((await fingerprint(page, 'book-demo')).sum).toBe(first.sum)
+  })
+})
+
+test('dark theme: the picture is drawn in light lines', async ({ page }) => {
+  await open(page, 1600, 1000)
+  await page.locator('[data-el="header__theme-toggle"]').click()
+  await page.waitForTimeout(1500)
+  const id = await activeId(page)
+  const color = await page.locator(picture(id)).evaluateAll((canvases) => {
+    const canvas = canvases.map((element) => element as HTMLCanvasElement).find((element) => element.getBoundingClientRect().width > 0)!
+    const data = canvas.getContext('2d')!.getImageData(0, 0, canvas.width, canvas.height).data
+    let light = 0
+    let dark = 0
+    for (let index = 0; index < data.length; index += 4) {
+      if (data[index + 3] < 20) continue
+      if (data[index] > 140) light++
+      else dark++
+    }
+    return { light, dark }
+  })
+  expect(color.light).toBeGreaterThan(color.dark)
+})

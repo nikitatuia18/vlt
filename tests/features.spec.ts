@@ -32,7 +32,7 @@ test('texts of the design: header and the six cards', async ({ page }) => {
   const cards: [string, string, string][] = [
     ['crypto', 'Crypto Processing', 'Accept, convert, and settle crypto payments via a single integration.'],
     ['invoicing', 'Invoicing', 'Issue invoices in local currency and accept payments in crypto.'],
-    ['ramp', 'Crypto on- and off-ramp', 'Convert seamlessly between fiat and crypto with rates from 0.0%.'],
+    ['ramp', 'Crypto on- and off-ramp', 'Convert seamlessly between fiat and crypto with rates from 0.05%.'],
     ['payouts', 'Mass Payouts', 'Automate global payouts to teams and partners in a single workflow.'],
     ['banking', 'Banking', 'Dedicated IBANs and corporate accounts in Tier-1 banks.'],
     ['wallet', 'Wallet', 'Secure custody and digital asset management for your platform.'],

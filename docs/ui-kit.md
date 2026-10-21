@@ -40,7 +40,7 @@
 | `GlowBackdrop` | мягкое цветное свечение за карточкой (эллипс с плавно гаснущим градиентом, без фильтра blur, как слой `Ellipse 215` тёмной сцены блока Industries); несколько свечений друг над другом перетекают друг в друга | `hue`: `violet` | `pink` | `orange` | `blue` | `green` (токены `surface-glow-*`); `visible`; `className` — размер и положение; за ним нужен позиционированный родитель |
 | `InteractiveDots` | «живой» фон: точки отталкиваются курсором (<canvas>, прозрачный) | `spacing` 40, `dotSize` 1, `radius` 150, `force` 1, `ease` 0.1 (значения утверждённого прототипа); `ripple`: `{ delay, duration, origin }` — появление «рябью» от точки (см. 7.1); `colorClass`: класс цвета точек (по умолчанию `text-surface-dots`, на баннере цвета бренда светлый `text-icon-static-w`); `className` |
 
-Служебное: `src/lib/theme.ts` — хук `useTheme` (тема живёт в `data-theme` на `<html>`).
+Служебное: `src/lib/theme.ts` — хук `useTheme` (тема живёт в `data-theme` на `<html>`); `src/lib/hypercube.ts` — гиперкуб (отрезок, квадрат, куб, тессеракт): повороты, проекция и общие толщины линий и размеры вершин; им рисуют тессеракт Features и картинки шагов next-steps.
 
 ### Откуда что взялось
 - **Header** теперь сам в UI Kit (`src/components/ui/Header/`): раньше был блоком. Дал: `ButtonLink` (md), `IconButton`, `ThemeToggle`, `Icon`, `Container`, пилюли меню (пока внутри блока).

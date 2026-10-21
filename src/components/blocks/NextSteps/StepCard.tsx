@@ -1,6 +1,7 @@
 import { motion, useTransform, type MotionValue } from 'motion/react'
 import { Reveal, RevealLines } from '../../../motion/reveal'
 import { appear } from '../../../motion/tokens'
+import { StepIllustration } from './illustrations/StepIllustration'
 import type { StepData } from './steps'
 
 type StepCardProps = {
@@ -19,6 +20,8 @@ type StepCardProps = {
  * One step. Figma `next-steps__card-{id}` (`--active` open, `--closed` closed).
  * Closed: the number on top and the title at the bottom. Open: the card is wider and the text and the progress line
  * unfold under the title. The whole card is clickable (the title is the button, its ::after covers the card).
+ * The open card also has the picture of its step (a ladder of dimensions, built while the orange line fills; docs/blocks/next-steps.motion.md):
+ * in the row it lies in the free field between the number and the title, below it is over the text and unfolds with it.
  * Wide screen (from 1440 px): the cards stand in a row and the open one is wider (width in flex-grow: the width of the text area, 420 : 182, so that with the 40 px paddings the cards are 500 and 262 px as in the design).
  * From 1440 to 1599 px the closed cards are narrower than 262 px, so the title is one size smaller there (derived).
  * Below: the cards stand one under another, and the text unfolds downwards (derived: the design has only the wide layout).
@@ -47,6 +50,17 @@ export function StepCard({ step, isActive, progress, staticProgress, onOpen, ind
         }`}
         lines={[number]}
       />
+
+      {/* Row layout: the field between the number and the title. It has the final width of the open card (like the text), so it does not
+          change while the card grows, and it appears together with the text. Below 1440 px the picture is inside the text (see below). */}
+      <div
+        aria-hidden="true"
+        className={`hidden min-h-0 w-[calc((100cqw-392px)*0.4348)] flex-1 items-center transition-opacity ease-out min-[90rem]:flex ${
+          isActive ? 'opacity-100 delay-300 duration-500' : 'opacity-0 duration-200'
+        }`}
+      >
+        <StepIllustration step={id} progress={progress} active={isActive} staticProgress={staticProgress} className="h-full max-h-65 w-full" />
+      </div>
 
       <div data-el={`next-steps__card-${id}-details`} className="flex min-w-0 flex-1 flex-col min-[90rem]:w-full min-[90rem]:flex-none">
         <h3 className="type-heading-md text-typography-primary tablet:type-heading-lg min-[90rem]:type-heading-lg min-[100rem]:type-heading-xl">
@@ -79,6 +93,7 @@ export function StepCard({ step, isActive, progress, staticProgress, onOpen, ind
                 isActive ? 'opacity-100 delay-300 duration-500' : 'opacity-0 duration-200'
               }`}
             >
+              <StepIllustration step={id} progress={progress} active={isActive} staticProgress={staticProgress} className="h-44 w-full tablet:h-56 min-[90rem]:hidden" />
               {/* The words rise from their masks each time the card opens (while the card is still widening: a little wait). */}
               <RevealLines
                 as="p"
