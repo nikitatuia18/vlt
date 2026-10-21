@@ -26,6 +26,8 @@ type RevealLinesProps = Trigger & {
    * is open and the text is on the screen, and go back under their masks a moment after it has closed. Instead of the other triggers.
    */
   open?: boolean
+  /** Below the tablet width the entries run on as one text (no forced line breaks); from there they are blocks again. Words only. */
+  joinBelowTablet?: boolean
   className?: string
   id?: string
   delay?: number
@@ -84,7 +86,7 @@ function useOpenPlay(open: boolean | undefined, holder: RefObject<HTMLElement | 
  * the entries of `lines` are separate blocks (forced line breaks). The text reads and copies as one text.
  * With `by="line"` whole lines rise instead, one after another. With `open` it plays each time a panel opens.
  */
-export function RevealLines({ lines, as = 'h2', by = 'word', step, open, className, delay = 0, when, atLoad, atPageEnd, ...rest }: RevealLinesProps) {
+export function RevealLines({ lines, as = 'h2', by = 'word', step, open, joinBelowTablet, className, delay = 0, when, atLoad, atPageEnd, ...rest }: RevealLinesProps) {
   const on = useRevealOn()
   const holder = useRef<HTMLElement | null>(null)
   const opened = useOpenPlay(open, holder)
@@ -92,7 +94,7 @@ export function RevealLines({ lines, as = 'h2', by = 'word', step, open, classNa
   const trigger = open === undefined ? ownTrigger : ({ initial: 'hidden', animate: opened ? 'shown' : 'hidden' } as const)
   const Element = motionTags[as] as typeof motion.div
   // Inside a line of other text (a button label) the lines are inline, in a heading or a paragraph they are blocks.
-  const lineBox = as === 'span' ? 'inline' : 'block'
+  const lineBox = as === 'span' ? 'inline' : joinBelowTablet ? 'inline tablet:block' : 'block'
 
   // Headings go a word at a time at 0.07 s, a paragraph (many words) faster, at 0.03 s.
   const gap = step ?? (by === 'word' ? (as === 'p' ? appear.word.paragraphStep : appear.word.step) : appear.line.step)

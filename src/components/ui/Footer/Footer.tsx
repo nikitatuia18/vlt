@@ -50,7 +50,7 @@ export function Footer({ columns = footerColumns, legalLinks = siteLegalLinks, y
         <Container>
           <div
             data-el="footer__container"
-            className={`relative flex flex-col gap-10 px-4 py-12 tablet:px-8 tablet:py-16 desktop:gap-12 desktop:px-10 desktop:py-20 min-[100rem]:flex-row min-[100rem]:justify-between min-[100rem]:py-30 ${columnLines}`}
+            className={`relative flex flex-col gap-10 py-12 tablet:px-8 tablet:py-16 desktop:gap-12 desktop:px-10 desktop:py-20 min-[100rem]:flex-row min-[100rem]:justify-between min-[100rem]:py-30 ${columnLines}`}
           >
             <Reveal variant="fade" data-el="footer__brand" className="flex flex-col items-start gap-4">
               <a href={import.meta.env.BASE_URL} aria-label="Velant Pay, home" className="flex rounded-pill text-typography-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-brand">
@@ -100,7 +100,7 @@ export function Footer({ columns = footerColumns, legalLinks = siteLegalLinks, y
             variant="fade"
             atPageEnd
             data-el="footer-bottom__container"
-            className={`flex flex-col gap-2 px-4 py-4 tablet:px-8 min-[90rem]:flex-row min-[90rem]:items-start min-[90rem]:justify-between min-[90rem]:px-10 ${columnLines}`}
+            className={`flex flex-col gap-2 py-4 tablet:px-8 min-[90rem]:flex-row min-[90rem]:items-start min-[90rem]:justify-between min-[90rem]:px-10 ${columnLines}`}
           >
             <div data-el="footer-bottom__company" className="type-body-md flex flex-col gap-1 text-typography-secondary tablet:flex-row tablet:items-center tablet:gap-6 min-[90rem]:w-[673.5px]">
               <RevealLines as="span" atPageEnd delay={0.1} data-el="footer-bottom__company-name" lines={[companyName]} />

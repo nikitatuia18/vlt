@@ -25,7 +25,7 @@ export function Faq() {
           data-el="faq__container"
           // The column lines are drawn inside (an inset shadow, like a Figma stroke), so they do not narrow the content.
           // px: the text must not touch the column lines (unlike the cards of other blocks, whose borders stand on the lines).
-          className="relative flex flex-col gap-8 px-4 py-12 column-lines tablet:gap-10 tablet:px-8 tablet:py-20 desktop:flex-row desktop:items-center desktop:gap-12 desktop:px-10 desktop:py-35"
+          className="relative flex flex-col gap-8 py-12 column-lines tablet:gap-10 tablet:px-8 tablet:py-20 desktop:flex-row desktop:items-center desktop:gap-12 desktop:px-10 desktop:py-35"
         >
           <RevealLines
             id="faq-title"

@@ -23,7 +23,7 @@ export function ColumnFade({ edge, block, length = 160 }: ColumnFadeProps) {
           aria-hidden="true"
           style={{ height: length }}
           // The column lines run on the inner 1 px of the left and right edges (see CornerDots).
-          className={`pointer-events-none absolute z-10 w-px from-border-subtle to-border-alpha-0 ${vertical} ${
+          className={`pointer-events-none absolute z-10 w-px from-border-subtle to-border-alpha-0 max-tablet:hidden ${vertical} ${
             side === 'left' ? 'left-0' : 'right-0'
           }`}
         />

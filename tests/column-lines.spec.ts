@@ -15,7 +15,21 @@ const ends = [
 
 const box = async (page: Page, selector: string) => (await page.locator(selector).boundingBox())!
 
-for (const viewport of [{ width: 1440, height: 900 }, { width: 393, height: 850 }]) {
+// On a phone (below 768 px) the lines and the dots are off: the content stands at the lines and they merge with it.
+for (const end of ends) {
+  test(`${end.block} ${end.edge}: no column lines, dots and fade at 393`, async ({ page }) => {
+    await page.setViewportSize({ width: 393, height: 850 })
+    await page.goto('/')
+    const container = page.locator(`[data-el="${end.block}__container"]`)
+    expect(await container.evaluate((el) => getComputedStyle(el).boxShadow), end.block).toBe('none')
+    for (const corner of end.corners) {
+      await expect(page.locator(`[data-el="${end.block}__deco-corner-${corner}"]`)).toBeHidden()
+    }
+    if (end.fade) await expect(page.locator(`[data-el="${end.block}__deco-column-fade-${end.edge}-left"]`)).toBeHidden()
+  })
+}
+
+for (const viewport of [{ width: 1440, height: 900 }, { width: 768, height: 900 }]) {
   for (const end of ends) {
     test(`${end.block} ${end.edge}: dots on the corners above the next block${end.fade ? ', lines fade out' : ''} at ${viewport.width}`, async ({ page }) => {
       await page.setViewportSize(viewport)

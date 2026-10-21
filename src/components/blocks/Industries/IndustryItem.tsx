@@ -63,6 +63,8 @@ export const IndustryItem = memo(function IndustryItem({ item, isActive, index, 
             as="p"
             open={isActive}
             delay={0.25}
+            // On a phone the two phrases flow as one text.
+            joinBelowTablet
             data-el={`industries__item-${id}-desc`}
             className="type-body-md max-w-142.5 text-typography-secondary tablet:type-body-lead"
             lines={description}

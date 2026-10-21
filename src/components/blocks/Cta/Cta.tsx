@@ -37,7 +37,7 @@ export function Cta() {
         <div
           data-el="cta__container"
           // The column lines are drawn inside (an inset shadow, like a Figma stroke), so they do not narrow the content.
-          className="relative px-4 py-12 column-lines tablet:px-8 tablet:py-20 desktop:px-10 desktop:py-35"
+          className="relative py-12 column-lines tablet:px-8 tablet:py-20 desktop:px-10 desktop:py-35"
         >
           <div ref={wrapRef} data-el="cta__banner-wrap" className="relative" style={{ '--s': scale } as CSSProperties}>
             <Reveal

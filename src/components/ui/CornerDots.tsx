@@ -35,7 +35,7 @@ export function CornerDots({ edge, block }: CornerDotsProps) {
           key={side}
           data-el={`${block}__deco-corner-${names[edge][side]}`}
           aria-hidden="true"
-          className={`pointer-events-none absolute z-10 flex size-[5px] text-icon-primary ${positions[edge][side]}`}
+          className={`pointer-events-none absolute z-10 flex size-[5px] text-icon-primary max-tablet:hidden ${positions[edge][side]}`}
         >
           <Icon src={cornerDot} width={5} height={5} />
         </Reveal>

@@ -61,6 +61,16 @@ test('texts: the title, the seven items, a description and a "Book a demo" butto
   )
 })
 
+test('the two phrases of a description run on as one text on a phone and stand as two lines from 768 px', async ({ page }) => {
+  for (const [width, display] of [[393, 'inline'], [768, 'block']] as const) {
+    await page.setViewportSize({ width, height: 900 })
+    await page.goto('/')
+    const phrases = page.locator('[data-el="industries__item-startups-desc"] > span')
+    await expect(phrases).toHaveCount(2)
+    for (const index of [0, 1]) await expect(phrases.nth(index)).toHaveCSS('display', display)
+  }
+})
+
 test('the section is pinned: it is 100vh + 6 x 60vh tall and the stage stays at the top of the screen while you scroll', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
   await page.goto('/')

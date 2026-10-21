@@ -116,6 +116,22 @@ test('global in stacked layout: globe above the text, all of it on the screen', 
   expect(metrics.y + metrics.height).toBeLessThanOrEqual(850)
 })
 
+test('on a phone: the card of a country is a round flag (not squeezed), the text is close to the heading', async ({ page }) => {
+  await open(page, 393, 850)
+  // offsetWidth / offsetHeight ignore the scale the globe loop puts on the card.
+  const sizes = await page.locator('[data-el="global__pin-ge"]').evaluate((el) => ({
+    width: (el as HTMLElement).offsetWidth,
+    height: (el as HTMLElement).offsetHeight,
+    flag: (el.querySelector('img') as HTMLImageElement).offsetWidth,
+  }))
+  expect(sizes.flag).toBe(44)
+  expect(Math.abs(sizes.width - sizes.height)).toBeLessThan(2)
+
+  const title = (await page.locator('[data-el="global__title"]').boundingBox())!
+  const desc = (await page.locator('[data-el="global__desc"]').boundingBox())!
+  expect(desc.y - (title.y + title.height)).toBeLessThanOrEqual(20)
+})
+
 test('cards come and go over time while the globe turns', async ({ page }) => {
   await open(page, 1440, 900)
   // Sample all cards every 300 ms for 5 s: a card must change a lot (the timeline plays and the turn changes who is seen).

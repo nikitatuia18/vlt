@@ -49,11 +49,16 @@ html.theme-ripple::view-transition-new(root) {
   mix-blend-mode: normal;
 }
 
-/* The subtle lines on both sides of the 1440 px column (Figma: the column of every block). */
+/*
+ * The subtle lines on both sides of the 1440 px column (Figma: the column of every block).
+ * Only from the tablet width (48rem): on a phone the content stands right at the lines and they merge with the text and the cards.
+ */
 @utility column-lines {
-  box-shadow:
-    inset 1px 0 0 var(--color-border-subtle),
-    inset -1px 0 0 var(--color-border-subtle);
+  @media (min-width: 48rem) {
+    box-shadow:
+      inset 1px 0 0 var(--color-border-subtle),
+      inset -1px 0 0 var(--color-border-subtle);
+  }
 }
 
 @layer base {

@@ -126,7 +126,7 @@ export function Global() {
 
             <div
               data-el="global__message"
-              className="order-2 flex w-fit max-w-full flex-col gap-8 min-[64rem]:order-none min-[64rem]:col-start-2 min-[64rem]:row-span-2 min-[64rem]:row-start-1 min-[64rem]:self-end"
+              className="order-2 flex w-fit max-w-full flex-col gap-4 tablet:gap-6 min-[64rem]:gap-8 min-[64rem]:order-none min-[64rem]:col-start-2 min-[64rem]:row-span-2 min-[64rem]:row-start-1 min-[64rem]:self-end"
             >
               <RevealLines
                 when={textOn}
