@@ -34,10 +34,12 @@ const SCROLL_KEYS = new Set(['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home
  * Holds the page where it is (for the time of the theme change, which shows the old page as a picture): the glide of the smooth scroll
  * stops at once and the wheel, the finger and the keys do not scroll. Returns the function that lets the page go again.
  * (No `overflow: hidden`: the scrollbar would disappear and the page would shift by its width.)
+ * A box marked `data-lenis-prevent` (the open menu) keeps its own scroll: the smooth scroll ignores it too.
  */
 export function holdScroll() {
   if (activeLenis) activeLenis.scrollTo(activeLenis.animatedScroll, { immediate: true, force: true })
   const block = (event: Event) => {
+    if (event.target instanceof Element && event.target.closest('[data-lenis-prevent]')) return
     event.preventDefault()
     event.stopImmediatePropagation()
   }

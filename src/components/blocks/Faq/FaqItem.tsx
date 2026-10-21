@@ -1,7 +1,5 @@
-import collapseIcon from '../../../assets/faq/icon-collapse-button.svg'
-import expandIcon from '../../../assets/faq/icon-expand-button.svg'
 import { Reveal, RevealLines } from '../../../motion/reveal'
-import { Icon } from '../../ui/Icon'
+import { PlusMinusIcon } from '../../ui/PlusMinusIcon'
 import type { FaqItemData } from './items'
 
 type FaqItemProps = {
@@ -17,7 +15,7 @@ type FaqItemProps = {
 /**
  * One question. Figma `faq__item-{id}` (`--open` / `--closed`).
  * The whole line with the question is one button (the design draws only the round toggle, but the question is the natural
- * target); the round toggle shows plus or minus. The answer unfolds under it: the row grows from 0 to its height while the text
+ * target); the round toggle shows plus or minus and turns one into the other. The answer unfolds under it: the row grows from 0 to its height while the text
  * keeps its width (max 560 px), so it never re-wraps and does not jump; it fades in a little later.
  */
 export function FaqItem({ item, isOpen, onToggle, isLast, index }: FaqItemProps) {
@@ -60,19 +58,8 @@ export function FaqItem({ item, isOpen, onToggle, isLast, index }: FaqItemProps)
             aria-hidden="true"
             className="relative inline-flex size-11 shrink-0 items-center justify-center rounded-pill bg-surface-subtle text-icon-primary ring-1 ring-border-subtle ring-inset transition-colors group-hover:bg-surface-hover"
           >
-            {/* Both icons lie on top of each other and cross-fade (the plus also turns), so the change is a smooth one. */}
-            <Icon
-              src={expandIcon}
-              width={24}
-              height={24}
-              className={`absolute transition-[opacity,transform] duration-500 ease-out ${isOpen ? 'rotate-90 opacity-0' : 'rotate-0 opacity-100'}`}
-            />
-            <Icon
-              src={collapseIcon}
-              width={24}
-              height={24}
-              className={`absolute transition-[opacity,transform] duration-500 ease-out ${isOpen ? 'rotate-0 opacity-100' : '-rotate-90 opacity-0'}`}
-            />
+            {/* The plus turns into the minus and back (the vertical bar lies down); the picture is the Figma icons redrawn as two bars. */}
+            <PlusMinusIcon isMinus={isOpen} />
           </span>
         </button>
       </h3>

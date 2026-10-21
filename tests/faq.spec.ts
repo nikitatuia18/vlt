@@ -138,12 +138,18 @@ test('the text of an opening answer does not re-wrap or jump while the row unfol
 
 test('the toggle changes from plus to minus', async ({ page }) => {
   await open(page, 1440, 900)
-  const icons = (id: string) => page.locator(`[data-el="faq__item-${id}-toggle"] > span`)
-  // closed item: the plus (first icon) is visible, the minus is not; open item: the other way round
-  await expect.poll(() => icons('licence').nth(0).evaluate((el) => Number(getComputedStyle(el).opacity))).toBe(1)
-  await expect.poll(() => icons('licence').nth(1).evaluate((el) => Number(getComputedStyle(el).opacity))).toBe(0)
-  await expect.poll(() => icons('safety').nth(0).evaluate((el) => Number(getComputedStyle(el).opacity))).toBe(0)
-  await expect.poll(() => icons('safety').nth(1).evaluate((el) => Number(getComputedStyle(el).opacity))).toBe(1)
+  // The vertical bar of the icon lies down onto the horizontal one: turned by 0 degrees (plus) or 90 degrees (minus).
+  const angle = (id: string) =>
+    page.locator(`[data-el="faq__item-${id}-toggle"] svg line`).nth(1).evaluate((el) => {
+      const matrix = new DOMMatrix(getComputedStyle(el).transform)
+      return Math.round((Math.atan2(matrix.b, matrix.a) * 180) / Math.PI)
+    })
+  await expect.poll(() => angle('licence')).toBe(0)
+  await expect.poll(() => angle('safety')).toBe(90)
+  // a click moves the open item (the other one closes); the turn itself is the motion of the icon
+  await page.locator('[data-el="faq__item-licence-head"]').click()
+  await expect.poll(() => angle('licence')).toBe(90)
+  await expect.poll(() => angle('safety')).toBe(0)
 })
 
 test('stacked layout (below 1280 px): the title is above the list', async ({ page }) => {

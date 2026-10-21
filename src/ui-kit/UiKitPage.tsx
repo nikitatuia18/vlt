@@ -8,6 +8,8 @@ import { Container } from '../components/ui/Container'
 import { ColumnFade } from '../components/ui/ColumnFade'
 import { Footer } from '../components/ui/Footer'
 import { Header } from '../components/ui/Header'
+import { MenuToggleIcon } from '../components/ui/Header/MenuToggleIcon'
+import { PlusMinusIcon } from '../components/ui/PlusMinusIcon'
 import { CornerDots } from '../components/ui/CornerDots'
 import { Icon } from '../components/ui/Icon'
 import { IconButton } from '../components/ui/IconButton'
@@ -57,6 +59,22 @@ const textStyles = [
 ] as const
 
 const spacingSteps = [1, 2, 3, 4, 6, 8, 10, 12, 15, 20, 35]
+
+/** The two icons that change shape, each on a button that flips it. */
+function MorphIcons() {
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [minus, setMinus] = useState(false)
+  return (
+    <>
+      <IconButton aria-label="Burger to cross" aria-pressed={menuOpen} onClick={() => setMenuOpen((open) => !open)}>
+        <MenuToggleIcon isOpen={menuOpen} />
+      </IconButton>
+      <IconButton aria-label="Plus to minus" aria-pressed={minus} onClick={() => setMinus((value) => !value)}>
+        <PlusMinusIcon isMinus={minus} />
+      </IconButton>
+    </>
+  )
+}
 
 function ColorSwatch({ token }: { token: string }) {
   const { theme } = useTheme()
@@ -230,6 +248,12 @@ export default function UiKitPage() {
                 <Icon src={exportIcon} width={21.5} height={21.5} />
               </span>
             </IconLink>
+          </div>
+          <div className="mt-6 flex flex-wrap items-center gap-6">
+            <MorphIcons />
+            <p className="type-body-sm max-w-110 text-typography-secondary">
+              Icons that change shape: MenuToggleIcon (burger to cross) and PlusMinusIcon (plus to minus), 0.4 s (duration.morph). Press them.
+            </p>
           </div>
         </Section>
 

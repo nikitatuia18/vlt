@@ -5,6 +5,7 @@ import { appear, duration, easeOut } from '../../../motion/tokens'
 import { useRevealOn } from '../../../motion/useReveal'
 import logo from '../../../assets/brand/logo-velant-pay.svg'
 import { DESKTOP_QUERY } from '../../../lib/media'
+import { holdScroll } from '../../../lib/smoothScroll'
 import { ButtonLink } from '../ButtonLink'
 import { Container } from '../Container'
 import { Icon } from '../Icon'
@@ -92,6 +93,12 @@ export function Header({
     return () => document.removeEventListener('keydown', closeOnEscape)
   }, [isMenuOpen])
 
+  // The open menu covers the screen: the page behind it must not scroll (wheel, finger, keys).
+  useEffect(() => {
+    if (!isMenuOpen) return
+    return holdScroll()
+  }, [isMenuOpen])
+
   const closeMenu = () => setIsMenuOpen(false)
 
   return (
@@ -166,12 +173,17 @@ export function Header({
         </Reveal>
       </Container>
 
-      {/* Dropdown for tablet and mobile; hidden on desktop where the full menu is in the bar. */}
+      {/*
+        The menu of tablet and mobile; hidden on desktop where the full menu is in the bar. It fills the rest of the screen under the bar
+        (the bar is pinned, so the panel ends at the bottom of the screen), scrolls inside itself if the screen is too low for it,
+        and does not pass the scroll on to the page.
+      */}
       <div
         id={panelId}
         hidden={!isMenuOpen}
         data-el="header__menu-panel"
-        className="absolute inset-x-0 top-full z-40 border-b border-border-subtle bg-surface-subtle desktop:hidden"
+        data-lenis-prevent
+        className="absolute inset-x-0 top-full z-40 h-[calc(100dvh-100%)] overflow-y-auto overscroll-contain bg-surface-subtle desktop:hidden"
       >
         <Container className="flex flex-col gap-4 py-4">
           <nav aria-label="Main">

@@ -59,6 +59,67 @@ test('mobile: burger opens and closes the dropdown (button, Escape, link)', asyn
   await expect(panel).toBeHidden()
 })
 
+for (const viewport of [{ width: 393, height: 800 }, { width: 768, height: 900 }, { width: 1024, height: 700 }]) {
+  test(`the open menu fills the screen under the bar and holds the page still at ${viewport.width}`, async ({ page }) => {
+    await page.setViewportSize(viewport)
+    await page.goto('/')
+    await page.evaluate(() => document.fonts.ready)
+    await page.mouse.move(viewport.width / 2, viewport.height - 40)
+    await page.mouse.wheel(0, 300)
+    await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(100)
+
+    // Scrolling up brings the bar back (it hides while scrolling down), then the menu opens.
+    await page.waitForTimeout(1500)
+    await page.mouse.wheel(0, -100)
+    await expect(page.locator('[data-el="header"]')).toHaveAttribute('data-hidden', 'false')
+    await page.locator('[data-el="header__menu-toggle"]').click()
+    const panel = page.locator('[data-el="header__menu-panel"]')
+    await expect(panel).toBeVisible()
+    await page.waitForTimeout(300)
+
+    const header = (await page.locator('[data-el="header"]').boundingBox())!
+    const box = (await panel.boundingBox())!
+    expect(box.y).toBeCloseTo(header.y + header.height - 1, 0)
+    expect(box.y + box.height).toBeCloseTo(viewport.height, 0)
+    await page.screenshot({ path: `tests/artifacts/header-menu-full-${viewport.width}.png` })
+
+    // The wheel over the page, the wheel over the menu and the keys do not move the page.
+    const before = await page.evaluate(() => window.scrollY)
+    await page.mouse.wheel(0, 500)
+    await page.mouse.move(viewport.width / 2, 120)
+    await page.mouse.wheel(0, 500)
+    await page.keyboard.press('PageDown')
+    await page.waitForTimeout(700)
+    expect(await page.evaluate(() => window.scrollY)).toBe(before)
+
+    // Closed: the page scrolls again.
+    await page.keyboard.press('Escape')
+    await expect(panel).toBeHidden()
+    await page.mouse.wheel(0, 400)
+    await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(before + 100)
+  })
+}
+
+test('the burger turns into a cross and back (the bars move, they are not swapped)', async ({ page }) => {
+  await page.setViewportSize({ width: 393, height: 800 })
+  await page.goto('/')
+  const toggle = page.locator('[data-el="header__menu-toggle"]')
+  // Angle of the first bar and the opacity of the middle one.
+  const state = () =>
+    page.locator('[data-el="menu-toggle-icon"] line').evaluateAll((bars) => {
+      const angle = (bar: Element) => {
+        const matrix = new DOMMatrix(getComputedStyle(bar).transform)
+        return Math.round((Math.atan2(matrix.b, matrix.a) * 180) / Math.PI)
+      }
+      return { top: angle(bars[0]), middle: Number(getComputedStyle(bars[1]).opacity), bottom: angle(bars[2]) }
+    })
+  await expect.poll(state).toEqual({ top: 0, middle: 1, bottom: 0 })
+  await toggle.click()
+  await expect.poll(state).toEqual({ top: 45, middle: 0, bottom: -45 })
+  await toggle.click()
+  await expect.poll(state).toEqual({ top: 0, middle: 1, bottom: 0 })
+})
+
 test('tablet: primary CTA in the bar, dropdown keeps the rest', async ({ page }) => {
   await page.setViewportSize({ width: 768, height: 800 })
   await page.goto('/')

@@ -10,6 +10,8 @@ export const easeOut = [0.22, 1, 0.36, 1] as const
 export const duration = {
   /** A card or a text block opening and closing. Slow and careful on purpose. */
   reveal: 0.7,
+  /** A small icon changing its shape (burger to cross, plus to minus). */
+  morph: 0.4,
 } as const
 
 /**
