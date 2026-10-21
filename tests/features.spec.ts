@@ -124,18 +124,19 @@ test('round "Learn more" links: 48 px circles with an accessible name; coming-so
   }
 })
 
-test('only the crypto card has a background so far: the interactive dots; the other illustrations are not built yet', async ({ page }) => {
+test('the four white cards have their animated picture (details: tests/features-illustrations.spec.ts); the grey ones have none', async ({ page }) => {
   await page.goto('/')
-  await expect(section(page).locator('img')).toHaveCount(0) // no pictures: the static PNG of the design is replaced
-  const illustrations = section(page).locator('[data-el$="-illustration"]')
-  await expect(illustrations).toHaveCount(1)
-  await expect(page.locator('[data-el="features__card-crypto"] [data-el="features__crypto-illustration"] canvas')).toHaveCount(1)
+  await expect(section(page).locator('[data-el$="-illustration"]')).toHaveCount(4)
+  for (const id of ['crypto', 'invoicing', 'ramp', 'payouts']) await expect(card(page, id).locator(`[data-el="features__${id}-illustration"]`)).toHaveCount(1)
+  for (const id of ['banking', 'wallet']) await expect(card(page, id).locator('[data-el$="-illustration"]')).toHaveCount(0)
+  // the crypto card: the dot grid and the tesseract, two canvases
+  await expect(card(page, 'crypto').locator('canvas')).toHaveCount(2)
 })
 
 test('crypto card: the dot grid fills the card, is clipped by its radius and reacts to the pointer', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
   await page.goto('/')
-  const dots = page.locator('[data-el="features__crypto-illustration"] canvas')
+  const dots = page.locator('[data-el="features__crypto-illustration"] canvas:not([data-el="features__tesseract"])')
   await dots.scrollIntoViewIfNeeded()
   const cardBox = (await card(page, 'crypto').boundingBox())!
   const canvasBox = (await dots.boundingBox())!

@@ -432,7 +432,8 @@ test('Industries: the description of the card unrolls word by word when the card
 // The rule of the design system: ALL text of the site appears word by word (RevealLines, or a label inside ButtonLink / Badge,
 // which use it). This test walks over every text of the page and names the ones that do not. The exceptions are listed here
 // on purpose: figures that count (CountUp), the cards on the globe (they have their own run in the timeline), the glass badges
-// of the banner (they jump out as a whole) and the menu of the narrow screens (it is closed).
+// of the banner (they jump out as a whole), the pictures of the product cards (their texts are part of the animations of the designer,
+// docs/blocks/features.motion.md) and the menu of the narrow screens (it is closed).
 test('every text of the page appears word by word, except the listed exceptions', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
   await page.goto('/')
@@ -442,6 +443,7 @@ test('every text of the page appears word by word, except the listed exceptions'
       '[data-el^="global__pin"]',
       '[data-el^="global__metric-"][data-el$="-value"]',
       '[data-el^="cta__badge"]',
+      '[data-el$="-illustration"]',
       '[data-el="header__menu-panel"]',
       '.sr-only',
       'script',

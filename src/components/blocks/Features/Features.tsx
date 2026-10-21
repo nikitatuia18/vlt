@@ -2,10 +2,10 @@ import { RevealLines } from '../../../motion/reveal'
 import { ColumnFade } from '../../ui/ColumnFade'
 import { Container } from '../../ui/Container'
 import { CornerDots } from '../../ui/CornerDots'
-import { InteractiveDots } from '../../ui/InteractiveDots'
 import { appear } from '../../../motion/tokens'
 import { mainCards, soonCards } from './cards'
 import { FeatureCard, SoonCard } from './FeatureCard'
+import { cardIllustrations } from './illustrations'
 
 /**
  * Product cards. Figma block `features`.
@@ -55,9 +55,8 @@ export function Features() {
                 // The first card spans two columns. The crypto text is a fixed 400 px wide in the design.
                 className={index === 0 ? 'tablet:col-span-2' : ''}
                 textClassName={index === 0 ? 'w-full desktop:w-100' : 'w-full'}
-                // The background of the crypto card is the same dot grid as in the hero (the static picture `features__card-crypto-bg`
-                // of the design is replaced by the UI Kit component). The tesseract (`img-tesseract`) will be added to this slot later.
-                illustration={index === 0 ? <InteractiveDots ripple={{ delay: 0.4, duration: 1.2 }} /> : undefined}
+                // The animated pictures of the cards (docs/blocks/features.motion.md); the crypto card also has the dot background and the tesseract.
+                illustration={cardIllustrations[card.id]}
               />
             ))}
             <div data-el="features__col-soon" className="flex flex-col justify-center gap-6 self-stretch">
