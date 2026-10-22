@@ -116,27 +116,52 @@ test.describe('with the animations on', () => {
     await expect.poll(() => offsetY(page, '[data-el="features__ramp-counter-scroll"]'), { timeout: 8000 }).toBeCloseTo(-640, 0)
   })
 
-  test('Payouts: the dashes run, the ways to pay flash, the dashes run to the people', async ({ page }) => {
+  test('Payouts: the dashes run, the ways to pay light up green, the dashes run to the people', async ({ page }) => {
     await toCards(page)
     await card(page, 'payouts').scrollIntoViewIfNeeded()
     const settle = { timeout: 12000 }
     await expect.poll(() => dash(page, 'dollar-bank'), settle).toBeGreaterThan(0.1)
-    // The flash lasts 0.1 s, so it is watched on every frame instead of being polled.
-    const flashed = await page.evaluate(
+    // The glow peaks for one frame, so it is watched on every frame instead of being polled.
+    const glowed = await page.evaluate(
       () =>
         new Promise<boolean>((resolve) => {
           const element = document.querySelector('[data-el="features__payouts-method-bank-flash"]')!
           const started = performance.now()
           const look = () => {
-            if (Number(getComputedStyle(element).opacity) === 1) resolve(true)
+            if (Number(getComputedStyle(element).opacity) > 0.5) resolve(true)
             else if (performance.now() - started > 12000) resolve(false)
             else requestAnimationFrame(look)
           }
           look()
         }),
     )
-    expect(flashed).toBe(true)
+    expect(glowed).toBe(true)
     await expect.poll(() => dash(page, 'bank-person'), settle).toBeGreaterThan(0.05)
+  })
+
+  test('Payouts: the ways to pay start one after another, not together', async ({ page }) => {
+    await toCards(page)
+    await card(page, 'payouts').scrollIntoViewIfNeeded()
+    const starts = await page.evaluate(
+      () =>
+        new Promise<Record<string, number>>((resolve) => {
+          const ids = ['bank', 'card', 'crypto']
+          const elements = Object.fromEntries(ids.map((id) => [id, document.querySelector(`[data-el="features__payouts-flow-dollar-${id}"]`)!]))
+          const first: Record<string, number> = {}
+          const began = performance.now()
+          const look = () => {
+            for (const id of ids) {
+              if (!(id in first) && Number.parseFloat(getComputedStyle(elements[id]).strokeDasharray) > 0) first[id] = performance.now() - began
+            }
+            if (Object.keys(first).length === ids.length || performance.now() - began > 8000) resolve(first)
+            else requestAnimationFrame(look)
+          }
+          look()
+        }),
+    )
+    expect(Object.keys(starts)).toHaveLength(3)
+    expect(starts.card - starts.bank).toBeGreaterThan(100)
+    expect(starts.crypto - starts.card).toBeGreaterThan(100)
   })
 
   test('the tesseract turns while the card is on the screen', async ({ page }) => {
