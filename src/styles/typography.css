@@ -152,3 +152,12 @@
   letter-spacing: var(--type-letter-spacing-pos-50);
   text-transform: uppercase;
 }
+
+/* code (EXCEPTION, not in Figma: the code window of the Global block) */
+@utility type-code-sm {
+  font-family: var(--font-mono);
+  font-weight: var(--type-weight-regular);
+  font-size: var(--type-size-150);
+  line-height: var(--type-line-height-200);
+  letter-spacing: var(--type-letter-spacing-none);
+}

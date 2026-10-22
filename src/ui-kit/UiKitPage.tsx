@@ -56,6 +56,7 @@ const textStyles = [
   'type-ui-sm',
   'type-ui-xs',
   'type-ui-caps',
+  'type-code-sm',
 ] as const
 
 const spacingSteps = [1, 2, 3, 4, 6, 8, 10, 12, 15, 20, 35]

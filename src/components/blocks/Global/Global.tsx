@@ -1,8 +1,9 @@
 import { useMotionValueEvent, useReducedMotion, useScroll } from 'motion/react'
 import { useLayoutEffect, useRef, useState } from 'react'
 import { shiftScroll } from '../../../lib/smoothScroll'
-import { CountUp, RevealLines } from '../../../motion/reveal'
+import { CountUp, Reveal, RevealLines } from '../../../motion/reveal'
 import { Container } from '../../ui/Container'
+import { CodeWindow } from './codeWindow/CodeWindow'
 import { Globe } from './globe/Globe'
 
 const metrics = [
@@ -128,6 +129,13 @@ export function Global() {
               data-el="global__message"
               className="order-2 flex w-fit max-w-full flex-col gap-4 tablet:gap-6 min-[64rem]:gap-8 min-[64rem]:order-none min-[64rem]:col-start-2 min-[64rem]:row-span-2 min-[64rem]:row-start-1 min-[64rem]:self-end"
             >
+              {/*
+                A picture that types itself and moves a little away from the mouse. Only where there is room: from 1024 px
+                and not on a low screen, where it would push the title out of the stage (docs/blocks/global.md).
+              */}
+              <Reveal when={textOn} className="max-[64rem]:hidden [@media(max-height:799px)]:hidden">
+                <CodeWindow play={textOn} data-el="global__code" />
+              </Reveal>
               <RevealLines
                 when={textOn}
                 id="global-title"

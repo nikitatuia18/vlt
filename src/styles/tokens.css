@@ -146,6 +146,8 @@
   /* Fonts. Figma calls Manrope "font-family-serif", but it is a sans-serif display face, so the CSS name is "display" */
   --font-sans: "Inter Variable", "Inter", system-ui, sans-serif;
   --font-display: "Manrope Variable", "Manrope", system-ui, sans-serif;
+  /* EXCEPTION (no Figma variable): the mono face of the code window in the Global block, see docs/tokens-map.md */
+  --font-mono: "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
 
   /* Type primitives (Figma: Primitives -- Typography); px → rem at 16px */
   --type-weight-regular: 400;
