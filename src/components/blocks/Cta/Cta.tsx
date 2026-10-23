@@ -86,7 +86,7 @@ export function Cta() {
               aria-hidden="true"
               className="pointer-events-none absolute bottom-0 h-[calc(592px*var(--s))] w-[calc(666px*var(--s))] max-desktop:left-1/2 max-desktop:-translate-x-1/2 desktop:right-[calc(59px*var(--s))]"
             >
-              <CtaBadge id="payments" icon={iconCard} label="Pay-in / Pay-out" left={0} top={36} size={1} revealDelay={1.1} />
+              <CtaBadge id="payments" icon={iconCard} label="Pay-in / Pay-out" left={0} top={36} size={1} from={{ x: 270, y: 250 }} revealDelay={1} />
               <Reveal variant="rise" delay={0.7} data-el="img-cta-person" className="absolute top-0 left-[10.96%] h-full w-[76.1%] overflow-hidden">
                 {/* The design shows the middle part of the picture: 150 % high, shifted up by 13.5 %. */}
                 <img
@@ -97,8 +97,8 @@ export function Cta() {
                   className="absolute top-[-13.51%] left-[-0.24%] h-[150%] w-[100.2%] max-w-none"
                 />
               </Reveal>
-              <CtaBadge id="multi-currency" icon={iconGlobal} label="Multi-currency" left={0} top={73.99} size={1.2137} revealDelay={1.25} />
-              <CtaBadge id="kyb" icon={iconSecurity} label="Instant KYB" left={72.22} top={55.07} size={1.1696} revealDelay={1.4} />
+              <CtaBadge id="multi-currency" icon={iconGlobal} label="Multi-currency" left={0} top={73.99} size={1.2137} from={{ x: 95, y: 440 }} revealDelay={1.2} />
+              <CtaBadge id="kyb" icon={iconSecurity} label="Instant KYB" left={72.22} top={55.07} size={1.1696} from={{ x: 390, y: 330 }} revealDelay={1.4} />
             </div>
           </div>
 

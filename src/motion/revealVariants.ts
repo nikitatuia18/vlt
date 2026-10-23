@@ -3,7 +3,7 @@ import { appear, easeOut } from './tokens'
 
 /* The ready-made ways to appear (docs/reveal.motion.md): the numbers come from `appear` in tokens.ts. */
 
-export type Variant = 'up' | 'drop' | 'card' | 'fade' | 'rise' | 'pop' | 'spring' | 'orbit' | 'shutter' | 'line-x' | 'line-y'
+export type Variant = 'up' | 'drop' | 'card' | 'fade' | 'rise' | 'pop' | 'spring' | 'emerge' | 'shutter' | 'line-x' | 'line-y'
 
 /** The delay is given to every variant through `custom`, so one set of variants serves all elements. */
 export const variants: Record<Variant, Variants> = {
@@ -51,11 +51,11 @@ export const variants: Record<Variant, Variants> = {
       transition: { duration: appear.spring.duration, ease: easeOut, delay, times: [0, 0.65, 1] },
     }),
   },
-  // A badge swirls in around a centre and settles in its place. Only the progress `--p` (0 to 1) is animated here;
-  // `orbitStyle` (orbit.ts) turns it into the position and the size, so that the path can use the scale of the picture.
-  orbit: {
+  // A badge flies out from behind a figure to its place. Only the progress `--p` (0 to 1) is animated here;
+  // `emergeStyle` (emerge.ts) turns it into the position and the size, so that the path can use the scale of the picture.
+  emerge: {
     hidden: { '--p': 0 },
-    shown: (delay: number) => ({ '--p': 1, transition: { duration: appear.orbit.duration, ease: easeOut, delay } }),
+    shown: (delay: number) => ({ '--p': 1, transition: { duration: appear.emerge.duration, ease: easeOut, delay } }),
   },
   // The banner opens like a shutter: a narrow strip in the middle widens to the full width.
   shutter: {

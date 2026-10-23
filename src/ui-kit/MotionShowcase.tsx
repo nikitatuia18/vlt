@@ -4,7 +4,7 @@ import { ButtonLink } from '../components/ui/ButtonLink'
 import { GlowBackdrop, type GlowHue } from '../components/ui/GlowBackdrop'
 import { InteractiveDots } from '../components/ui/InteractiveDots'
 import { useForcedTheme, useTheme } from '../lib/theme'
-import { orbitStyle } from '../motion/orbit'
+import { emergeStyle } from '../motion/emerge'
 import { CountUp, Reveal, RevealLines } from '../motion/reveal'
 import { useRevealOn } from '../motion/useReveal'
 import { Section } from './Section'
@@ -146,16 +146,16 @@ export function AppearanceSections() {
               <span className="type-ui-lg text-typography-primary">Instant KYB</span>
             </Reveal>
           </Tile>
-          <Tile name="orbit" usage='variant="orbit" + orbitStyle(dx, dy) (motion/orbit.ts): a glass badge swirls around a centre and settles in its place (the badges of the Cta banner). (dx, dy): its final place from the centre.' tall>
+          <Tile name="emerge" usage='variant="emerge" + emergeStyle(dx, dy) (motion/emerge.ts): a glass badge flies out from behind a figure (a layer above it) to its place and grows. (dx, dy): where it starts, from its place. The badges of the Cta banner, one after another (0.2 s).' tall>
             <div className="relative h-32 w-full" style={{ '--s': 1 } as CSSProperties}>
-              <Reveal variant="orbit" className="absolute top-1/2 left-1/2 h-0 w-0">
-                <div className="h-0 w-0" style={orbitStyle(-70, -30)}>
+              <Reveal variant="emerge" className="absolute top-1/2 left-1/2 h-0 w-0" style={{ marginLeft: 40, marginTop: -16 }}>
+                <div className="h-0 w-0" style={emergeStyle(-100, 0)}>
                   <span className="type-ui-lg block w-max rounded-pill bg-surface-black-16 px-4 py-2 text-typography-primary ring-1 ring-border-subtle ring-inset backdrop-blur-sm">
                     Instant KYB
                   </span>
                 </div>
               </Reveal>
-              <span className="absolute top-1/2 left-1/2 size-3 -translate-1/2 rounded-pill bg-icon-primary" />
+              <span className="absolute top-1/2 left-1/2 size-20 -translate-x-[calc(50%+40px)] -translate-y-1/2 rounded-pill bg-icon-primary" />
             </div>
           </Tile>
           <Tile name="shutter" usage='variant="shutter": a banner opens from a narrow strip in the middle to its full width.'>

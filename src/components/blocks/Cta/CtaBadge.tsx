@@ -1,11 +1,10 @@
-import { orbitStyle } from '../../../motion/orbit'
+import { emergeStyle } from '../../../motion/emerge'
 import { Reveal } from '../../../motion/reveal'
 import { Icon } from '../../ui/Icon'
 
-// The stage of the design (px) and the middle of the person in it: the badges swirl around this point when they appear.
+// The stage of the design (px): the starting points of the badges are given in it.
 const STAGE_W = 666
 const STAGE_H = 592
-const PERSON_CENTER = { x: 326, y: 300 }
 
 // Icon size of the base badge (px). The design draws the same icon in three sizes (35.3 / 42.9 / 41.3) because the badges
 // themselves are three sizes; here the whole badge is scaled, so the icon is always drawn at the base size.
@@ -21,7 +20,9 @@ type CtaBadgeProps = {
   top: number
   /** Size of this badge against the first one (the design draws them in three sizes: 1, 1.21, 1.17). */
   size: number
-  /** Seconds the badge waits after the banner has come into view: the badges jump out one after another. */
+  /** Where the top left corner of the badge starts its flight, in px of the stage (666 x 592): behind or at the edge of the person. */
+  from: { x: number; y: number }
+  /** Seconds the badge waits after the banner has come into view: the badges fly out one after another. */
   revealDelay?: number
 }
 
@@ -31,11 +32,11 @@ type CtaBadgeProps = {
  * so the three badges keep the proportions of the design at every screen width.
  * Font note: the design uses Urbanist; it is not in the font set, so the closest style (`ui-lg`) is used.
  */
-export function CtaBadge({ id, icon, label, left, top, size, revealDelay = 0 }: CtaBadgeProps) {
+export function CtaBadge({ id, icon, label, left, top, size, from, revealDelay = 0 }: CtaBadgeProps) {
   return (
-    // The outer box (a point) only places the badge and plays the swirl (`--p`); the point inside it flies, and the badge keeps its own scale.
-    <Reveal variant="orbit" delay={revealDelay} className="absolute h-0 w-0" style={{ left: `${left}%`, top: `${top}%` }}>
-      <div className="h-0 w-0" style={orbitStyle((left * STAGE_W) / 100 - PERSON_CENTER.x, (top * STAGE_H) / 100 - PERSON_CENTER.y)}>
+    // The outer box (a point) only places the badge and plays the flight (`--p`); the point inside it moves, and the badge keeps its own scale.
+    <Reveal variant="emerge" delay={revealDelay} className="absolute h-0 w-0" style={{ left: `${left}%`, top: `${top}%` }}>
+      <div className="h-0 w-0" style={emergeStyle(from.x - (left * STAGE_W) / 100, from.y - (top * STAGE_H) / 100)}>
         <div
           data-el={`cta__badge-${id}`}
           className="flex w-max origin-top-left items-center justify-center gap-2 rounded-pill bg-surface-black-16 p-2 text-typography-static-w ring-1 ring-border-subtle backdrop-blur-[8px] ring-inset"
