@@ -1,5 +1,11 @@
+import { orbitStyle } from '../../../motion/orbit'
 import { Reveal } from '../../../motion/reveal'
 import { Icon } from '../../ui/Icon'
+
+// The stage of the design (px) and the middle of the person in it: the badges swirl around this point when they appear.
+const STAGE_W = 666
+const STAGE_H = 592
+const PERSON_CENTER = { x: 326, y: 300 }
 
 // Icon size of the base badge (px). The design draws the same icon in three sizes (35.3 / 42.9 / 41.3) because the badges
 // themselves are three sizes; here the whole badge is scaled, so the icon is always drawn at the base size.
@@ -27,17 +33,19 @@ type CtaBadgeProps = {
  */
 export function CtaBadge({ id, icon, label, left, top, size, revealDelay = 0 }: CtaBadgeProps) {
   return (
-    // The outer box (a point) only places the badge and plays the jump-out; the badge itself keeps its own scale.
-    <Reveal variant="spring" delay={revealDelay} className="absolute h-0 w-0" style={{ left: `${left}%`, top: `${top}%` }}>
-      <div
-        data-el={`cta__badge-${id}`}
-        className="flex w-max origin-top-left items-center justify-center gap-2 rounded-pill bg-surface-black-16 p-2 text-typography-static-w ring-1 ring-border-subtle backdrop-blur-[8px] ring-inset"
-        style={{ transform: `scale(calc(var(--s) * ${size}))` }}
-      >
-        <Icon src={icon} width={ICON_SIZE} height={ICON_SIZE} />
-        <span data-el={`cta__badge-${id}-label`} className="type-ui-lg pr-2 whitespace-nowrap">
-          {label}
-        </span>
+    // The outer box (a point) only places the badge and plays the swirl (`--p`); the point inside it flies, and the badge keeps its own scale.
+    <Reveal variant="orbit" delay={revealDelay} className="absolute h-0 w-0" style={{ left: `${left}%`, top: `${top}%` }}>
+      <div className="h-0 w-0" style={orbitStyle((left * STAGE_W) / 100 - PERSON_CENTER.x, (top * STAGE_H) / 100 - PERSON_CENTER.y)}>
+        <div
+          data-el={`cta__badge-${id}`}
+          className="flex w-max origin-top-left items-center justify-center gap-2 rounded-pill bg-surface-black-16 p-2 text-typography-static-w ring-1 ring-border-subtle backdrop-blur-[8px] ring-inset"
+          style={{ transform: `scale(calc(var(--s) * ${size}))` }}
+        >
+          <Icon src={icon} width={ICON_SIZE} height={ICON_SIZE} />
+          <span data-el={`cta__badge-${id}-label`} className="type-ui-lg pr-2 whitespace-nowrap">
+            {label}
+          </span>
+        </div>
       </div>
     </Reveal>
   )

@@ -66,7 +66,8 @@ test('desktop frame (2560): banner 496 px high, radius 60, padding 60; picture a
 
   // Badges: size and position (the design draws them in three sizes; the text style is the closest token, hence the tolerance).
   const badges = [
-    { id: 'payments', width: 191.6, height: 53, x: 748 - 41, y: 303 - 140 },
+    // Pay-in / Pay-out is moved on purpose (the design has it at 748 / 303): there the scarf of the person covered the end of its label.
+    { id: 'payments', width: 191.6, height: 53, x: 748 - 41 - 74, y: 303 - 140 - 46 },
     { id: 'multi-currency', width: 220.7, height: 64.3, x: 674 - 41, y: 482 - 140 },
     { id: 'kyb', width: 184.6, height: 61.9, x: 1155 - 41, y: 370 - 140 },
   ]

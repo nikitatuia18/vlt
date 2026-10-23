@@ -86,7 +86,7 @@ export function Cta() {
               aria-hidden="true"
               className="pointer-events-none absolute bottom-0 h-[calc(592px*var(--s))] w-[calc(666px*var(--s))] max-desktop:left-1/2 max-desktop:-translate-x-1/2 desktop:right-[calc(59px*var(--s))]"
             >
-              <CtaBadge id="payments" icon={iconCard} label="Pay-in / Pay-out" left={11.11} top={43.75} size={1} revealDelay={1.1} />
+              <CtaBadge id="payments" icon={iconCard} label="Pay-in / Pay-out" left={0} top={36} size={1} revealDelay={1.1} />
               <Reveal variant="rise" delay={0.7} data-el="img-cta-person" className="absolute top-0 left-[10.96%] h-full w-[76.1%] overflow-hidden">
                 {/* The design shows the middle part of the picture: 150 % high, shifted up by 13.5 %. */}
                 <img

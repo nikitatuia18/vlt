@@ -1,9 +1,10 @@
-import { useState, type ReactNode } from 'react'
+import { useState, type CSSProperties, type ReactNode } from 'react'
 import { Badge } from '../components/ui/Badge'
 import { ButtonLink } from '../components/ui/ButtonLink'
 import { GlowBackdrop, type GlowHue } from '../components/ui/GlowBackdrop'
 import { InteractiveDots } from '../components/ui/InteractiveDots'
 import { useForcedTheme, useTheme } from '../lib/theme'
+import { orbitStyle } from '../motion/orbit'
 import { CountUp, Reveal, RevealLines } from '../motion/reveal'
 import { useRevealOn } from '../motion/useReveal'
 import { Section } from './Section'
@@ -144,6 +145,18 @@ export function AppearanceSections() {
             <Reveal variant="spring" className="origin-center rounded-pill bg-surface-black-16 px-4 py-2 ring-1 ring-border-subtle ring-inset backdrop-blur-sm">
               <span className="type-ui-lg text-typography-primary">Instant KYB</span>
             </Reveal>
+          </Tile>
+          <Tile name="orbit" usage='variant="orbit" + orbitStyle(dx, dy) (motion/orbit.ts): a glass badge swirls around a centre and settles in its place (the badges of the Cta banner). (dx, dy): its final place from the centre.' tall>
+            <div className="relative h-32 w-full" style={{ '--s': 1 } as CSSProperties}>
+              <Reveal variant="orbit" className="absolute top-1/2 left-1/2 h-0 w-0">
+                <div className="h-0 w-0" style={orbitStyle(-70, -30)}>
+                  <span className="type-ui-lg block w-max rounded-pill bg-surface-black-16 px-4 py-2 text-typography-primary ring-1 ring-border-subtle ring-inset backdrop-blur-sm">
+                    Instant KYB
+                  </span>
+                </div>
+              </Reveal>
+              <span className="absolute top-1/2 left-1/2 size-3 -translate-1/2 rounded-pill bg-icon-primary" />
+            </div>
           </Tile>
           <Tile name="shutter" usage='variant="shutter": a banner opens from a narrow strip in the middle to its full width.'>
             <Reveal variant="shutter" className="h-24 w-full rounded-40 bg-surface-brand-default" />

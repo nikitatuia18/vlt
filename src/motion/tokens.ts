@@ -47,6 +47,9 @@ export const appear = {
   pop: { duration: 0.5 },
   /** A glass badge jumps out. */
   spring: { duration: 0.7 },
+  /** A glass badge swirls around a centre and settles: the angle it still has to turn (deg), how much farther out it starts (1 = no swing)
+   *  and how flat the orbit is (1 = a circle; lower keeps the swirl inside the banner instead of flying out above it). */
+  orbit: { duration: 1.9, sweep: 300, swing: 1.15, flatten: 0.6 },
   /** The banner opens like a shutter. */
   shutter: { duration: 1.1 },
   /** A figure comes in from below (the person of the banner). */

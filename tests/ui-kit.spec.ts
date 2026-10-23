@@ -89,7 +89,7 @@ test('UI Kit shows the glow hues: a dark panel, a glow behind a see-through card
 test('UI Kit is the knowledge base of movement: every way to appear has a tile with a Replay button', async ({ page }) => {
   await page.goto('/ui-kit')
   for (const id of ['appearance', 'glow', 'theme-scenes']) await expect(page.locator(`[data-el="ui-kit__${id}"]`)).toBeVisible()
-  for (const name of ['lines', 'words', 'labels', 'up', 'drop', 'card', 'fade', 'rise', 'pop', 'spring', 'shutter', 'line-x', 'count', 'ripple']) {
+  for (const name of ['lines', 'words', 'labels', 'up', 'drop', 'card', 'fade', 'rise', 'pop', 'spring', 'orbit', 'shutter', 'line-x', 'count', 'ripple']) {
     await expect(page.locator(`[data-el="ui-kit__reveal-${name}"]`), name).toBeVisible()
     await page.locator(`[data-el="ui-kit__reveal-${name}-replay"]`).click()
     await expect(page.locator(`[data-el="ui-kit__reveal-${name}"]`), name).toBeVisible()
