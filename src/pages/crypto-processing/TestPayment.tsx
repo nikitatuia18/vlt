@@ -99,8 +99,7 @@ export function TestPayment() {
             data-el="crypto-processing__api-illustration"
             className="w-full rounded-32 bg-surface-subtle p-4 ring-1 ring-border-subtle ring-inset tablet:p-10 desktop:rounded-48 desktop:p-15"
           >
-            <div ref={sceneRef} className="flex flex-col gap-6">
-              <p className="type-ui-sm text-typography-tertiary">{testScene.demo}</p>
+            <div ref={sceneRef}>
               <div className="grid grid-cols-1 desktop:grid-cols-[1fr_auto_1fr_auto_1fr]">
                 <Column data-el="crypto-processing__api-column-request" {...testScene.columns.request}>
                   <pre data-el="crypto-processing__api-code" className="type-code-sm overflow-x-auto whitespace-pre text-typography-primary">

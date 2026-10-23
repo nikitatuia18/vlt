@@ -1,19 +1,27 @@
 /*
  * Short texts inside the scenes of the Crypto Processing page (micro interfaces). DRAFT, from the copywriter (docs/pages/crypto-processing.md,
  * version 2). The coins, networks and sums are DEMO values (demo.ts): not a list of what the product supports [CONFIRM].
+ * The page does not say "demo" anywhere (the designer asked for a clean picture), so the scenes only have to look believable.
  */
 
 export const heroScene = {
-  hint: 'Click the map to send a payment',
-  hintTouch: 'Tap the map to send a payment',
+  hint: 'Click the map to send a payment from that place',
+  hintTouch: 'Tap the map to send a payment from that place',
   hintAgain: 'Try another place',
   button: 'Send a payment',
-  demo: 'Demo',
   account: 'Your account',
   panelTitle: 'Latest payment',
+  from: 'From',
+  recentTitle: 'Recent payments',
   status: {
     waiting: 'Waiting for payment',
     confirmed: 'Payment confirmed',
+    settled: 'Settled',
+  },
+  /** The steps of the latest payment, with the second each one happened at (filled in by the scene). */
+  steps: {
+    waiting: 'Created',
+    confirmed: 'Confirmed',
     settled: 'Settled',
   },
 } as const
@@ -22,7 +30,6 @@ export type PaymentStatus = keyof typeof heroScene.status
 
 /** Block 1: the three stations and their panels. */
 export const journeyScene = {
-  demo: 'Demo values',
   play: 'Play',
   pause: 'Pause',
   hint: 'Try another coin or network.',
@@ -36,11 +43,23 @@ export const journeyScene = {
     convert: { title: 'Conversion', sends: 'Client sends', receives: 'You receive', rate: 'Rate' },
     settle: { title: 'Settlement', credited: 'Credited to', account: 'Your account', amount: 'Amount', status: 'Status' },
   },
+  /** What the station is doing while its log is written, and what it says when the log is done. */
+  progress: {
+    accept: { working: 'Waiting for payment', done: 'Payment confirmed' },
+    convert: { working: 'Applying the rate', done: 'Converted' },
+    settle: { working: 'Sending to your account', done: 'Settled' },
+  },
+  // [CONFIRM: the real names of the events]
+  log: {
+    waiting: 'waiting for confirmations…',
+    locking: 'locking the rate…',
+    sending: 'sending to your account…',
+    converted: 'converted',
+  },
 } as const
 
 /** Block 2: the columns, the events and the log of the system. */
 export const testScene = {
-  demo: 'Demo values',
   send: 'Send test payment',
   sending: 'Sending…',
   replay: 'Replay',

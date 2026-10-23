@@ -125,7 +125,7 @@ export const cryptoProcessing: ProductContent = {
   },
   hero: {
     product: 'crypto-processing',
-    title: ['Accept crypto payments through one integration.'],
+    title: ['Accept crypto payments', 'through one integration.'],
     // [CONFIRM: where the money goes: an account, a wallet, a balance in Velant; where the status is seen: API, webhooks, a dashboard]
     subtitle: 'Your client pays from their wallet. Velant converts the payment and settles it to your account, with a status for every payment.',
     primaryCta: bookDemo,
@@ -140,7 +140,7 @@ export const cryptoProcessing: ProductContent = {
 export const flowContent = {
   title: 'Follow one payment.',
   // DRAFT. [CONFIRM: where the statuses can be seen: API, webhooks, a dashboard]
-  intro: 'Press Play or pick a step to see what happens to one demo payment.',
+  intro: 'Press Play or pick a step to see what happens to one payment.',
 } as const
 
 /** Block 2: "Run a test payment" (the scene is in TestPayment.tsx, its texts in sceneText.ts). */

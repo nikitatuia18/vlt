@@ -11,7 +11,7 @@
 
 ### Правила для монет, сетей и сумм в интерактивах
 
-- Монеты и сети в интерактивах — **только demo-значения**. Рядом всегда метка «Demo» или «Demo values». В списки «что мы поддерживаем» они не попадают, в FAQ на вопрос про монеты и сети остаётся «подтвердим на демо».
+- Монеты и сети в интерактивах — **только demo-значения**, но слова «Demo» на странице нет (решение дизайнера 2026-10-23: чистая картинка). В списки «что мы поддерживаем» они не попадают, в FAQ на вопрос про монеты и сети остаётся «подтвердим на демо».
 - Набор demo: монеты USDT, USDC, DAI; сети Ethereum, Tron, Polygon. Взяты потому, что любая пара монета + сеть правдоподобна (все три монеты ходят во всех трёх сетях). Если продукт не хочет называть даже в demo, запасной вариант: «Coin A / B / C» и «Network A / B / C» (хуже читается, в версию 2 не берём).
 - Формат суммы: число с разделителем тысяч и двумя знаками, пробел, код валюты, без символов валют: `1,000.00 USDT`, `920.00 EUR`. Вход: «`{amount} {COIN}`», зачисление: «`+{amount} {CUR}`» со знаком плюс.
 - Demo-курс один на все сцены: `1 USDT = 0.92 EUR` (суммы сходятся: 120.00 → 110.40, 250.00 → 230.00, 480.00 → 441.60, 1,000.00 → 920.00). Комиссий в сумме нет: ни одна сумма не должна читаться как «после комиссии». `[CONFIRM: валюта расчёта, EUR взят как пример]`
@@ -21,7 +21,7 @@
 
 | Место | Вариант | Знаков | Рекомендация |
 |---|---|---|---|
-| Hero `crypto-processing__hero-title` (одна строка) | A. Accept crypto payments through one integration. | 47 | **рекомендую**: рабочая версия дизайнера; называет действие и способ, не повторяет ритм главной |
+| Hero `crypto-processing__hero-title` (две строки: «Accept crypto payments» / «through one integration.») | A. Accept crypto payments / through one integration. | 47 | **рекомендую**: рабочая версия дизайнера; называет действие и способ, не повторяет ритм главной |
 | | B. Crypto payments, settled to your account. | 41 | результат первым; но «settled to your account» требует `[CONFIRM: куда рассчитываем]` |
 | | C. One API to accept and settle crypto. | 36 | самый короткий; «One API» уже открывает подзаголовок главной, повтор |
 | Блок 1 `crypto-processing__flow-title` | A. Follow one payment. | 19 | **рекомендую**: называет действие посетителя; не конфликтует с Cta и подзаголовком hero, где уже есть путь «кошелёк → счёт» |
@@ -37,7 +37,7 @@
 
 | data-el | Текст | Знаков | Статус |
 |---|---|---|---|
-| `crypto-processing__hero-title` | Accept crypto payments through one integration. | 47 | черновик (вариант A) |
+| `crypto-processing__hero-title` | Accept crypto payments / through one integration. (две строки, чтобы «integration» не висело одно) | 47 | черновик (вариант A) |
 | `crypto-processing__hero-subtitle` | Your client pays from their wallet. Velant converts the payment and settles it to your account, with a status for every payment. | 128 | черновик `[CONFIRM: куда рассчитываем — счёт, кошелёк, баланс Velant; где виден статус — API, webhooks, кабинет]` |
 | `crypto-processing__hero-cta-primary` | Book a demo | 11 | макет |
 | `crypto-processing__hero-cta-secondary` | See how it works | 16 | черновик (без изменений) |
@@ -57,7 +57,6 @@
 | `crypto-processing__hero-scene-status-confirmed` | Payment confirmed | 17 | черновик (из версии 1) |
 | `crypto-processing__hero-scene-status-settled` | Settled | 7 | черновик (из версии 1) |
 | `crypto-processing__hero-scene-account` (метка точки счёта) | Your account | 12 | черновик |
-| `crypto-processing__hero-scene-demo` | Demo | 4 | черновик (метка, что суммы условные) |
 | сумма в полёте (пример) | 250.00 USDT | 11 | demo, формат выше |
 | сумма при зачислении (пример) | +230.00 EUR | 11 | demo, формат выше |
 
@@ -81,7 +80,6 @@
 | `crypto-processing__flow-pause` | Pause | 5 | черновик |
 | `crypto-processing__flow-replay` (после конца круга, по желанию) | Replay | 6 | черновик |
 | `crypto-processing__flow-hint` | Try another coin or network. | 28 | черновик (одна строка-подсказка; запасной: «Change the coin or network on the Accept step.», 46) |
-| `crypto-processing__flow-demo` | Demo values | 11 | черновик (метка рядом с панелями) |
 
 Мини-панели:
 
@@ -114,7 +112,6 @@
 | `crypto-processing__api-replay` | Replay | 6 | черновик |
 | `crypto-processing__api-empty` (пустые колонки Events и Your system) | No events yet | 13 | черновик |
 | подсказка под колонкой Request (если монета и сеть выбраны в блоке 1) | Uses the coin and network you picked above. | 43 | черновик; если выбора выше нет, не нужна |
-| метка | Demo values | 11 | черновик |
 
 Тексты событий (имена — из версии 1, не подтверждены продуктом `[CONFIRM]`):
 
@@ -204,7 +201,7 @@
 
 | data-el | Текст | Знаков | Статус |
 |---|---|---|---|
-| `crypto-processing__hero-title` | Accept crypto. Convert. Settle. (три строки: «Accept crypto.», «Convert.», «Settle.») | 31 (14 / 8 / 7) | черновик |
+| `crypto-processing__hero-title` | Accept crypto payments / through one integration. (две строки, чтобы «integration» не висело одно) | 47 | черновик (вариант A) |
 | `crypto-processing__hero-subtitle` | Your clients pay in crypto. Velant converts the payment and settles it to your account through one API. | 103 | черновик `[CONFIRM: куда рассчитываем — счёт, кошелёк, баланс Velant]` |
 | `crypto-processing__hero-cta-primary` | Book a demo | 11 | макет |
 | `crypto-processing__hero-cta-secondary` | See how it works (якорь на блок `flow`) | 16 | черновик (запасной: «Explore products», как на главной) |

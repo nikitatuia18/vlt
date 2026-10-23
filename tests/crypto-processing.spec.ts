@@ -70,7 +70,7 @@ test('block 1: a station opens its panel (click and arrow keys); the coin, the n
 
   await station('convert').press('ArrowRight')
   await expect(station('settle')).toHaveAttribute('aria-selected', 'true')
-  await expect(page.locator('[data-el="crypto-processing__flow-panel-settle"]')).toContainText(heroScene.status.settled)
+  await expect(page.locator('[data-el="crypto-processing__flow-panel-settle"]')).toContainText(journeyScene.progress.settle.done)
   await station('settle').press('ArrowLeft')
   await expect(station('convert')).toHaveAttribute('aria-selected', 'true')
 
@@ -123,6 +123,39 @@ test.describe('with motion', () => {
     await canvas.click({ position: { x: box.width * 0.2, y: box.height * 0.5 } })
     await expect(page.locator('[data-el="crypto-processing__hero-scene-status"]')).toHaveAttribute('data-status', 'waiting')
     await expect(page.locator('[data-el="crypto-processing__hero-scene-status"]')).toHaveAttribute('data-status', 'settled', { timeout: 8000 })
+  })
+
+  test('hero map: the panel names the place, the payment id and the steps; the landed payment joins the recent ones', async ({ page }) => {
+    await open(page, 1440, 900)
+    await toBlock(page, 'crypto-processing__hero__media')
+    const canvas = page.locator('[data-el="crypto-processing__hero-scene-illustration"] canvas')
+    const box = (await canvas.boundingBox())!
+    const recent = page.locator('[data-el="crypto-processing__hero-scene-recent"] li')
+    await expect(recent).toHaveCount(3, { timeout: 12000 })
+    const before = await page.locator('[data-el="crypto-processing__hero-scene-id"]').textContent()
+    // The click at the left edge of the map is North America.
+    await canvas.click({ position: { x: box.width * 0.2, y: box.height * 0.3 } })
+    await expect(page.locator('[data-el="crypto-processing__hero-scene-id"]')).not.toHaveText(before!)
+    await expect(page.locator('[data-el="crypto-processing__hero-scene-id"]')).toHaveText(/^pay_[0-9a-f]{6}$/)
+    await expect(page.locator('[data-el="crypto-processing__hero-scene-route"]')).toContainText('From North America')
+    await expect(page.locator('[data-el="crypto-processing__hero-scene-status"]')).toHaveAttribute('data-status', 'settled', { timeout: 8000 })
+    await expect(recent.first()).toContainText('North America')
+  })
+
+  test('block 1: every station writes its log; Play writes it again at once', async ({ page }) => {
+    await open(page, 1440, 900)
+    await toBlock(page, 'crypto-processing__flow')
+    const log = (id: string) => page.locator(`[data-el="crypto-processing__flow-log-${id}"]`)
+    await expect(log('accept')).toHaveAttribute('data-done', 'false')
+    await expect(log('accept')).toHaveAttribute('data-done', 'true', { timeout: 6000 })
+    await expect(log('accept')).toContainText('payment.confirmed')
+    // The visitor stops the round on Convert: its log is written, and the round stays there.
+    await page.locator('[data-el="crypto-processing__flow-station-convert"]').click()
+    await expect(log('convert')).toHaveAttribute('data-done', 'true', { timeout: 6000 })
+    await expect(log('convert')).toContainText(`${formatAmount(1000)} USDT → ${formatAmount(settledAmount(1000))} EUR`)
+    // Play: the log starts over right away.
+    await page.locator('[data-el="crypto-processing__flow-play"]').click()
+    await expect(log('convert')).toHaveAttribute('data-done', 'false')
   })
 
   test('block 1 plays by itself while seen, and stops when the visitor picks a station', async ({ page }) => {

@@ -7,40 +7,91 @@ import { duration, easeOut } from '../../motion/tokens'
 import { useRevealOn } from '../../motion/useReveal'
 import { amounts, coins, formatAmount, networks, RATE, setSelection, SETTLEMENT_CURRENCY, settledAmount, useSelection } from './demo'
 import { flowContent } from './content'
-import { heroScene, journeyScene } from './sceneText'
+import { journeyScene } from './sceneText'
+import { TypedLog, type LogLine } from './TypedLog'
 
-/** Seconds one station stays shown while the scene plays by itself. */
-const STEP_SECONDS = 3
+/** Seconds the scene waits on a station, once its log is written, before it goes to the next one by itself. */
+const STEP_PAUSE = 1.6
 
-/** Where the stations stand on the track: the middles of three equal columns. */
-const stationLeft = (index: number) => 100 / 6 + index * (100 / 3)
+type Selection = ReturnType<typeof useSelection>
+
+/** What each station writes in its console: the coin, the network and the sums come from the choice of the visitor. */
+function logLines(station: number, { coin, network, amount }: Selection): readonly LogLine[] {
+  const sent = `${formatAmount(amount)} ${coin}`
+  const received = `${formatAmount(settledAmount(amount))} ${SETTLEMENT_CURRENCY}`
+  const { log } = journeyScene
+  if (station === 0) {
+    return [
+      { text: 'payment.created', tone: 'event' },
+      { text: `${sent} on ${network}`, tone: 'text' },
+      { text: log.waiting, tone: 'muted' },
+      { text: 'payment.confirmed', tone: 'ok' },
+    ]
+  }
+  if (station === 1) {
+    return [
+      { text: log.locking, tone: 'muted' },
+      { text: `1 ${coin} = ${RATE} ${SETTLEMENT_CURRENCY}`, tone: 'text' },
+      { text: `${sent} → ${received}`, tone: 'text' },
+      { text: log.converted, tone: 'ok' },
+    ]
+  }
+  return [
+    { text: log.sending, tone: 'muted' },
+    { text: `${received} → ${journeyScene.panels.settle.account}`, tone: 'text' },
+    { text: 'payment.settled', tone: 'ok' },
+  ]
+}
 
 /**
  * Block 1 of the Crypto Processing page: "Follow one payment". `crypto-processing__flow`.
  * One demo payment goes through three stations (Accept, Convert, Settle) along a dotted track; a dot (the payment) travels with it.
- * The scene plays by itself while it is on the screen; a click on a station or on a chip pauses it and shows that station. On the Accept
- * station the visitor picks the coin, the network and the sum: the choice is used by the next stations and by the request of block 2.
+ * The scene plays by itself while it is on the screen: each station writes its log (a typing console), and when the log is done the payment
+ * goes on to the next station. A click on a station or on a chip pauses the round and shows that station (its log is written again);
+ * Play goes on from there at once. On the Accept station the visitor picks the coin, the network and the sum: the choice is used by
+ * the next stations and by the request of block 2.
  * Texts inside the scene are part of the picture (like the cards of Features): they are not revealed by words.
  */
 export function PaymentJourney() {
   const selection = useSelection()
   const [active, setActive] = useState(0)
   const [playing, setPlaying] = useState(true)
+  // The log of the shown station is written anew when `run` changes (a new station, Play, a new choice).
+  const [run, setRun] = useState(0)
+  const [logDone, setLogDone] = useState(false)
   const sceneRef = useRef<HTMLDivElement>(null)
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([])
   const inView = useInView(sceneRef, { amount: 0.4 })
   const animated = useRevealOn()
   const reduced = useReducedMotion() ?? false
 
-  // By itself: the next station after a few seconds, round and round, while the scene is seen and nobody has touched it.
+  // By itself: when the log of the station is written, a short pause and the next station, round and round, while the scene is seen
+  // and nobody has touched it.
   useEffect(() => {
-    if (!animated || !playing || !inView) return
-    const timer = setTimeout(() => setActive((current) => (current + 1) % journeyScene.stations.length), STEP_SECONDS * 1000)
+    if (!animated || !playing || !inView || !logDone) return
+    const timer = setTimeout(() => {
+      setActive((current) => (current + 1) % journeyScene.stations.length)
+      setRun((current) => current + 1)
+    }, STEP_PAUSE * 1000)
     return () => clearTimeout(timer)
-  }, [animated, playing, inView, active])
+  }, [animated, playing, inView, logDone, active])
 
   const choose = (index: number) => {
     setActive(index)
+    setRun((current) => current + 1)
+    setPlaying(false)
+  }
+
+  // Play writes the log of the shown station again at once, so that something happens the moment it is pressed.
+  const togglePlaying = () => {
+    if (!playing) setRun((current) => current + 1)
+    setPlaying(!playing)
+  }
+
+  // A new choice on Accept: the log is written again with the new sum, and the round stops.
+  const pick = (change: Partial<Selection>) => {
+    setSelection(change)
+    setRun((current) => current + 1)
     setPlaying(false)
   }
 
@@ -54,6 +105,21 @@ export function PaymentJourney() {
   }
 
   const settled = settledAmount(selection.amount)
+  const stationId = journeyScene.stations[active].id
+
+  // Not a component: a function defined here would be a new component type on every render and remount the console.
+  const stationLog = (
+    <>
+      <TypedLog
+        key={`${active}-${run}`}
+        data-el={`crypto-processing__flow-log-${stationId}`}
+        lines={logLines(active, selection)}
+        instant={reduced || !animated}
+        onDone={setLogDone}
+      />
+      <Status label={logDone ? journeyScene.progress[stationId].done : journeyScene.progress[stationId].working} done={logDone} working={!logDone} />
+    </>
+  )
 
   return (
     <section id="how-it-works" data-el="crypto-processing__flow" aria-labelledby="crypto-processing-flow-title" className="border-y border-border-subtle">
@@ -81,14 +147,13 @@ export function PaymentJourney() {
             className="w-full rounded-32 bg-surface-subtle p-4 ring-1 ring-border-subtle ring-inset tablet:p-10 desktop:rounded-48 desktop:p-15"
           >
             <div ref={sceneRef} className="mx-auto flex w-full max-w-200 flex-col gap-8">
-              <div className="flex items-center justify-between gap-4">
-                <p className="type-ui-sm text-typography-tertiary">{journeyScene.demo}</p>
+              <div className="flex items-center justify-end gap-4">
                 {animated && (
                   <button
                     type="button"
                     data-el="crypto-processing__flow-play"
                     aria-pressed={playing}
-                    onClick={() => setPlaying((current) => !current)}
+                    onClick={togglePlaying}
                     className="type-ui-md rounded-pill bg-surface-page px-4 py-2 text-typography-primary ring-1 ring-border-subtle transition-colors ring-inset hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-brand"
                   >
                     {playing ? journeyScene.pause : journeyScene.play}
@@ -96,7 +161,7 @@ export function PaymentJourney() {
                 )}
               </div>
 
-              {/* The track: a dotted line through the three stations; the coloured part is the way the payment has made, the ring is the payment. */}
+              {/* The track: a dotted line through the three stations; the coloured part is the way the payment has made. */}
               <div className="relative">
                 <div aria-hidden="true" className="absolute top-6 right-[16.67%] left-[16.67%] border-t-2 border-dashed border-typography-tertiary" />
                 <motion.div
@@ -138,15 +203,6 @@ export function PaymentJourney() {
                     </li>
                   ))}
                 </ol>
-                {/* The payment: a ring that travels from station to station (above the circles, it does not catch clicks). */}
-                <motion.span
-                  aria-hidden="true"
-                  data-el="crypto-processing__flow-coin"
-                  className="pointer-events-none absolute top-6 size-15 -translate-x-1/2 -translate-y-1/2 rounded-pill ring-2 ring-typography-brand"
-                  initial={false}
-                  animate={{ left: `${stationLeft(active)}%` }}
-                  transition={{ duration: reduced ? 0 : duration.reveal, ease: easeOut }}
-                />
               </div>
 
               <motion.div
@@ -165,26 +221,26 @@ export function PaymentJourney() {
                     <PanelTitle>{journeyScene.panels.accept.title}</PanelTitle>
                     <Choice label={journeyScene.panels.accept.coin}>
                       {coins.map((coin) => (
-                        <Chip key={coin} selected={coin === selection.coin} onClick={() => { setSelection({ coin }); setPlaying(false) }}>
+                        <Chip key={coin} selected={coin === selection.coin} onClick={() => pick({ coin })}>
                           {coin}
                         </Chip>
                       ))}
                     </Choice>
                     <Choice label={journeyScene.panels.accept.network}>
                       {networks.map((network) => (
-                        <Chip key={network} selected={network === selection.network} onClick={() => { setSelection({ network }); setPlaying(false) }}>
+                        <Chip key={network} selected={network === selection.network} onClick={() => pick({ network })}>
                           {network}
                         </Chip>
                       ))}
                     </Choice>
                     <Choice label={journeyScene.panels.accept.amount}>
                       {amounts.map((amount) => (
-                        <Chip key={amount} selected={amount === selection.amount} onClick={() => { setSelection({ amount }); setPlaying(false) }}>
+                        <Chip key={amount} selected={amount === selection.amount} onClick={() => pick({ amount })}>
                           {formatAmount(amount)}
                         </Chip>
                       ))}
                     </Choice>
-                    <Status label={heroScene.status.waiting} />
+                    {stationLog}
                     <p data-el="crypto-processing__flow-hint" className="type-ui-sm text-typography-secondary">
                       {journeyScene.hint}
                     </p>
@@ -196,7 +252,7 @@ export function PaymentJourney() {
                     <Row label={journeyScene.panels.convert.sends} value={`${formatAmount(selection.amount)} ${selection.coin}`} />
                     <Row label={journeyScene.panels.convert.rate} value={`1 ${selection.coin} = ${RATE} ${SETTLEMENT_CURRENCY}`} />
                     <Row label={journeyScene.panels.convert.receives} value={`${formatAmount(settled)} ${SETTLEMENT_CURRENCY}`} strong />
-                    <Status label={heroScene.status.confirmed} />
+                    {stationLog}
                   </>
                 )}
                 {active === 2 && (
@@ -204,7 +260,7 @@ export function PaymentJourney() {
                     <PanelTitle>{journeyScene.panels.settle.title}</PanelTitle>
                     <Row label={journeyScene.panels.settle.credited} value={journeyScene.panels.settle.account} />
                     <Row label={journeyScene.panels.settle.amount} value={`${formatAmount(settled)} ${SETTLEMENT_CURRENCY}`} strong />
-                    <Status label={heroScene.status.settled} done />
+                    {stationLog}
                   </>
                 )}
               </motion.div>
@@ -256,10 +312,10 @@ function Row({ label, value, strong = false }: { label: string; value: string; s
   )
 }
 
-function Status({ label, done = false }: { label: string; done?: boolean }) {
+function Status({ label, done = false, working = false }: { label: string; done?: boolean; working?: boolean }) {
   return (
-    <p className="type-ui-md mt-auto inline-flex items-center gap-2 text-typography-primary">
-      <span className={`size-2 rounded-pill ${done ? 'bg-typography-brand' : 'bg-typography-secondary'}`} />
+    <p data-el="crypto-processing__flow-status" className="type-ui-md mt-auto inline-flex items-center gap-2 text-typography-primary">
+      <span className={`size-2 rounded-pill ${done ? 'bg-typography-brand' : 'bg-typography-secondary'} ${working ? 'animate-pulse' : ''}`} />
       {label}
     </p>
   )

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { prefersReducedMotion } from '../../lib/media'
 import { useTheme } from '../../lib/theme'
-import { createFlatLandDots, LAT_SPAN, LON_SPAN, MAP, type FlatDot } from './flatLand'
+import { createFlatLandDots, LAT_SPAN, LON_SPAN, MAP, regionOf, type FlatDot } from './flatLand'
 import { amounts, coins, formatAmount, networks, SETTLEMENT_CURRENCY, settledAmount, type Coin, type Network } from './demo'
 import { heroScene, type PaymentStatus } from './sceneText'
 
@@ -39,9 +39,27 @@ const PUSH_FORCE = 38
 const EASE = 0.12
 
 type Dot = { bx: number; by: number; x: number; y: number }
-type DemoPayment = { coin: Coin; network: Network; amount: number }
-type Payment = { id: number; from: FlatDot; start: number; info: DemoPayment; confirmed: boolean }
-type Ring = { start: number }
+type PaymentInfo = { id: string; region: string; coin: Coin; network: Network; amount: number }
+type Payment = { id: number; from: FlatDot; start: number; info: PaymentInfo; confirmed: boolean }
+/** `text` is the sum credited, shown by the account for a moment after the landing. */
+type Ring = { start: number; text: string }
+
+/** How long the ring and the credited sum stay on the map after a landing (ms). */
+const RING_MS = 900
+const CREDIT_MS = 1600
+
+const STATUS_ORDER: readonly PaymentStatus[] = ['waiting', 'confirmed', 'settled']
+/** The second of the flight each step of the latest payment happens at. */
+const STEP_SECONDS: Record<PaymentStatus, number> = { waiting: 0, confirmed: FLIGHT_SECONDS * CONFIRMED_AT, settled: FLIGHT_SECONDS }
+
+const newPaymentId = () => `pay_${Math.random().toString(16).slice(2, 8)}`
+
+/** What the panels show before the first payment of the visit (and for good with reduced motion). */
+const FIRST_PAYMENT: PaymentInfo = { id: 'pay_8f3a21', region: 'Asia', coin: 'USDT', network: 'Tron', amount: 250 }
+const FIRST_HISTORY: readonly PaymentInfo[] = [
+  { id: 'pay_41c7d0', region: 'North America', coin: 'USDC', network: 'Ethereum', amount: 1000 },
+  { id: 'pay_b92e55', region: 'South America', coin: 'DAI', network: 'Polygon', amount: 120 },
+]
 
 const between = (low: number, high: number) => low + Math.random() * (high - low)
 const pick = <T,>(list: readonly T[]) => list[Math.floor(Math.random() * list.length)]
@@ -55,7 +73,8 @@ export function DotMapScene() {
   const { theme } = useTheme()
 
   const [status, setStatus] = useState<PaymentStatus>('settled')
-  const [latest, setLatest] = useState<DemoPayment>({ coin: 'USDT', network: 'Tron', amount: 250 })
+  const [latest, setLatest] = useState<PaymentInfo>(FIRST_PAYMENT)
+  const [history, setHistory] = useState<readonly PaymentInfo[]>(FIRST_HISTORY)
   // After the visitor has sent a payment the hint asks for another place; on a screen without a mouse it says "tap".
   const [sentByVisitor, setSentByVisitor] = useState(false)
   const [touch] = useState(() => typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches)
@@ -136,6 +155,20 @@ export function DotMapScene() {
     const draw = (now: number) => {
       context.clearRect(0, 0, width, height)
       const { land, line, text } = colors.current
+      const font = `500 ${width < 600 ? 10 : 12}px ${getComputedStyle(canvas).fontFamily}`
+
+      /** A caption next to a point; it flips to the left when it would leave the card. */
+      const caption = (value: string, x: number, y: number, alpha: number) => {
+        context.font = font
+        context.textBaseline = 'middle'
+        context.fillStyle = text
+        context.globalAlpha = alpha
+        const flip = x + 12 + context.measureText(value).width > width - 8
+        context.textAlign = flip ? 'right' : 'left'
+        context.fillText(value, flip ? x - 12 : x + 12, y - 12)
+        context.textAlign = 'left'
+        context.globalAlpha = 1
+      }
 
       // The land.
       context.fillStyle = land
@@ -162,20 +195,27 @@ export function DotMapScene() {
       context.beginPath()
       context.arc(ax, ay, 4, 0, Math.PI * 2)
       context.fill()
-      context.fillStyle = text
-      context.font = `500 ${width < 600 ? 10 : 12}px ${getComputedStyle(canvas).fontFamily}`
-      context.textBaseline = 'middle'
-      context.fillText(heroScene.account, ax + 14, ay - 14)
+      caption(heroScene.account, ax + 2, ay, 1)
 
-      // The rings where payments landed.
+      // The rings where payments landed, and the sum that was credited.
+      let creditRow = 0
       for (const ring of rings) {
-        const progress = (now - ring.start) / 900
-        if (progress < 0 || progress > 1) continue
-        context.strokeStyle = line
-        context.globalAlpha = (1 - progress) * 0.7
-        context.beginPath()
-        context.arc(ax, ay, 6 + progress * 34, 0, Math.PI * 2)
-        context.stroke()
+        const age = now - ring.start
+        const progress = age / RING_MS
+        if (progress >= 0 && progress <= 1) {
+          context.strokeStyle = line
+          context.globalAlpha = (1 - progress) * 0.7
+          context.beginPath()
+          context.arc(ax, ay, 6 + progress * 34, 0, Math.PI * 2)
+          context.stroke()
+        }
+        if (age >= 0 && age <= CREDIT_MS) {
+          context.font = font
+          context.fillStyle = line
+          context.globalAlpha = age < CREDIT_MS * 0.7 ? 1 : (CREDIT_MS - age) / (CREDIT_MS * 0.3)
+          // Two payments that land together do not write over each other.
+          context.fillText(ring.text, ax + 14, ay + 18 + creditRow++ * 15)
+        }
       }
       context.globalAlpha = 1
 
@@ -210,6 +250,11 @@ export function DotMapScene() {
         context.beginPath()
         context.arc(toX(payment.from.lon), toY(payment.from.lat), 4 + t * 10, 0, Math.PI * 2)
         context.stroke()
+        // Only the latest payment is named, so that the map does not fill with captions: where from, then the sum on the way.
+        if (payment.id === latestId) {
+          caption(payment.info.region, toX(payment.from.lon), toY(payment.from.lat), Math.max(0, 1 - t * 1.6))
+          caption(`${formatAmount(payment.info.amount)} ${payment.info.coin}`, hx, hy, Math.min(1, (1 - t) * 4))
+        }
       }
       context.globalAlpha = 1
     }
@@ -218,7 +263,7 @@ export function DotMapScene() {
       if (from) setSentByVisitor(true)
       if (payments.length >= MAX_IN_FLIGHT) return
       const source = from ?? pick(SOURCES)
-      const info: DemoPayment = { coin: pick(coins), network: pick(networks), amount: pick(amounts) }
+      const info: PaymentInfo = { id: newPaymentId(), region: regionOf(source), coin: pick(coins), network: pick(networks), amount: pick(amounts) }
       const payment: Payment = { id: nextId++, from: source, start: performance.now(), info, confirmed: false }
       payments.push(payment)
       latestId = payment.id
@@ -258,11 +303,13 @@ export function DotMapScene() {
         if (t >= 1) landed.push(payment)
       }
       for (const payment of landed) {
-        rings.push({ start: now })
+        const { amount } = payment.info
+        rings.push({ start: now, text: `+${formatAmount(settledAmount(amount))} ${SETTLEMENT_CURRENCY}` })
+        setHistory((list) => [payment.info, ...list].slice(0, 3))
         if (payment.id === latestId) setStatus('settled')
       }
       if (landed.length) payments = payments.filter((payment) => !landed.includes(payment))
-      rings = rings.filter((ring) => now - ring.start < 900)
+      rings = rings.filter((ring) => now - ring.start < CREDIT_MS)
 
       // The next automatic payment.
       if (now >= nextAuto) {
@@ -338,6 +385,7 @@ export function DotMapScene() {
   }, [])
 
   const dotColor = status === 'settled' ? 'bg-typography-brand' : 'bg-typography-secondary'
+  const reached = STATUS_ORDER.indexOf(status)
 
   return (
     <div data-el="crypto-processing__hero-scene-illustration" className="relative size-full">
@@ -350,16 +398,55 @@ export function DotMapScene() {
         <p data-el="crypto-processing__hero-scene-hint" className="type-ui-sm text-typography-secondary">
           {sentByVisitor ? heroScene.hintAgain : touch ? heroScene.hintTouch : heroScene.hint}
         </p>
-        <p className="type-ui-sm text-typography-tertiary">{heroScene.demo}</p>
+        {/* The last payments that landed: on a phone the card has no room for them. */}
+        <div
+          data-el="crypto-processing__hero-scene-recent"
+          className="pointer-events-none hidden w-72 flex-col gap-2 rounded-32 bg-surface-page p-4 ring-1 ring-border-subtle ring-inset tablet:flex"
+        >
+          <p className="type-ui-sm text-typography-secondary">{heroScene.recentTitle}</p>
+          <ul className="flex flex-col gap-2">
+            {history.map((payment) => (
+              <li key={payment.id} className="flex flex-col border-t border-border-subtle pt-2">
+                <span className="type-ui-md flex items-baseline justify-between gap-3 text-typography-primary">
+                  {payment.region}
+                  <span className="whitespace-nowrap text-typography-brand">
+                    +{formatAmount(settledAmount(payment.amount))} {SETTLEMENT_CURRENCY}
+                  </span>
+                </span>
+                <span className="type-ui-sm text-typography-secondary">
+                  {formatAmount(payment.amount)} {payment.coin} · {payment.network}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
 
       <div className="absolute inset-x-4 bottom-4 flex flex-col gap-3 tablet:inset-x-auto tablet:bottom-8 tablet:left-8 tablet:flex-row tablet:items-end tablet:gap-4">
-        <div data-el="crypto-processing__hero-scene-panel" className="flex w-full flex-col gap-2 rounded-32 bg-surface-page p-4 ring-1 ring-border-subtle ring-inset tablet:w-60" aria-live="polite">
-          <p className="type-ui-sm text-typography-secondary">{heroScene.panelTitle}</p>
+        <div data-el="crypto-processing__hero-scene-panel" className="flex w-full flex-col gap-2 rounded-32 bg-surface-page p-4 ring-1 ring-border-subtle ring-inset tablet:w-72" aria-live="polite">
+          <p className="type-ui-sm flex items-baseline justify-between gap-3 text-typography-secondary">
+            {heroScene.panelTitle}
+            <span data-el="crypto-processing__hero-scene-id" className="type-code-sm">
+              {latest.id}
+            </span>
+          </p>
           <p className="type-heading-sm text-typography-primary">
             {formatAmount(latest.amount)} {latest.coin}
             <span className="type-ui-sm pl-2 text-typography-secondary">{latest.network}</span>
           </p>
+          <p data-el="crypto-processing__hero-scene-route" className="type-ui-sm text-typography-secondary">
+            {heroScene.from} {latest.region} → {heroScene.account}
+          </p>
+          {/* The steps with their times need height: a phone card keeps the map visible and shows only the status line. */}
+          <ol className="hidden grid-cols-3 gap-2 pt-1 tablet:grid" aria-hidden="true">
+            {STATUS_ORDER.map((step, index) => (
+              <li key={step} className="flex flex-col gap-1">
+                <span className={`h-0.5 rounded-pill transition-colors ${index <= reached ? 'bg-typography-brand' : 'bg-border-medium'}`} />
+                <span className="type-ui-sm text-typography-primary">{heroScene.steps[step]}</span>
+                <span className="type-ui-sm text-typography-secondary">{index <= reached ? `${STEP_SECONDS[step].toFixed(1)} s` : '–'}</span>
+              </li>
+            ))}
+          </ol>
           <p data-el="crypto-processing__hero-scene-status" data-status={status} className="type-ui-md inline-flex items-center gap-2 text-typography-primary">
             <span className={`size-2 rounded-pill ${dotColor}`} />
             {heroScene.status[status]}
