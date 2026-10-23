@@ -1,6 +1,6 @@
 # Страницы продуктов: как делать
 
-Первая страница — [Crypto Processing](pages/crypto-processing.md) (`/crypto-processing`). По ней делаются остальные (Invoicing, Crypto on- and off-ramp, Mass Payouts).
+Первая страница — [Crypto Processing](pages/crypto-processing.md) (`/crypto-processing`). По ней делаются остальные (Invoicing: [предложение](pages/invoicing.md), Crypto on- and off-ramp, Mass Payouts).
 Страницы продуктов нет в Figma (область Figma по CLAUDE.md — только кадры главной): строим в коде на дизайн-системе, дизайнер оценивает в браузере.
 
 ## Из чего страница
@@ -18,6 +18,7 @@
 ## Правила
 - `data-el` блоков: `{product}__hero`, `{product}__flow` и т. п.; у общих блоков имена прежние (`logos`, `industries`, `faq`, `cta`).
 - Весь текст страницы появляется по словам; исключения как на главной: цифры (`CountUp`), окно с кодом Global, тексты внутри сцен (`*-illustration`: микро-интерфейсы со своим ходом, по согласию дизайнера).
-- Ссылку на страницу с карточки продукта на главной (`Features/cards.ts`) включаем после утверждения страницы.
+- Ссылку на страницу с карточки продукта на главной (`Features/cards.ts`: `href('<product>')`) включаем после утверждения страницы; Crypto Processing включена 2026-10-23.
+- Общие элементы сцен (`TypedLog`, `Chip`, `Choice`, `Status` из `src/pages/crypto-processing/`) при второй странице переезжают в `src/components/ui/` и в UI Kit.
 - Заголовок вкладки и description страницы задаются через `meta` (`usePageMeta`).
 - Адрес на GitHub Pages: `/vlt/<product>` (прямой заход работает: `404.html` — копия `index.html`).
