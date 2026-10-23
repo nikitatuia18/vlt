@@ -22,14 +22,14 @@ const industries: readonly IndustryItemData[] = [
     id: 'ecommerce',
     glow: 'violet',
     title: 'E-commerce',
-    description: ['Add crypto to your checkout through one integration.', 'Shoppers pay from their wallet, you receive fiat'],
+    description: ['Let shoppers pay in crypto at your checkout.', 'Shoppers pay from their wallet, you receive fiat'],
     cta: bookDemo,
   },
   {
     id: 'marketplaces',
     glow: 'pink',
     title: 'Marketplaces and platforms',
-    description: ['Let buyers pay in crypto on your platform.', 'Follow every payment through the API'],
+    description: ['Let buyers pay in crypto on your platform.', 'See every payment status through the API'],
     cta: bookDemo,
   },
   {
@@ -125,9 +125,9 @@ export const cryptoProcessing: ProductContent = {
   },
   hero: {
     product: 'crypto-processing',
-    title: ['Accept crypto.', 'Convert.', 'Settle.'],
-    // [CONFIRM: where the money goes: an account, a wallet, a balance in Velant]
-    subtitle: 'Your clients pay in crypto. Velant converts the payment and settles it to your account through one API.',
+    title: ['Accept crypto payments through one integration.'],
+    // [CONFIRM: where the money goes: an account, a wallet, a balance in Velant; where the status is seen: API, webhooks, a dashboard]
+    subtitle: 'Your client pays from their wallet. Velant converts the payment and settles it to your account, with a status for every payment.',
     primaryCta: bookDemo,
     secondaryCta: { label: 'See how it works', href: '#how-it-works' },
   },
@@ -136,60 +136,16 @@ export const cryptoProcessing: ProductContent = {
   cta: { title: 'Ready to accept crypto payments?', subtitle: "We'll map the path from your client's wallet to your account." },
 }
 
-/** Block 1: the path of a payment. */
+/** Block 1: "Follow one payment" (the scene is in PaymentJourney.tsx, its texts in sceneText.ts). */
 export const flowContent = {
-  title: 'How a crypto payment reaches your account.',
-  // [CONFIRM: where the statuses can be seen: API, webhooks, a dashboard]
-  intro: 'Three steps, one integration. You see the status of every payment on the way.',
-  steps: [
-    {
-      id: 'accept',
-      node: 'Client wallet',
-      chips: ['Coin', 'Network'],
-      title: 'Accept',
-      text: 'Your client picks a coin and a network and pays from their own wallet.',
-    },
-    {
-      id: 'convert',
-      node: 'Velant',
-      chips: ['Rate'],
-      title: 'Convert',
-      // [CONFIRM: how the rate is fixed, its source, the settlement currencies]
-      text: 'Velant converts the payment into your settlement currency at the current rate.',
-    },
-    {
-      id: 'settle',
-      node: 'Your account',
-      chips: ['Settlement'],
-      title: 'Settle',
-      // [CONFIRM: the time of settlement is not named]
-      text: 'The funds reach your company account. Your system gets every status update.',
-    },
-  ],
+  title: 'Follow one payment.',
+  // DRAFT. [CONFIRM: where the statuses can be seen: API, webhooks, a dashboard]
+  intro: 'Press Play or pick a step to see what happens to one demo payment.',
 } as const
 
-/** Block 2: the code and the events. */
+/** Block 2: "Run a test payment" (the scene is in TestPayment.tsx, its texts in sceneText.ts). */
 export const apiContent = {
-  title: 'Integrate once. Track every payment.',
-  // [CONFIRM: the set and the names of the events]
-  text: 'Create a payment with one request. Webhooks tell your system when it is confirmed and settled.',
-  feedTitle: 'Webhook events',
-  events: [
-    { id: 'created', name: 'payment.created', note: 'Payment request created' },
-    { id: 'confirmed', name: 'payment.confirmed', note: 'Transfer confirmed on the network' },
-    { id: 'settled', name: 'payment.settled', note: 'Funds sent to your account' },
-  ],
-  /** The two tabs of the code window. The fields are made up for the picture (like in the code window of Global); [CONFIRM] values are left out. */
-  tabs: [
-    {
-      id: 'create',
-      label: 'Create payment',
-      code: 'POST /v1/payments\n{\n  "amount": 1200,\n  "currency": "EUR",\n  "network": "…",\n  "settle_in": "…"\n}\n\n< 201  "status": "pending"',
-    },
-    {
-      id: 'webhook',
-      label: 'Webhook event',
-      code: 'POST https://your-app.com/webhooks\n{\n  "event": "payment.confirmed",\n  "status": "confirmed",\n  "payment_id": "pay_…",\n  "amount": 1200\n}',
-    },
-  ],
+  title: 'Run a test payment.',
+  // DRAFT. [CONFIRM: how the system is told (webhooks?), the set and the names of the events]
+  text: 'Your integration ends when your system learns that the order is paid. Send a test payment and watch it get there.',
 } as const

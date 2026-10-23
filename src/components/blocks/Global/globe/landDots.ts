@@ -11,7 +11,7 @@ const decodeMask = () => {
 }
 
 /** True when the point (degrees) is on land. */
-const isLand = (latitude: number, longitude: number) => {
+export const isLand = (latitude: number, longitude: number) => {
   mask ??= decodeMask()
   const row = Math.min(LAND_MASK_HEIGHT - 1, Math.floor(90 - latitude))
   const column = Math.min(LAND_MASK_WIDTH - 1, Math.floor(longitude + 180))

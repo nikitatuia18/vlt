@@ -127,3 +127,7 @@ SVG, подключённый как `<img>`, не берёт CSS-перемен
 ## 2026-10-23 · Playwright · `reuseExistingServer` подхватывает чужой сервер на :5173
 Если на 5173 уже открыт другой проект (был AllTrust Design System), `npx playwright test` не поднимет наш `npm run dev` и будет гонять тесты по чужому сайту: ошибки вида «locator не найден».
 **Как применять:** перед тестами открыть http://localhost:5173 и убедиться, что это Velant Pay; иначе запустить `npx vite --port 5174 --strictPort` и временный конфиг с `baseURL` на 5174 (после проверки удалить).
+
+## 2026-10-23 · TypeScript · тест импортирует данные страницы, а те тянут картинки
+`tests/*.spec.ts` проверяются `tsconfig.tests.json`; если тест импортирует `content.ts`, а тот (даже через `import type`) тянет компонент с `import x from './a.svg'`, `npm run build` падает на «Cannot find module .svg» и `ImportMeta.env`.
+**Как применять:** в `tsconfig.tests.json` стоят типы `vite/client`; данные страниц лучше держать в файлах без импорта компонентов.

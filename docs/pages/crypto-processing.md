@@ -1,7 +1,158 @@
 # Страница Crypto Processing (тексты и структура, черновик)
 
-Статус: **структура и тексты на утверждение** (2026-10-23). Все тексты ниже — черновик, написан по навыку `project-copywriting` (разд. 4а), финальным текст делает пользователь. `src/pages/crypto-processing/content.ts` **не создан**: сначала утверждается структура.
+Статус: **черновик, версия 2 после замечаний дизайнера** (2026-10-23). Все тексты — черновик, написан по навыку `project-copywriting` (разд. 4а), финальным текст делает пользователь. `src/pages/crypto-processing/content.ts` создан; в версии 2 в нём заменены только заголовок и подзаголовок hero, заголовок и подводка блоков 1 и 2 (рекомендованные варианты). Микротексты интерактивов в код ещё не перенесены.
 Макет Figma для страницы не открывался: у страницы нет кадра, `data-el` ниже — предложение (в `naming-spec.md` для неё нет слоёв).
+
+## Версия 2 (после замечаний дизайнера)
+
+Что изменилось: hero и блоки 1–2 переписаны. Старые разделы ниже **устарели в части hero и блоков 1–2** (карта вопросов, Industries, Faq, Cta, вопросы к продукту остаются в силе). Знаки считаются с пробелами и знаками препинания. Метка `[CONFIRM]` — нужен факт продукта.
+
+Причины замен: «Accept crypto. Convert. Settle.» в три строки повторял ритм главной («Banking for today. …») и ничего не сообщал; блок 1 не объяснял, что происходит; блок 2 показывал код без ответа «что дальше». Приёмы разбора конкурента (`docs/research/mosta-crypto-processing.md`): заголовок как конкретное утверждение, объяснение действием, а не картинкой с подписями. Тексты конкурента не использованы.
+
+### Правила для монет, сетей и сумм в интерактивах
+
+- Монеты и сети в интерактивах — **только demo-значения**. Рядом всегда метка «Demo» или «Demo values». В списки «что мы поддерживаем» они не попадают, в FAQ на вопрос про монеты и сети остаётся «подтвердим на демо».
+- Набор demo: монеты USDT, USDC, DAI; сети Ethereum, Tron, Polygon. Взяты потому, что любая пара монета + сеть правдоподобна (все три монеты ходят во всех трёх сетях). Если продукт не хочет называть даже в demo, запасной вариант: «Coin A / B / C» и «Network A / B / C» (хуже читается, в версию 2 не берём).
+- Формат суммы: число с разделителем тысяч и двумя знаками, пробел, код валюты, без символов валют: `1,000.00 USDT`, `920.00 EUR`. Вход: «`{amount} {COIN}`», зачисление: «`+{amount} {CUR}`» со знаком плюс.
+- Demo-курс один на все сцены: `1 USDT = 0.92 EUR` (суммы сходятся: 120.00 → 110.40, 250.00 → 230.00, 480.00 → 441.60, 1,000.00 → 920.00). Комиссий в сумме нет: ни одна сумма не должна читаться как «после комиссии». `[CONFIRM: валюта расчёта, EUR взят как пример]`
+- Номер заказа в журнале: `#1042` (любой, меняется по желанию).
+
+### Заголовки: варианты и рекомендация
+
+| Место | Вариант | Знаков | Рекомендация |
+|---|---|---|---|
+| Hero `crypto-processing__hero-title` (одна строка) | A. Accept crypto payments through one integration. | 47 | **рекомендую**: рабочая версия дизайнера; называет действие и способ, не повторяет ритм главной |
+| | B. Crypto payments, settled to your account. | 41 | результат первым; но «settled to your account» требует `[CONFIRM: куда рассчитываем]` |
+| | C. One API to accept and settle crypto. | 36 | самый короткий; «One API» уже открывает подзаголовок главной, повтор |
+| Блок 1 `crypto-processing__flow-title` | A. Follow one payment. | 19 | **рекомендую**: называет действие посетителя; не конфликтует с Cta и подзаголовком hero, где уже есть путь «кошелёк → счёт» |
+| | B. From their wallet to your account. | 34 | объясняет результат, но повторяет подзаголовок hero и Cta («from your client's wallet to your account»); «their» без контекста |
+| | C. One payment, three steps. | 25 | считает станции; нет глагола, слабее зовёт к действию |
+| Блок 2 `crypto-processing__api-title` | A. Run a test payment. | 19 | **рекомендую**: действие и результат в самом слове «test»; рабочая версия дизайнера |
+| | B. Your system knows when you are paid. | 36 | говорит про результат интеграции; длиннее, без действия |
+| | C. From one request to a paid order. | 33 | показывает весь путь; повторяет конструкцию «From … to» (в Industries «From first payment to final payout.») |
+
+Пара рекомендаций (блок 1 «Follow one payment.» и блок 2 «Run a test payment.») — два повелительных наклонения подряд. Это намеренно: оба блока интерактивные, заголовок сразу говорит «нажми». Если дизайнеру покажется однообразно, замена: блок 1 B.
+
+### Hero (версия 2)
+
+| data-el | Текст | Знаков | Статус |
+|---|---|---|---|
+| `crypto-processing__hero-title` | Accept crypto payments through one integration. | 47 | черновик (вариант A) |
+| `crypto-processing__hero-subtitle` | Your client pays from their wallet. Velant converts the payment and settles it to your account, with a status for every payment. | 128 | черновик `[CONFIRM: куда рассчитываем — счёт, кошелёк, баланс Velant; где виден статус — API, webhooks, кабинет]` |
+| `crypto-processing__hero-cta-primary` | Book a demo | 11 | макет |
+| `crypto-processing__hero-cta-secondary` | See how it works | 16 | черновик (без изменений) |
+
+Подзаголовок: клиент → конвертация → расчёт → статус, всё про результат; слов «crypto» и «API» в нём нет, чтобы не повторять заголовок.
+
+### Hero-сцена: карта из точек (версия 2)
+
+Тексты сцены — часть картинки, по словам не появляются.
+
+| data-el | Текст | Знаков | Статус |
+|---|---|---|---|
+| `crypto-processing__hero-scene-hint` | Click the map to send a payment | 31 | черновик, рекомендую (как у дизайнера: глагол, действие и результат; короче и ясней вариантов) |
+| то же, узкий экран, где нет мыши | Tap the map to send a payment | 29 | черновик |
+| то же, после первого платежа | Try another place | 17 | черновик (по желанию, заменяет подсказку) |
+| `crypto-processing__hero-scene-status-waiting` | Waiting for payment | 19 | черновик (из версии 1) |
+| `crypto-processing__hero-scene-status-confirmed` | Payment confirmed | 17 | черновик (из версии 1) |
+| `crypto-processing__hero-scene-status-settled` | Settled | 7 | черновик (из версии 1) |
+| `crypto-processing__hero-scene-account` (метка точки счёта) | Your account | 12 | черновик |
+| `crypto-processing__hero-scene-demo` | Demo | 4 | черновик (метка, что суммы условные) |
+| сумма в полёте (пример) | 250.00 USDT | 11 | demo, формат выше |
+| сумма при зачислении (пример) | +230.00 EUR | 11 | demo, формат выше |
+
+Запасные подсказки (не рекомендую): «Click anywhere to send a payment» (32), «Click anywhere on the map to send a payment» (43).
+
+### Блок 1 «Follow one payment» (версия 2)
+
+Интерактив: платёж проходит три станции по точечной дорожке; посетитель нажимает станцию или Play.
+
+| data-el | Текст | Знаков | Статус |
+|---|---|---|---|
+| `crypto-processing__flow-title` | Follow one payment. | 19 | черновик (вариант A) |
+| `crypto-processing__flow-intro` | Press Play or pick a step to see what happens to one demo payment. | 66 | черновик (запасной: «Press Play, or pick a step to see what happens to the payment at each stage.», 75) |
+| `crypto-processing__flow-station-accept` | Accept | 6 | черновик |
+| `crypto-processing__flow-station-convert` | Convert | 7 | черновик |
+| `crypto-processing__flow-station-settle` | Settle | 6 | черновик |
+| подпись под станцией Accept | Client pays | 11 | черновик |
+| подпись под станцией Convert | Rate applied | 12 | черновик |
+| подпись под станцией Settle | Funds credited | 14 | черновик `[CONFIRM: тип счёта]` |
+| `crypto-processing__flow-play` | Play | 4 | черновик |
+| `crypto-processing__flow-pause` | Pause | 5 | черновик |
+| `crypto-processing__flow-replay` (после конца круга, по желанию) | Replay | 6 | черновик |
+| `crypto-processing__flow-hint` | Try another coin or network. | 28 | черновик (одна строка-подсказка; запасной: «Change the coin or network on the Accept step.», 46) |
+| `crypto-processing__flow-demo` | Demo values | 11 | черновик (метка рядом с панелями) |
+
+Мини-панели:
+
+| Панель | Заголовок | Поля и значения (demo) | Статус платежа |
+|---|---|---|---|
+| Accept | Client payment (14) | Coin (4): чипы USDT · USDC · DAI; Network (7): чипы Ethereum · Tron · Polygon; Amount (6): 1,000.00 USDT | Waiting for payment |
+| Convert | Conversion (10) | Client sends (12): 1,000.00 USDT; You receive (11): 920.00 EUR; Rate (4): 1 USDT = 0.92 EUR | Payment confirmed |
+| Settle | Settlement (10) | Credited to (11): Your account (12); Amount (6): 920.00 EUR; Status (6): Settled (7) | Settled |
+
+В панели Accept при выборе монеты меняется код монеты в сумме и в панели Convert («Client sends»); курс остаётся 0.92 (demo), чтобы не изобретать курсы разных монет.
+
+Старые тексты шагов (`flow-step-*-text`, `node`, `chips`) в версии 2 не нужны, если дизайнер оставит только станции и панели; из `content.ts` они не удалены.
+
+### Блок 2 «Run a test payment» (версия 2)
+
+Интерактив: три колонки Request → Events → Your system.
+
+| data-el | Текст | Знаков | Статус |
+|---|---|---|---|
+| `crypto-processing__api-title` | Run a test payment. | 19 | черновик (вариант A) |
+| `crypto-processing__api-text` | Your integration ends when your system learns that the order is paid. Send a test payment and watch it get there. | 113 | черновик `[CONFIRM: механизм сообщения — webhooks?; набор событий]` |
+| `crypto-processing__api-column-request` | Request | 7 | черновик |
+| подпись колонки Request | What you send | 13 | черновик |
+| `crypto-processing__api-column-events` | Events | 6 | черновик |
+| подпись колонки Events | What Velant sends back | 22 | черновик `[CONFIRM]` |
+| `crypto-processing__api-column-system` | Your system | 11 | черновик |
+| подпись колонки Your system | What your system does | 21 | черновик |
+| `crypto-processing__api-send` | Send test payment | 17 | черновик |
+| `crypto-processing__api-sending` (пока события летят) | Sending… | 8 | черновик |
+| `crypto-processing__api-replay` | Replay | 6 | черновик |
+| `crypto-processing__api-empty` (пустые колонки Events и Your system) | No events yet | 13 | черновик |
+| подсказка под колонкой Request (если монета и сеть выбраны в блоке 1) | Uses the coin and network you picked above. | 43 | черновик; если выбора выше нет, не нужна |
+| метка | Demo values | 11 | черновик |
+
+Тексты событий (имена — из версии 1, не подтверждены продуктом `[CONFIRM]`):
+
+| Событие | Имя | Знаков | Пояснение | Знаков |
+|---|---|---|---|---|
+| 1 | payment.created | 15 | Payment created | 15 |
+| 2 | payment.confirmed | 17 | Confirmed on the network | 24 |
+| 3 | payment.settled | 15 | Funds sent to your account | 26 |
+
+Журнал «Your system» (номер заказа `#1042` — пример, нейтральный):
+
+| После события | Строка журнала | Знаков |
+|---|---|---|
+| payment.created | Order #1042: waiting for payment | 32 |
+| payment.confirmed | Order #1042: payment confirmed | 30 |
+| payment.settled | Order #1042 marked as paid | 26 |
+
+Код в колонке Request: форма как в версии 1 (`POST /v1/payments`, поля выдуманы для картинки), в `asset` и `network` подставляются выбранные монета и сеть; `settle_in` остаётся `[CONFIRM]`. Кнопка отправки выглядит «выключенной» (`Sending…`), пока события летят; по окончании меняется на «Replay».
+
+### Industries, Faq, Cta: вычитка на повторы с главной и с новыми заголовками
+
+Менять нечего обязательно, но есть повторы, которые стоит решить (в `content.ts` не правил, жду решения):
+
+| Место | Что повторяется | Предложение (не применено) |
+|---|---|---|
+| Industries, E-commerce, строка 1: «Add crypto to your checkout through one integration.» | «through one integration» слово в слово повторяет заголовок hero | «Let shoppers pay in crypto at your checkout.» (43) |
+| Industries, PSPs and Acquirers, строка 2: «One integration instead of a separate crypto stack» | третий «one integration» на странице | допустимо (другой смысл); при желании «No separate crypto stack to build» (34) |
+| Industries, Marketplaces, строка 2: «Follow every payment through the API» | эхо «Follow one payment» в блоке 1 | «See every payment status through the API» (39) |
+| Cta subtitle: «We'll map the path from your client's wallet to your account.» | путь «кошелёк клиента → счёт» уже в подзаголовке hero (при рекомендованном заголовке блока 1 «Follow one payment.» конфликта с блоком 1 нет) | оставить; если нужно меньше повторов: «We'll show you the payment path for your business.» (52) |
+| Cta title: «Ready to accept crypto payments?» | эхо заголовка hero | оставить: в конце страницы повтор сознательный |
+| Faq `status` («You get an event when a payment is created, confirmed, and settled.») | совпадает с событиями блока 2 | оставить, согласовано |
+| Faq `receive` lead («you receive fiat») | в демо расчёт в EUR | согласовано (`[CONFIRM]` валюты) |
+
+Остальное (Faq 2–8, бейджи Cta, пункты Industries 1, 3–7 кроме перечисленных) повторов с главной и с новыми заголовками не создаёт.
+
+---
+
+## Версия 1 (устарела в части hero и блоков 1–2)
 Метка `[CONFIRM]` — нужен факт продукта, которого у нас нет; в `content.ts` текст пойдёт без факта, метка останется комментарием.
 
 Опора на факты (только из сайта и макета): один API; принять, конвертировать, рассчитаться; клиент платит из кошелька, получает fiat («Let your clients pay in crypto, and receive fiat» — макет, Startups); интеграция «From 1 week», KYB входит в онбординг; custodial + MPC; канадская MSB licence; демо → KYB → запуск → первая боевая транзакция. Остальное — без цифр.
@@ -27,7 +178,7 @@
 
 ## (б) Структура страницы
 
-Обёртка страницы: `page-crypto-processing__body`. Блоки страницы по порядку; общие блоки сохраняют свои `data-el` (`logos`, `industries`, `faq`, `cta`), меняются только данные.
+**Строки 1, 3 и 4 таблицы (hero, блоки 1 и 2) устарели: заголовки и содержание картинок — в версии 2 выше.** Обёртка страницы: `page-crypto-processing__body`. Блоки страницы по порядку; общие блоки сохраняют свои `data-el` (`logos`, `industries`, `faq`, `cta`), меняются только данные.
 
 | # | Блок / `data-el` | Отвечает на | Заголовок | Суть (1–2 фразы) | Что показывает картинка / микро-интерфейс |
 |---|---|---|---|---|---|
@@ -49,7 +200,7 @@
 
 Знаки считаются с пробелами и знаками препинания; для списков строк (Industries) — по строкам отдельно. Статусы: «черновик» — написан мной; «макет» — текст уже на главной (из макета), повтор без изменений.
 
-### Hero
+### Hero (устарело, см. версию 2)
 
 | data-el | Текст | Знаков | Статус |
 |---|---|---|---|
@@ -77,7 +228,7 @@
 
 Значения в сцене (сумма, название монеты и сети, курс) — часть картинки, не текст страницы; **названия монет и сетей не берём, пока продукт не подтвердит список** (`[CONFIRM]`); до тех пор — значки без названий или нейтральные заглушки.
 
-### Блок 1 — `crypto-processing__flow`
+### Блок 1 — `crypto-processing__flow` (устарело, см. версию 2)
 
 | data-el | Текст | Знаков | Статус |
 |---|---|---|---|
@@ -102,7 +253,7 @@
 | `crypto-processing__flow-chip-rate` | Rate | 4 | черновик |
 | `crypto-processing__flow-chip-settlement` | Settlement | 10 | черновик |
 
-### Блок 2 — `crypto-processing__api`
+### Блок 2 — `crypto-processing__api` (устарело, см. версию 2)
 
 | data-el | Текст | Знаков | Статус |
 |---|---|---|---|

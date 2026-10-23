@@ -20,11 +20,11 @@ export type ProductContent = {
  * The page of one product: the hero, the logos, the blocks about the product itself (`sections`, two for now: the pictures
  * and micro interfaces that explain it), then the blocks shared with the home page with the texts of the product.
  */
-export function ProductPage({ content, heroMedia, sections }: { content: ProductContent; heroMedia?: ReactNode; sections: ReactNode }) {
+export function ProductPage({ content, heroMedia, heroMediaClassName, sections }: { content: ProductContent; heroMedia?: ReactNode; heroMediaClassName?: string; sections: ReactNode }) {
   usePageMeta(content.meta)
   return (
     <PageShell>
-      <ProductHero {...content.hero} media={heroMedia} />
+      <ProductHero {...content.hero} media={heroMedia} mediaClassName={heroMediaClassName} />
       <Logos />
       {sections}
       <Industries {...content.industries} />

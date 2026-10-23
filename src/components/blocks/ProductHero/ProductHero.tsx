@@ -14,13 +14,15 @@ export type ProductHeroProps = {
   secondaryCta: { label: string; href: string }
   /** The scene inside the big card under the text (a micro interface of the product). Empty until it is made. */
   media?: ReactNode
+  /** Extra classes of the card (for example another proportion on narrow screens). */
+  mediaClassName?: string
 }
 
 /**
  * First screen of a product page: the same composition as the hero of the home page (centered text, two buttons, a big card),
  * with the text and the scene given by the page. The dots, the type steps and the card (1440 : 800, radius 48) are the ones of `Hero`.
  */
-export function ProductHero({ product, title, subtitle, primaryCta, secondaryCta, media }: ProductHeroProps) {
+export function ProductHero({ product, title, subtitle, primaryCta, secondaryCta, media, mediaClassName = '' }: ProductHeroProps) {
   const el = (name: string) => `${product}__${name}`
   return (
     <section data-el={el('hero')} aria-labelledby={`${product}-title`} className="relative overflow-hidden">
@@ -84,7 +86,7 @@ export function ProductHero({ product, title, subtitle, primaryCta, secondaryCta
           atLoad
           delay={1.55}
           data-el={el('hero__media')}
-          className="mt-12 aspect-[1440/800] w-full overflow-hidden rounded-32 bg-surface-subtle ring-1 ring-inset ring-border-subtle tablet:mt-16 desktop:mt-20 desktop:rounded-48"
+          className={`mt-12 aspect-[1440/800] w-full overflow-hidden rounded-32 bg-surface-subtle ring-1 ring-inset ring-border-subtle tablet:mt-16 desktop:mt-20 desktop:rounded-48 ${mediaClassName}`}
         >
           {media}
         </Reveal>
