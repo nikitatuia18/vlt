@@ -1,3 +1,5 @@
+import { href } from '../../../lib/route'
+
 export type FeatureCardData = {
   /** Same slug as the Figma layer `features__card-{id}`. */
   id: string
@@ -13,7 +15,7 @@ export const mainCards: readonly FeatureCardData[] = [
     id: 'crypto',
     title: 'Crypto Processing',
     description: 'Accept, convert, and settle crypto payments via a single integration.',
-    href: '#crypto-processing',
+    href: href('crypto-processing'),
   },
   {
     id: 'invoicing',

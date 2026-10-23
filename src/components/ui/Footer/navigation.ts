@@ -1,3 +1,5 @@
+import { href } from '../../../lib/route'
+
 export type FooterLink = {
   /** Same slug as the Figma layer `footer__link-{id}`. */
   id: string
@@ -28,7 +30,7 @@ export const footerColumns: readonly FooterColumn[] = [
       { id: 'payment-orchestration', label: 'Payment orchestration', href: '#payment-orchestration' },
       { id: 'smart-routing', label: 'Smart routing', href: '#smart-routing' },
       { id: 'payment-methods', label: 'Payment methods', href: '#payment-methods' },
-      { id: 'crypto-processing', label: 'Crypto processing', href: '#crypto-processing' },
+      { id: 'crypto-processing', label: 'Crypto processing', href: href('crypto-processing') },
       { id: 'otc-trading', label: 'OTC trading', href: '#otc-trading' },
       { id: 'custom-integrations', label: 'Custom integrations', href: '#custom-integrations' },
     ],

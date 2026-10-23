@@ -74,6 +74,7 @@ export function Global() {
   return (
     <section
       ref={sectionRef}
+      id="global"
       data-el="global"
       aria-labelledby="global-title"
       style={plain ? undefined : { height: `calc(100svh + ${PINNED_SCROLL})` }}

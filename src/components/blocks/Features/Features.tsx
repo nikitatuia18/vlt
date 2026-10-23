@@ -18,7 +18,7 @@ import { cardIllustrations } from './illustrations'
  */
 export function Features() {
   return (
-    <section data-el="features" aria-labelledby="features-title" className="border-y border-border-subtle">
+    <section id="products" data-el="features" aria-labelledby="features-title" className="border-y border-border-subtle">
       <Container>
         <div
           data-el="features__container"

@@ -1,9 +1,16 @@
 import type { ReactNode } from 'react'
+import { navBlockIds } from '../components/ui/Header/navigation'
 import { Footer } from '../components/ui/Footer'
 import { Header } from '../components/ui/Header'
+import { useScrollSpy } from '../lib/useScrollSpy'
 
-/** What every page of the site has in common: the skip link, the header, the main area and the footer. */
-export function PageShell({ currentId = 'products', children }: { currentId?: string; children: ReactNode }) {
+/**
+ * What every page of the site has in common: the skip link, the header, the main area and the footer.
+ * `currentId` marks a menu item for good (a product page is under "Products"); `spy` marks the item of the block on the screen
+ * instead (the home page, where the menu items are its blocks).
+ */
+export function PageShell({ currentId = 'products', spy = false, children }: { currentId?: string; spy?: boolean; children: ReactNode }) {
+  const spied = useScrollSpy(navBlockIds)
   return (
     <>
       {/* The first stop of the Tab key: shown only while it has focus; jumps over the header to the content. */}
@@ -14,7 +21,7 @@ export function PageShell({ currentId = 'products', children }: { currentId?: st
       >
         Skip to content
       </a>
-      <Header currentId={currentId} />
+      <Header currentId={spy ? spied : currentId} />
       <main id="main" tabIndex={-1} className="focus:outline-none">
         {children}
       </main>

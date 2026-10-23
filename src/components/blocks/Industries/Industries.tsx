@@ -101,6 +101,7 @@ export function Industries({ items = industries, activeId = DESIGN_ACTIVE_ID }: 
   return (
     <section
       ref={sectionRef}
+      id="industries"
       data-el="industries"
       data-glow={glow}
       aria-labelledby="industries-title"

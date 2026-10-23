@@ -39,7 +39,7 @@ export function Cta({ title = "Tell us what you're building.", subtitle = "We'll
   const scale = useCtaScale(wrapRef)
 
   return (
-    <section data-el="cta" aria-labelledby="cta-title" className="border-b border-border-subtle">
+    <section id="contact" data-el="cta" aria-labelledby="cta-title" className="border-b border-border-subtle">
       <Container>
         <div
           data-el="cta__container"

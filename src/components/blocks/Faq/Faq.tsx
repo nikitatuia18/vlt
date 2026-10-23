@@ -28,7 +28,7 @@ export function Faq({ items = faqItems, title = 'Still have questions?', openId:
   const [openId, setOpenId] = useState<string | null>(firstOpenId === null || items.some((item) => item.id === firstOpenId) ? firstOpenId : (items[0]?.id ?? null))
 
   return (
-    <section data-el="faq" aria-labelledby="faq-title" className="border-b border-border-subtle">
+    <section id="faq" data-el="faq" aria-labelledby="faq-title" className="border-b border-border-subtle">
       <Container>
         <div
           data-el="faq__container"

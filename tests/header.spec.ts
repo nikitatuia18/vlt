@@ -55,7 +55,7 @@ test('mobile: burger opens and closes the dropdown (button, Escape, link)', asyn
   await expect(toggle).toBeFocused()
 
   await toggle.click()
-  await panel.getByRole('link', { name: 'Pricing' }).click()
+  await panel.getByRole('link', { name: 'FAQ' }).click()
   await expect(panel).toBeHidden()
 })
 
@@ -182,17 +182,24 @@ test('the selected menu item is filled like a hovered one: grey in Light, lighte
   await page.setViewportSize({ width: 1440, height: 800 })
   await page.goto('/')
   const fill = (id: string) => page.locator(`[data-el="header__menu-item-${id}"]`).evaluate((el) => getComputedStyle(el).backgroundColor)
+  // The menu follows the blocks of the page: scrolled to the Features block, "Products" is the selected item.
+  await page.locator('[data-el="features"]').evaluate((el) => el.scrollIntoView({ block: 'center' }))
   const current = page.locator('[data-el="header__menu-item-products"]')
   await expect(current).toHaveAttribute('aria-current', 'true')
-  await expect(page.locator('[data-el="header__menu-item-solutions"]')).not.toHaveAttribute('aria-current', 'true')
-  expect(await fill('products')).toBe('rgb(243, 243, 243)') // surface/hover, Light = neutral/100 (#f3f3f3)
-  expect(await fill('solutions')).toBe('rgba(0, 0, 0, 0)') // the others have no fill until hovered
+  await page.mouse.move(700, 600)
+  await expect(page.locator('[data-el="header__menu-item-industries"]')).not.toHaveAttribute('aria-current', 'true')
+  // The fill fades in (a color transition), so it is awaited rather than read at once.
+  await expect(current).toHaveCSS('background-color', 'rgb(243, 243, 243)') // surface/hover, Light = neutral/100 (#f3f3f3)
+  expect(await fill('industries')).toBe('rgba(0, 0, 0, 0)') // the others have no fill until hovered
   // The same color as the fill of a hovered item.
-  await page.locator('[data-el="header__menu-item-solutions"]').hover()
-  await expect(page.locator('[data-el="header__menu-item-solutions"]')).toHaveCSS('background-color', 'rgb(243, 243, 243)')
+  await page.locator('[data-el="header__menu-item-industries"]').hover()
+  await expect(page.locator('[data-el="header__menu-item-industries"]')).toHaveCSS('background-color', 'rgb(243, 243, 243)')
 
   await page.locator('[data-el="header__theme-toggle"]').click()
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
+  // The click may have moved the page (the bar was hidden, the toggle was scrolled into view): put the Features block back on the line.
+  await page.locator('[data-el="features"]').evaluate((el) => el.scrollIntoView({ block: 'center' }))
+  await expect(current).toHaveAttribute('aria-current', 'true')
   await page.mouse.move(700, 600)
   await expect(current).toHaveCSS('background-color', 'rgb(38, 38, 38)') // surface/hover, Dark = neutral/800
   await page.locator('[data-el="header"]').screenshot({ path: 'tests/artifacts/header-desktop-1440-dark.png' })
@@ -204,7 +211,7 @@ test('the Header is one reusable component: the page chooses the current item (U
   const headers = page.locator('[data-el="ui-kit__header"] [data-el="header"]')
   await expect(headers).toHaveCount(2)
   await expect(headers.nth(0).locator('[data-el="header__menu"] [aria-current="true"]')).toHaveText('Products')
-  await expect(headers.nth(1).locator('[data-el="header__menu"] [aria-current="true"]')).toHaveText('Pricing')
+  await expect(headers.nth(1).locator('[data-el="header__menu"] [aria-current="true"]')).toHaveText('Industries')
   // In the UI Kit they are not pinned: they stay in the flow.
   expect(await headers.nth(0).evaluate((el) => getComputedStyle(el).position)).toBe('relative')
 })

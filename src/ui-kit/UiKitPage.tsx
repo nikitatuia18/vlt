@@ -272,7 +272,7 @@ export default function UiKitPage() {
         >
           <div className="flex flex-col gap-6 overflow-hidden rounded-32 ring-1 ring-border-subtle">
             <Header isPinned={false} currentId="products" />
-            <Header isPinned={false} currentId="pricing" />
+            <Header isPinned={false} currentId="industries" />
           </div>
         </Section>
 

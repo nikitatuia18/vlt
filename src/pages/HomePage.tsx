@@ -11,7 +11,7 @@ import { PageShell } from './PageShell'
 // The home page is assembled from blocks (src/components/blocks/*) in the order of the Figma frame.
 export default function HomePage() {
   return (
-    <PageShell>
+    <PageShell spy>
       <Hero />
       <Logos />
       <Features />

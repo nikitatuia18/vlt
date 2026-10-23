@@ -85,7 +85,7 @@ export function NextSteps() {
   }
 
   return (
-    <section data-el="next-steps" aria-labelledby="next-steps-title" className="border-y border-border-subtle">
+    <section id="get-started" data-el="next-steps" aria-labelledby="next-steps-title" className="border-y border-border-subtle">
       <Container>
         <div
           data-el="next-steps__container"

@@ -28,7 +28,66 @@ export function shiftScroll(delta: number) {
   if (Math.abs(target - here) > 0.5) activeLenis.scrollTo(target, { lerp: SMOOTHNESS, force: true })
 }
 
-const SCROLL_KEYS = new Set(['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' '])
+/**
+ * Scrolls to the block with this `id` (glides with the smooth scroll; at once with reduced motion or when `immediate`).
+ * The block stops under the header (the `scroll-padding-top` of the page, which the smooth scroll and the native fallback both follow).
+ * The page changes its height on the way (the globe block gets shorter once its big animation has played), so the block is not where it
+ * was when the glide began: when the page stands still the place is checked and the last stretch is made again (up to 3 times).
+ * Returns false when there is no such block.
+ */
+export function scrollToSection(id: string, immediate = false, attempt = 0): boolean {
+  const target = document.getElementById(id)
+  if (!target) return false
+  if (!activeLenis) {
+    target.scrollIntoView({ block: 'start' })
+    return true
+  }
+  activeLenis.scrollTo(target, immediate ? { immediate: true, force: true } : { duration: attempt ? 0.8 : 1.4, force: true })
+  if (attempt < 3) {
+    // Not the "complete" callback of the glide: a block that changes the height of the page on the way (shiftScroll) replaces the glide,
+    // and then the callback never comes. So: wait until the page stands still and look where the block is.
+    const check = (waited: number) => {
+      if (activeLenis?.isScrolling && waited < 4000) {
+        window.setTimeout(() => check(waited + 100), 100)
+        return
+      }
+      const padding = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0
+      if (Math.abs(target.getBoundingClientRect().top - padding) > 4) scrollToSection(id, immediate, attempt + 1)
+    }
+    window.setTimeout(() => check(0), 200)
+  }
+  return true
+}
+
+/**
+ * Links to a block of the page you are on (`/#faq`, `#products`) glide to it instead of jumping; the address gets the hash.
+ * Arriving on a page with a hash (a menu item clicked on another page) scrolls to the block once the fonts are in, so that the
+ * layout does not move afterwards. Links to other pages and the skip link are left to the browser.
+ */
+export function useAnchorLinks() {
+  useEffect(() => {
+    const samePage = (url: URL) => url.origin === window.location.origin && url.pathname.replace(/\/$/, '') === window.location.pathname.replace(/\/$/, '')
+
+    const onClick = (event: MouseEvent) => {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
+      const link = event.target instanceof Element ? event.target.closest<HTMLAnchorElement>('a[href]') : null
+      if (!link || link.target === '_blank') return
+      const url = new URL(link.href, window.location.href)
+      if (!samePage(url) || url.hash.length < 2 || url.hash === '#main') return
+      if (!scrollToSection(decodeURIComponent(url.hash.slice(1)))) return
+      event.preventDefault()
+      window.history.replaceState(null, '', url.hash)
+    }
+    document.addEventListener('click', onClick)
+
+    const arrivedAt = window.location.hash.slice(1)
+    if (arrivedAt) void document.fonts.ready.then(() => scrollToSection(decodeURIComponent(arrivedAt), true))
+
+    return () => document.removeEventListener('click', onClick)
+  }, [])
+}
+
+const SCROLL_KEYS =new Set(['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' '])
 
 /**
  * Holds the page where it is (for the time of the theme change, which shows the old page as a picture): the glide of the smooth scroll
