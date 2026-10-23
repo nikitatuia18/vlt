@@ -147,20 +147,6 @@ export function PaymentJourney() {
             className="w-full rounded-32 bg-surface-subtle p-4 ring-1 ring-border-subtle ring-inset tablet:p-10 desktop:rounded-48 desktop:p-15"
           >
             <div ref={sceneRef} className="mx-auto flex w-full max-w-200 flex-col gap-8">
-              <div className="flex items-center justify-end gap-4">
-                {animated && (
-                  <button
-                    type="button"
-                    data-el="crypto-processing__flow-play"
-                    aria-pressed={playing}
-                    onClick={togglePlaying}
-                    className="type-ui-md rounded-pill bg-surface-page px-4 py-2 text-typography-primary ring-1 ring-border-subtle transition-colors ring-inset hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-brand"
-                  >
-                    {playing ? journeyScene.pause : journeyScene.play}
-                  </button>
-                )}
-              </div>
-
               {/* The track: a dotted line through the three stations; the coloured part is the way the payment has made. */}
               <div className="relative">
                 <div aria-hidden="true" className="absolute top-6 right-[16.67%] left-[16.67%] border-t-2 border-dashed border-typography-tertiary" />
@@ -205,6 +191,19 @@ export function PaymentJourney() {
                 </ol>
               </div>
 
+              {/* Play / Pause sits in the corner of the panel (outside the animated panel, so it does not blink when the station changes). */}
+              <div className="relative">
+              {animated && (
+                <button
+                  type="button"
+                  data-el="crypto-processing__flow-play"
+                  aria-pressed={playing}
+                  onClick={togglePlaying}
+                  className="type-ui-md absolute top-4 right-4 z-10 rounded-pill bg-surface-subtle px-4 py-2 text-typography-primary ring-1 ring-border-subtle transition-colors ring-inset hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-brand tablet:top-6 tablet:right-6"
+                >
+                  {playing ? journeyScene.pause : journeyScene.play}
+                </button>
+              )}
               <motion.div
                 key={active}
                 id="flow-panel"
@@ -264,6 +263,7 @@ export function PaymentJourney() {
                   </>
                 )}
               </motion.div>
+              </div>
             </div>
           </Reveal>
 

@@ -398,31 +398,11 @@ export function DotMapScene() {
         <p data-el="crypto-processing__hero-scene-hint" className="type-ui-sm text-typography-secondary">
           {sentByVisitor ? heroScene.hintAgain : touch ? heroScene.hintTouch : heroScene.hint}
         </p>
-        {/* The last payments that landed: on a phone the card has no room for them. */}
-        <div
-          data-el="crypto-processing__hero-scene-recent"
-          className="pointer-events-none hidden w-72 flex-col gap-2 rounded-32 bg-surface-page p-4 ring-1 ring-border-subtle ring-inset tablet:flex"
-        >
-          <p className="type-ui-sm text-typography-secondary">{heroScene.recentTitle}</p>
-          <ul className="flex flex-col gap-2">
-            {history.map((payment) => (
-              <li key={payment.id} className="flex flex-col border-t border-border-subtle pt-2">
-                <span className="type-ui-md flex items-baseline justify-between gap-3 text-typography-primary">
-                  {payment.region}
-                  <span className="whitespace-nowrap text-typography-brand">
-                    +{formatAmount(settledAmount(payment.amount))} {SETTLEMENT_CURRENCY}
-                  </span>
-                </span>
-                <span className="type-ui-sm text-typography-secondary">
-                  {formatAmount(payment.amount)} {payment.coin} · {payment.network}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </div>
       </div>
 
-      <div className="absolute inset-x-4 bottom-4 flex flex-col gap-3 tablet:inset-x-auto tablet:bottom-8 tablet:left-8 tablet:flex-row tablet:items-end tablet:gap-4">
+      {/* The bottom row: the two cards on the left, the button on the right. */}
+      <div className="absolute inset-x-4 bottom-4 flex flex-col gap-3 tablet:inset-x-8 tablet:bottom-8 tablet:flex-row tablet:items-end tablet:justify-between tablet:gap-4">
+        <div className="flex w-full flex-col gap-4 tablet:w-auto tablet:flex-row tablet:items-end">
         <div data-el="crypto-processing__hero-scene-panel" className="flex w-full flex-col gap-2 rounded-32 bg-surface-page p-4 ring-1 ring-border-subtle ring-inset tablet:w-72" aria-live="polite">
           <p className="type-ui-sm flex items-baseline justify-between gap-3 text-typography-secondary">
             {heroScene.panelTitle}
@@ -456,6 +436,29 @@ export function DotMapScene() {
               </span>
             )}
           </p>
+        </div>
+        {/* The last payments that landed: only on wide cards, a phone or a small tablet has no room for a second card. */}
+        <div
+          data-el="crypto-processing__hero-scene-recent"
+          className="pointer-events-none hidden w-72 flex-col gap-2 rounded-32 bg-surface-page p-4 ring-1 ring-border-subtle ring-inset min-[64rem]:flex"
+        >
+          <p className="type-ui-sm text-typography-secondary">{heroScene.recentTitle}</p>
+          <ul className="flex flex-col gap-2">
+            {history.map((payment) => (
+              <li key={payment.id} className="flex flex-col border-t border-border-subtle pt-2">
+                <span className="type-ui-md flex items-baseline justify-between gap-3 text-typography-primary">
+                  {payment.region}
+                  <span className="whitespace-nowrap text-typography-brand">
+                    +{formatAmount(settledAmount(payment.amount))} {SETTLEMENT_CURRENCY}
+                  </span>
+                </span>
+                <span className="type-ui-sm text-typography-secondary">
+                  {formatAmount(payment.amount)} {payment.coin} · {payment.network}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
         </div>
         <button
           type="button"

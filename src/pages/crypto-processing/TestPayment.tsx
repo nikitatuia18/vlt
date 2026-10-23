@@ -117,21 +117,24 @@ export function TestPayment() {
                       </>
                     )}
                   </pre>
-                  <p className="type-ui-sm mt-auto text-typography-secondary">{testScene.requestHint}</p>
+                  {/* The button is in the request card: it is the request that it sends. */}
+                  <div className="mt-auto flex flex-col gap-3">
+                    <button
+                      type="button"
+                      data-el="crypto-processing__api-send"
+                      disabled={running}
+                      onClick={run}
+                      className="type-ui-md self-start rounded-pill bg-surface-inverse px-5 py-3 text-typography-inverse transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-brand disabled:opacity-60"
+                    >
+                      {label}
+                    </button>
+                    <p className="type-ui-sm text-typography-secondary">{testScene.requestHint}</p>
+                  </div>
                 </Column>
 
                 <Link pulse={pulses[0]} reduced={reduced} />
 
                 <Column data-el="crypto-processing__api-column-events" {...testScene.columns.events}>
-                  <button
-                    type="button"
-                    data-el="crypto-processing__api-send"
-                    disabled={running}
-                    onClick={run}
-                    className="type-ui-md self-start rounded-pill bg-surface-inverse px-5 py-3 text-typography-inverse transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-brand disabled:opacity-60"
-                  >
-                    {label}
-                  </button>
                   <ul data-el="crypto-processing__api-feed" aria-live="polite" className="flex flex-col gap-3">
                     {shown === 0 && <li className="type-ui-md text-typography-secondary">{testScene.empty}</li>}
                     {testScene.events.slice(0, shown).map((event) => (
