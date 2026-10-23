@@ -6,7 +6,7 @@ import { ColumnFade } from '../../ui/ColumnFade'
 import { GlowBackdrop, type GlowHue } from '../../ui/GlowBackdrop'
 import { Container } from '../../ui/Container'
 import { CornerDots } from '../../ui/CornerDots'
-import { DESIGN_ACTIVE_ID, industries } from './items'
+import { DESIGN_ACTIVE_ID, industries, type IndustryItemData } from './items'
 import { IndustryItem } from './IndustryItem'
 
 /** Scroll length per item, in viewport heights: the longer, the slower the items open one after another. Tuned with the designer. */
@@ -14,11 +14,6 @@ const SCROLL_PER_ITEM_VH = 60
 
 /** The content follows the open item with this time constant (ms): the bigger, the softer the movement. */
 const FOLLOW_MS = 260
-
-const designActiveIndex = industries.findIndex((item) => item.id === DESIGN_ACTIVE_ID)
-
-/** The hues that exist in the list (one glow layer each; they cross-fade). */
-const glowHues = [...new Set(industries.flatMap((item) => (item.glow ? [item.glow] : [])))] as GlowHue[]
 
 /**
  * "From first payment to final payout." Figma block `industries`.
@@ -33,7 +28,17 @@ const glowHues = [...new Set(industries.flatMap((item) => (item.glow ? [item.glo
  * From the design: column 1440 px with a subtle line on both sides, text steps, lines of the list, the open card.
  * Derived: the pinned scroll, the title above the list (the design has it on the left), the smaller sizes and paddings.
  */
-export function Industries() {
+export type IndustriesProps = {
+  /** The scenes in the order they open. Default: the items of the home page. */
+  items?: readonly IndustryItemData[]
+  /** The item that is open first with reduced motion. Default: the one of the design (Startups). */
+  activeId?: string
+}
+
+export function Industries({ items = industries, activeId = DESIGN_ACTIVE_ID }: IndustriesProps = {}) {
+  const designActiveIndex = Math.max(0, items.findIndex((item) => item.id === activeId))
+  // The hues that exist in the list (one glow layer each; they cross-fade).
+  const glowHues = [...new Set(items.flatMap((item) => (item.glow ? [item.glow] : [])))] as GlowHue[]
   const reducedMotion = useReducedMotion()
   const tallRef = useRef<HTMLDivElement>(null)
   const stageRef = useRef<HTMLDivElement>(null)
@@ -51,14 +56,14 @@ export function Industries() {
 
   const { scrollYProgress } = useScroll({ target: tallRef, offset: ['start start', 'end end'] })
   useMotionValueEvent(scrollYProgress, 'change', (progress) => {
-    const index = Math.min(industries.length - 1, Math.max(0, Math.floor(progress * industries.length)))
+    const index = Math.min(items.length - 1, Math.max(0, Math.floor(progress * items.length)))
     setActiveIndex(index)
   })
 
   // With reduced motion nothing follows the scroll: the design state is shown first, then the item the visitor picked.
   const shownIndex = reducedMotion ? pickedIndex : activeIndex
   // The open item sets the scene: some items turn the whole block dark and light a colored glow behind the card.
-  const glow = industries[shownIndex]?.glow
+  const glow = items[shownIndex]?.glow
   // The dark scenes darken the whole site (the header, the page), and the theme toggle is locked meanwhile.
   // The theme changes as a circle that spreads from the middle of the screen (where the open card stands); inside it the page is already dark.
   // With reduced motion the block is a plain one that shows the dark scene of Startups at once: it darkens the site only while it is on the screen.
@@ -91,7 +96,7 @@ export function Industries() {
     slider.style.transform = `translate3d(0, ${next}px, 0)`
   })
 
-  const scrollLength = `calc(100svh + ${(industries.length - 1) * SCROLL_PER_ITEM_VH}vh)`
+  const scrollLength = `calc(100svh + ${(items.length - 1) * SCROLL_PER_ITEM_VH}vh)`
 
   return (
     <section
@@ -151,7 +156,7 @@ export function Industries() {
               </div>
 
               <ul ref={listRef} data-el="industries__list" className="relative flex w-full flex-col gap-6">
-                {industries.map((item, index) => (
+                {items.map((item, index) => (
                   <IndustryItem
                     key={item.id}
                     item={item}

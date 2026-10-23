@@ -3,7 +3,7 @@ import { RevealLines } from '../../../motion/reveal'
 import { Container } from '../../ui/Container'
 import { CornerDots } from '../../ui/CornerDots'
 import { FaqItem } from './FaqItem'
-import { DESIGN_OPEN_ID, faqItems } from './items'
+import { DESIGN_OPEN_ID, faqItems, type FaqItemData } from './items'
 
 /**
  * "Still have questions?" Figma block `faq`.
@@ -15,8 +15,17 @@ import { DESIGN_OPEN_ID, faqItems } from './items'
  * Derived (not in the desktop frame): below 1280 px the title stands above the list; smaller paddings and type sizes
  * (the title is 40 px between 1280 and 1599 px, where its column is too narrow for 64 px); side padding on small screens.
  */
-export function Faq() {
-  const [openId, setOpenId] = useState<string | null>(DESIGN_OPEN_ID)
+export type FaqProps = {
+  /** Questions and answers in the order shown. Default: the ones of the home page. */
+  items?: readonly FaqItemData[]
+  /** The heading on the left. Default: the one of the design. */
+  title?: string
+  /** The answer that is open at the start (null: all closed). Default: the one of the design; falls back to the first item. */
+  openId?: string | null
+}
+
+export function Faq({ items = faqItems, title = 'Still have questions?', openId: firstOpenId = DESIGN_OPEN_ID }: FaqProps = {}) {
+  const [openId, setOpenId] = useState<string | null>(firstOpenId === null || items.some((item) => item.id === firstOpenId) ? firstOpenId : (items[0]?.id ?? null))
 
   return (
     <section data-el="faq" aria-labelledby="faq-title" className="border-b border-border-subtle">
@@ -32,16 +41,16 @@ export function Faq() {
             data-el="faq__title"
             // 64 px type needs about 330 px for "questions?"; between 1280 and 1599 px the title column is narrower, so one step smaller there.
             className="type-heading-lg text-typography-primary tablet:type-heading-xl min-[64rem]:type-display-sm desktop:type-heading-xl desktop:min-w-72.5 desktop:flex-1 desktop:px-px min-[100rem]:type-display-sm"
-            lines={['Still have questions?']}
+            lines={[title]}
           />
 
           <ul data-el="faq__list" className="w-full desktop:w-226.5 desktop:min-w-175 desktop:shrink">
-            {faqItems.map((item, index) => (
+            {items.map((item, index) => (
               <FaqItem
                 key={item.id}
                 item={item}
                 isOpen={item.id === openId}
-                isLast={index === faqItems.length - 1}
+                isLast={index === items.length - 1}
                 index={index}
                 onToggle={() => setOpenId((current) => (current === item.id ? null : item.id))}
               />

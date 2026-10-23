@@ -1,0 +1,24 @@
+import type { ReactNode } from 'react'
+import { Footer } from '../components/ui/Footer'
+import { Header } from '../components/ui/Header'
+
+/** What every page of the site has in common: the skip link, the header, the main area and the footer. */
+export function PageShell({ currentId = 'products', children }: { currentId?: string; children: ReactNode }) {
+  return (
+    <>
+      {/* The first stop of the Tab key: shown only while it has focus; jumps over the header to the content. */}
+      <a
+        href="#main"
+        data-el="skip-link"
+        className="type-ui-sm sr-only rounded-pill bg-surface-inverse text-typography-inverse focus:not-sr-only focus:px-4 focus:py-3 focus:fixed focus:top-4 focus:left-4 focus:z-60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-brand"
+      >
+        Skip to content
+      </a>
+      <Header currentId={currentId} />
+      <main id="main" tabIndex={-1} className="focus:outline-none">
+        {children}
+      </main>
+      <Footer />
+    </>
+  )
+}

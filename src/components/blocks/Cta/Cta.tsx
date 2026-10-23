@@ -27,7 +27,14 @@ import { useCtaScale } from './useCtaScale'
  * Derived (not in the desktop frame): below 1280 px the picture stands under the text inside the banner; smaller paddings and
  * type; the title is 72 px between 1280 and 1599 px (80 px with a 1358 px banner needs the full width of the design).
  */
-export function Cta() {
+export type CtaProps = {
+  /** The heading. Default: the one of the design. */
+  title?: string
+  /** The line under the heading. Default: the one of the design. */
+  subtitle?: string
+}
+
+export function Cta({ title = "Tell us what you're building.", subtitle = "We'll map your payment flow and show you how Velant can handle it." }: CtaProps = {}) {
   const wrapRef = useRef<HTMLDivElement>(null)
   const scale = useCtaScale(wrapRef)
 
@@ -62,14 +69,14 @@ export function Cta() {
                     id="cta-title"
                     data-el="cta__title"
                     className="type-heading-xl tablet:type-display-sm desktop:type-display-lg min-[100rem]:type-display-xl"
-                    lines={["Tell us what you're building."]}
+                    lines={[title]}
                   />
                   <RevealLines
                     as="p"
                     delay={1}
                     data-el="cta__subtitle"
                     className="type-body-md max-w-107 tablet:type-body-lead desktop:type-heading-md"
-                    lines={["We'll map your payment flow and show you how Velant can handle it."]}
+                    lines={[subtitle]}
                   />
                 </div>
                 <Reveal variant="fade" delay={1.5}>

@@ -1,53 +1,28 @@
 import { lazy, Suspense } from 'react'
-import { Cta } from './components/blocks/Cta'
-import { Faq } from './components/blocks/Faq'
-import { Features } from './components/blocks/Features'
-import { Global } from './components/blocks/Global'
-import { Hero } from './components/blocks/Hero'
-import { Industries } from './components/blocks/Industries'
-import { Logos } from './components/blocks/Logos'
-import { NextSteps } from './components/blocks/NextSteps'
-import { Footer } from './components/ui/Footer'
-import { Header } from './components/ui/Header'
 import { useSmoothScroll } from './lib/smoothScroll'
+import HomePage from './pages/HomePage'
 
-// The living UI Kit is loaded only when /ui-kit is opened, so it does not weigh on the site itself.
+// The living UI Kit and the product pages are loaded only when they are opened, so they do not weigh on the home page.
 const UiKitPage = lazy(() => import('./ui-kit/UiKitPage'))
+const CryptoProcessingPage = lazy(() => import('./pages/crypto-processing/CryptoProcessingPage'))
 
-// The page is assembled from blocks (src/components/blocks/*) in the order of the Figma frame.
+/** The path of the page without the base of the site (`/vlt/` on GitHub Pages) and without a trailing slash. */
+const pagePath = () => window.location.pathname.slice(import.meta.env.BASE_URL.length - 1).replace(/\/$/, '')
+
+// One page per address: no router library is needed while the pages are few. Pages of products follow `docs/pages.md`.
+const pages: Record<string, ReturnType<typeof lazy>> = {
+  '/ui-kit': UiKitPage,
+  '/crypto-processing': CryptoProcessingPage,
+}
+
 export default function App() {
   useSmoothScroll()
 
-  if (window.location.pathname.replace(/\/$/, '') === `${import.meta.env.BASE_URL}ui-kit`) {
-    return (
-      <Suspense fallback={null}>
-        <UiKitPage />
-      </Suspense>
-    )
-  }
-
+  const Page = pages[pagePath()]
+  if (!Page) return <HomePage />
   return (
-    <>
-      {/* The first stop of the Tab key: shown only while it has focus; jumps over the header to the content. */}
-      <a
-        href="#main"
-        data-el="skip-link"
-        className="type-ui-sm sr-only rounded-pill bg-surface-inverse text-typography-inverse focus:not-sr-only focus:px-4 focus:py-3 focus:fixed focus:top-4 focus:left-4 focus:z-60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-brand"
-      >
-        Skip to content
-      </a>
-      <Header currentId="products" />
-      <main id="main" tabIndex={-1} className="focus:outline-none">
-        <Hero />
-        <Logos />
-        <Features />
-        <Industries />
-        <Global />
-        <NextSteps />
-        <Faq />
-        <Cta />
-      </main>
-      <Footer />
-    </>
+    <Suspense fallback={null}>
+      <Page />
+    </Suspense>
   )
 }
