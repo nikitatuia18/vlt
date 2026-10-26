@@ -4,6 +4,7 @@ import moonIcon from '../assets/icons/moon.svg'
 import sunIcon from '../assets/icons/sun.svg'
 import { Badge } from '../components/ui/Badge'
 import { ButtonLink } from '../components/ui/ButtonLink'
+import { Chip, Choice } from '../components/ui/Chip'
 import { Container } from '../components/ui/Container'
 import { ColumnFade } from '../components/ui/ColumnFade'
 import { Footer } from '../components/ui/Footer'
@@ -16,6 +17,7 @@ import { IconButton } from '../components/ui/IconButton'
 import { IconLink } from '../components/ui/IconLink'
 import { InteractiveDots } from '../components/ui/InteractiveDots'
 import { ThemeToggle } from '../components/ui/ThemeToggle'
+import { TypedLog } from '../components/ui/TypedLog'
 import { useTheme } from '../lib/theme'
 import { AppearanceSections, GlowSection, ThemeSceneSection } from './MotionShowcase'
 import { Section } from './Section'
@@ -127,6 +129,7 @@ function TextStyleRow({ name }: { name: string }) {
 const preventNavigation = (event: { preventDefault: () => void }) => event.preventDefault()
 
 export default function UiKitPage() {
+  const [chosen, setChosen] = useState('USDT')
   // The UI Kit is an internal page: keep it out of search results (the home page has no such tag).
   useEffect(() => {
     const previousTitle = document.title
@@ -262,6 +265,38 @@ export default function UiKitPage() {
           <div className="flex flex-wrap items-center gap-4">
             <Badge>New</Badge>
             <Badge icon="clock">Coming soon</Badge>
+          </div>
+        </Section>
+
+        <Section
+          id="choice-chips"
+          title="Choice chips"
+          note="Choice + Chip: a row of pills the visitor picks from (a coin, a currency, a term); the chosen one is dark. Used in the scenes of the product pages."
+        >
+          <Choice label="Coin">
+            {['USDT', 'USDC', 'DAI'].map((coin) => (
+              <Chip key={coin} selected={coin === chosen} onClick={() => setChosen(coin)}>
+                {coin}
+              </Chip>
+            ))}
+          </Choice>
+        </Section>
+
+        <Section
+          id="typed-log"
+          title="Typed console"
+          note="TypedLog: a small console that writes its lines character by character with a thin bar of progress; mount it again (a new key) to write it anew. Used in the scenes of the product pages."
+        >
+          <div className="max-w-110">
+            <TypedLog
+              data-el="ui-kit__typed-log"
+              instant={false}
+              lines={[
+                { text: 'invoice.paid', tone: 'event' },
+                { text: 'INV-1042: payment received', tone: 'text' },
+                { text: 'invoice.reconciled', tone: 'ok' },
+              ]}
+            />
           </div>
         </Section>
 

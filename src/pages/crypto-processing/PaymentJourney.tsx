@@ -1,14 +1,15 @@
 import { motion, useInView, useReducedMotion } from 'motion/react'
 import { useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from 'react'
+import { Chip, Choice } from '../../components/ui/Chip'
 import { Container } from '../../components/ui/Container'
 import { CornerDots } from '../../components/ui/CornerDots'
+import { TypedLog, type LogLine } from '../../components/ui/TypedLog'
 import { Reveal, RevealLines } from '../../motion/reveal'
 import { duration, easeOut } from '../../motion/tokens'
 import { useRevealOn } from '../../motion/useReveal'
 import { amounts, coins, formatAmount, networks, RATE, setSelection, SETTLEMENT_CURRENCY, settledAmount, useSelection } from './demo'
 import { flowContent } from './content'
 import { journeyScene } from './sceneText'
-import { TypedLog, type LogLine } from './TypedLog'
 
 /** Seconds the scene waits on a station, once its log is written, before it goes to the next one by itself. */
 const STEP_PAUSE = 1.6
@@ -277,30 +278,6 @@ export function PaymentJourney() {
 
 function PanelTitle({ children }: { children: ReactNode }) {
   return <h3 className="type-heading-sm text-typography-primary">{children}</h3>
-}
-
-function Choice({ label, children }: { label: string; children: ReactNode }) {
-  return (
-    <div className="flex flex-col gap-2 tablet:flex-row tablet:items-center tablet:gap-4">
-      <p className="type-ui-md text-typography-secondary tablet:w-24">{label}</p>
-      <div className="flex flex-wrap gap-2">{children}</div>
-    </div>
-  )
-}
-
-function Chip({ selected, onClick, children }: { selected: boolean; onClick: () => void; children: ReactNode }) {
-  return (
-    <button
-      type="button"
-      aria-pressed={selected}
-      onClick={onClick}
-      className={`type-ui-md rounded-pill px-4 py-2 ring-1 transition-colors ring-inset focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-brand ${
-        selected ? 'bg-surface-inverse text-typography-inverse ring-transparent' : 'bg-surface-subtle text-typography-primary ring-border-subtle hover:bg-surface-hover'
-      }`}
-    >
-      {children}
-    </button>
-  )
 }
 
 function Row({ label, value, strong = false }: { label: string; value: string; strong?: boolean }) {

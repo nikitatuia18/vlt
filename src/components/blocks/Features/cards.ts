@@ -21,7 +21,7 @@ export const mainCards: readonly FeatureCardData[] = [
     id: 'invoicing',
     title: 'Invoicing',
     description: 'Issue invoices in local currency and accept payments in crypto.',
-    href: '#invoicing',
+    href: href('invoicing'),
   },
   {
     id: 'ramp',
