@@ -110,7 +110,7 @@ test('round "Learn more" links: 48 px circles with an accessible name; coming-so
     const link = page.locator(`[data-el="features__card-${id}-cta"]`)
     await expect(link).toHaveAttribute('aria-label', `Learn more: ${title}`)
     // Crypto Processing and Invoicing have their pages; the others are placeholders until their pages are made.
-    const pages: Record<string, string> = { crypto: '/crypto-processing', invoicing: '/invoicing', ramp: '/ramp' }
+    const pages: Record<string, string> = { crypto: '/crypto-processing', invoicing: '/invoicing', ramp: '/ramp', payouts: '/mass-payouts' }
     await expect(link).toHaveAttribute('href', pages[id] ?? /^#/)
     const linkBox = (await link.boundingBox())!
     expect(linkBox.width).toBeCloseTo(48, 0)

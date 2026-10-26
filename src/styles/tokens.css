@@ -188,11 +188,17 @@
 
   /* Radius (derived from node properties in Figma: there are no radius variables). Named by px. */
   --radius-*: initial;
+  --radius-16: 1rem; /* small cards inside the scenes of the product pages (derived, not from Figma) */
+  --radius-24: 1.5rem; /* larger panels inside the scenes of the product pages (derived, not from Figma) */
   --radius-32: 2rem; /* hero__dash */
   --radius-40: 2.5rem; /* features cards */
   --radius-48: 3rem; /* hero__media */
   --radius-60: 3.75rem; /* EXCEPTION: cta banner, no close token, see docs/tokens-map.md (not from Figma variables) */
   --radius-pill: 9999px; /* buttons, menu items, round icon buttons */
+
+  /* Shadow (derived, not from Figma): a card that is picked up and carried (the recipients in Mass Payouts). It takes the shadow color of the theme. */
+  --shadow-*: initial;
+  --shadow-lifted: 0 2px 6px var(--color-surface-black-16), 0 16px 32px -8px var(--color-surface-black-16);
 
   /* Layout (derived): content column of the page, 1440 px in the desktop frame */
   --container-page: 90rem;

@@ -33,7 +33,7 @@ export const mainCards: readonly FeatureCardData[] = [
     id: 'payouts',
     title: 'Mass Payouts',
     description: 'Automate global payouts to teams and partners in a single workflow.',
-    href: '#mass-payouts',
+    href: href('mass-payouts'),
   },
 ]
 

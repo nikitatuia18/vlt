@@ -18,7 +18,20 @@ const toneClass: Record<LogLine['tone'], string> = {
  * The component is mounted again (a new `key`) whenever the lines must be written anew. `instant` shows everything at once
  * (reduced motion, appearance animations off). `onDone` is told when the last character is written (and with `false` while it is not).
  */
-export function TypedLog({ lines, instant, onDone, ...rest }: { lines: readonly LogLine[]; instant: boolean; onDone?: (done: boolean) => void; 'data-el': string }) {
+export function TypedLog({
+  lines,
+  instant,
+  onDone,
+  rounded = 'rounded-32',
+  ...rest
+}: {
+  lines: readonly LogLine[]
+  instant: boolean
+  onDone?: (done: boolean) => void
+  /** The corner radius class of the box (the default is the one of the cards of the product pages). */
+  rounded?: 'rounded-32' | 'rounded-24' | 'rounded-16'
+  'data-el': string
+}) {
   // Where each line starts on the common "typing line": the pause between lines is a few characters long.
   const starts: number[] = []
   let total = 0
@@ -43,7 +56,7 @@ export function TypedLog({ lines, instant, onDone, ...rest }: { lines: readonly 
   }, [done])
 
   return (
-    <div {...rest} data-done={done} className="flex flex-col gap-3 rounded-32 bg-surface-page p-4 ring-1 ring-border-subtle ring-inset">
+    <div {...rest} data-done={done} className={`flex flex-col gap-3 ${rounded} bg-surface-page p-4 ring-1 ring-border-subtle ring-inset`}>
       <div aria-hidden="true" className="h-0.5 overflow-hidden rounded-pill bg-border-subtle">
         <div className="h-full bg-typography-brand" style={{ width: `${Math.min(100, (typed / total) * 100)}%` }} />
       </div>
