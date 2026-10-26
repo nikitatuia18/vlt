@@ -434,7 +434,7 @@ test('Industries: the description of the card unrolls word by word when the card
 // on purpose: figures that count (CountUp), the cards on the globe (they have their own run in the timeline), the code window of Global (it types itself by characters), the glass badges
 // of the banner (they fly out as a whole), the scenes of the product page (`*-illustration`: micro interfaces with their own run), the pictures of the product cards (their texts are part of the animations of the designer,
 // docs/blocks/features.motion.md) and the menu of the narrow screens (it is closed).
-for (const path of ['/', '/crypto-processing', '/invoicing']) test(`every text of the page ${path} appears word by word, except the listed exceptions`, async ({ page }) => {
+for (const path of ['/', '/crypto-processing', '/invoicing', '/ramp']) test(`every text of the page ${path} appears word by word, except the listed exceptions`, async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
   await page.goto(path)
   await page.waitForTimeout(500)

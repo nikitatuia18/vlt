@@ -7,12 +7,14 @@ import HomePage from './pages/HomePage'
 const UiKitPage = lazy(() => import('./ui-kit/UiKitPage'))
 const CryptoProcessingPage = lazy(() => import('./pages/crypto-processing/CryptoProcessingPage'))
 const InvoicingPage = lazy(() => import('./pages/invoicing/InvoicingPage'))
+const RampPage = lazy(() => import('./pages/ramp/RampPage'))
 
 // One page per address: no router library is needed while the pages are few. Pages of products follow `docs/pages.md`.
 const pages: Record<string, ReturnType<typeof lazy>> = {
   '/ui-kit': UiKitPage,
   '/crypto-processing': CryptoProcessingPage,
   '/invoicing': InvoicingPage,
+  '/ramp': RampPage,
 }
 
 export default function App() {

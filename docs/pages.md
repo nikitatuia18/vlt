@@ -1,6 +1,6 @@
 # Страницы продуктов: как делать
 
-Первая страница — [Crypto Processing](pages/crypto-processing.md) (`/crypto-processing`). Вторая — [Invoicing](pages/invoicing.md) (`/invoicing`, [описание](blocks/invoicing.md)): hero «кабинет» и **один блок из трёх шагов** вместо двух блоков (число блоков про продукт не догма, `sections` принимает любые). По ним делаются остальные (Crypto on- and off-ramp, Mass Payouts).
+Первая страница — [Crypto Processing](pages/crypto-processing.md) (`/crypto-processing`). Вторая — [Invoicing](pages/invoicing.md) (`/invoicing`, [описание](blocks/invoicing.md)): hero «кабинет» и **один блок из трёх шагов** вместо двух блоков (число блоков про продукт не догма, `sections` принимает любые). Третья — [Crypto on- and off-ramp](pages/ramp.md) (`/ramp`, [описание](blocks/ramp.md)): hero «€ превращается в ₮» (облако точек с физикой) и два блока: выбор маршрута и цена до подтверждения (без станций и консоли, чтобы не повторять прошлые страницы). По ним делаются остальные (Mass Payouts).
 Страницы продуктов нет в Figma (область Figma по CLAUDE.md — только кадры главной): строим в коде на дизайн-системе, дизайнер оценивает в браузере.
 
 ## Из чего страница
