@@ -53,7 +53,8 @@ export function Hero() {
               <ButtonLink
                 href="#book-a-demo"
                 size="lg"
-                icon="export"
+                variant="dark"
+                icon="arrow"
                 labelReveal={{ atLoad: true, delay: 1.45 }}
                 data-el="hero__cta-primary"
                 className="w-full tablet:w-auto"

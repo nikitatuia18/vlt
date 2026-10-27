@@ -1,11 +1,11 @@
 import type { ComponentProps, ReactNode } from 'react'
-import exportIconSrc from '../../assets/icons/export.svg'
+import arrowUpRight from '../../assets/icons/arrow-up-right.svg'
 import { RevealLines, type TextReveal } from '../../motion/reveal'
 import { Icon } from './Icon'
 
-export type ButtonLinkVariant = 'primary' | 'secondary' | 'inverse'
+export type ButtonLinkVariant = 'primary' | 'dark' | 'secondary' | 'inverse'
 export type ButtonLinkSize = 'md' | 'lg'
-export type ButtonLinkIcon = 'export'
+export type ButtonLinkIcon = 'arrow'
 
 type ButtonLinkProps = Omit<ComponentProps<'a'>, 'children'> & {
   variant?: ButtonLinkVariant
@@ -19,7 +19,7 @@ type ButtonLinkProps = Omit<ComponentProps<'a'>, 'children'> & {
 }
 
 const baseClasses =
-  'inline-flex items-center justify-center rounded-pill whitespace-nowrap interactive ' +
+  'group inline-flex items-center justify-center rounded-pill whitespace-nowrap interactive ' +
   'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-brand'
 
 const sizeClasses: Record<ButtonLinkSize, string> = {
@@ -30,26 +30,23 @@ const sizeClasses: Record<ButtonLinkSize, string> = {
 const variantClasses: Record<ButtonLinkVariant, string> = {
   primary:
     'bg-surface-brand-default text-typography-static-w hover:bg-surface-brand-hover active:bg-surface-brand-active',
+  // The accent of the page body: the orange primary is kept for the header only.
+  dark: 'bg-surface-inverse text-typography-inverse hover:bg-surface-inverse/90 active:bg-surface-inverse/80',
   secondary:
     'bg-surface-subtle text-typography-primary ring-1 ring-inset ring-border-subtle hover:bg-surface-hover',
   // White in both themes (static colors): for a button on a brand-colored banner.
   inverse: 'bg-surface-static-w text-typography-static-b hover:bg-surface-static-w/90 active:bg-surface-static-w/80',
 }
 
-// Icon slot (px) per button size, and the glyph size inside the slot as drawn in Figma (insets 4.58% / 5.21%).
+// Icon slot (px) per button size; the arrow is drawn on a 24 px grid and scaled to the slot.
 const iconSlot: Record<ButtonLinkSize, 20 | 24> = { md: 20, lg: 24 }
-const exportGlyph = { 20: 18.1671, 24: 21.5 } as const
 
 function ButtonIcon({ name, size }: { name: ButtonLinkIcon; size: ButtonLinkSize }) {
   const slot = iconSlot[size]
-  const glyph = exportGlyph[slot]
   // Only one icon exists so far; add new ones to this switch together with their sizes.
-  if (name === 'export') {
-    return (
-      <span className="grid place-items-center" style={{ width: slot, height: slot }}>
-        <Icon src={exportIconSrc} width={glyph} height={glyph} />
-      </span>
-    )
+  if (name === 'arrow') {
+    // The same arrow as on the cards; the button is a `.group`, so the arrow nudges up and to the right on hover.
+    return <Icon src={arrowUpRight} width={slot} height={slot} className="interactive-nudge" />
   }
   return null
 }

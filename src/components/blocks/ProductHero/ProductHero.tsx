@@ -58,7 +58,8 @@ export function ProductHero({ product, title, subtitle, primaryCta, secondaryCta
               <ButtonLink
                 href={primaryCta.href}
                 size="lg"
-                icon="export"
+                variant="dark"
+                icon="arrow"
                 labelReveal={{ atLoad: true, delay: 1.45 }}
                 data-el={el('hero__cta-primary')}
                 className="w-full tablet:w-auto"

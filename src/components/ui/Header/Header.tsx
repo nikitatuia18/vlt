@@ -155,7 +155,7 @@ export function Header({
           <ThemeToggle data-el="header__theme-toggle" className="max-desktop:hidden" />
 
           <div data-el="header__buttons" className="hidden items-center gap-2 tablet:flex">
-            <ButtonLink href={primaryCta.href} icon="export" labelReveal={{ atLoad: true, delay: 0.9 }} data-el="header__cta-primary">
+            <ButtonLink href={primaryCta.href} icon="arrow" labelReveal={{ atLoad: true, delay: 0.9 }} data-el="header__cta-primary">
               {primaryCta.label}
             </ButtonLink>
             <ButtonLink
@@ -215,7 +215,7 @@ export function Header({
 
           <div className="flex flex-col gap-2 tablet:flex-row tablet:items-center">
             {/* On tablet the primary CTA is already in the bar. */}
-            <ButtonLink href={primaryCta.href} icon="export" onClick={closeMenu} className="tablet:hidden">
+            <ButtonLink href={primaryCta.href} icon="arrow" onClick={closeMenu} className="tablet:hidden">
               {primaryCta.label}
             </ButtonLink>
             <ButtonLink href={secondaryCta.href} variant="secondary" onClick={closeMenu}>

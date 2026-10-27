@@ -87,7 +87,7 @@ export function AppearanceSections() {
           <Tile name="labels" usage="ButtonLink and Badge: the label rises word by word by itself; labelReveal={{ delay, atLoad, when, open }} says when. The pill itself comes with Reveal variant=&quot;fade&quot;.">
             <div className="flex flex-wrap items-center justify-center gap-3">
               <Reveal variant="fade">
-                <ButtonLink href="#appearance" icon="export" onClick={(event) => event.preventDefault()} labelReveal={{ delay: 0.15 }}>
+                <ButtonLink href="#appearance" icon="arrow" onClick={(event) => event.preventDefault()} labelReveal={{ delay: 0.15 }}>
                   Book a demo
                 </ButtonLink>
               </Reveal>
@@ -104,7 +104,7 @@ export function AppearanceSections() {
                 One API for payments, crypto and payouts.
               </Reveal>
               <Reveal delay={0.12}>
-                <ButtonLink href="#appearance" icon="export" onClick={(event) => event.preventDefault()}>
+                <ButtonLink href="#appearance" icon="arrow" onClick={(event) => event.preventDefault()}>
                   Book a demo
                 </ButtonLink>
               </Reveal>
@@ -221,7 +221,7 @@ export function GlowSection() {
                 <GlowBackdrop hue={hue} visible className="absolute top-1/2 left-1/2 h-52 w-[130%] -translate-x-1/2 -translate-y-1/2" />
                 <div className="relative flex flex-col items-center gap-3 rounded-32 bg-surface-white-16 px-8 py-6 text-center ring-1 ring-border-subtle ring-inset">
                   <p className="type-heading-md text-typography-primary">{hue}</p>
-                  <ButtonLink href="#glow" variant="inverse" icon="export" onClick={(event) => event.preventDefault()}>
+                  <ButtonLink href="#glow" variant="inverse" icon="arrow" onClick={(event) => event.preventDefault()}>
                     Book a demo
                   </ButtonLink>
                 </div>

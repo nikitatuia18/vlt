@@ -80,7 +80,7 @@ export function Cta({ title = "Tell us what you're building.", subtitle = "We'll
                   />
                 </div>
                 <Reveal variant="fade" delay={1.5}>
-                  <ButtonLink href="#book-a-demo" variant="inverse" size="lg" icon="export" labelReveal={{ delay: 1.6 }} data-el="cta__cta-primary">
+                  <ButtonLink href="#book-a-demo" variant="inverse" size="lg" icon="arrow" labelReveal={{ delay: 1.6 }} data-el="cta__cta-primary">
                     Book a demo
                   </ButtonLink>
                 </Reveal>
