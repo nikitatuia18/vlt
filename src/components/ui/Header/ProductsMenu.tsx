@@ -10,13 +10,16 @@ import { productMenuItems, type ProductMenuItem } from './productMenu'
 /** The pointer may cross the gap between the item and the panel, or leave for a moment, without the panel closing. */
 const CLOSE_DELAY_MS = 150
 
+/** Three rows; the products go down the left column first, then down the right one. */
+const ROWS = 3
+
 const itemBaseClasses = 'flex gap-4 rounded-24 p-4 text-left'
 const itemLinkClasses = 'transition-colors hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-typography-brand'
 
-/** One product of the list: icon, number, name, description. The text rises word by word every time the panel opens. */
+/** One product of the list: icon, name, description. The text rises word by word every time the panel opens. */
 function ProductItem({ item, index, isOpen }: { item: ProductMenuItem; index: number; isOpen: boolean }) {
-  // The words follow the panel as it fades in; neighbours start one after another, row by row (two columns).
-  const delay = 0.12 + Math.floor(index / 2) * 0.1 + (index % 2) * 0.04
+  // The words follow the panel as it fades in; neighbours start one after another, row by row (the panel is filled column by column).
+  const delay = 0.12 + (index % ROWS) * 0.1 + Math.floor(index / ROWS) * 0.04
   const content = (
     <>
       <span aria-hidden="true" className="flex size-10 shrink-0 items-center justify-center rounded-16 bg-surface-page text-icon-primary ring-1 ring-inset ring-border-subtle">
@@ -24,8 +27,6 @@ function ProductItem({ item, index, isOpen }: { item: ProductMenuItem; index: nu
       </span>
       <span className="flex min-w-0 flex-col gap-1">
         <span className="flex items-center gap-3">
-          {/* The number is a label of the list (and the number of the icon file), set in the mono face like a code. */}
-          <RevealLines as="span" open={isOpen} delay={delay} lines={[item.number]} className="type-code-sm text-typography-brand" />
           <RevealLines as="span" open={isOpen} delay={delay} lines={[item.label]} className="type-ui-md text-typography-primary" />
           {!item.href && (
             <Badge size="sm" labelReveal={{ open: isOpen, delay: delay + 0.1 }}>
@@ -135,9 +136,9 @@ export function ProductsMenu({ children }: { children: (isOpen: boolean, panelId
               : { opacity: 0, y: -8, transitionEnd: { visibility: 'hidden' }, transition: { duration: fade, ease: easeOut } }
           }
           style={{ visibility: 'hidden', opacity: 0 }}
-          className="w-160 rounded-32 bg-surface-subtle p-3 shadow-lifted ring-1 ring-border-subtle ring-inset"
+          className="w-160 rounded-32 bg-surface-subtle p-3 shadow-menu ring-1 ring-border-subtle ring-inset"
         >
-          <ul className="grid grid-cols-2 gap-x-2 gap-y-1">
+          <ul className="grid grid-flow-col grid-cols-2 grid-rows-3 gap-x-2 gap-y-1">
             {productMenuItems.map((item, index) => (
               <ProductItem key={item.id} item={item} index={index} isOpen={isOpen} />
             ))}

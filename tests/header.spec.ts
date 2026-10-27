@@ -235,8 +235,8 @@ test.describe('Products dropdown (desktop)', () => {
     await expect(links).toHaveCount(4)
     expect(await links.evaluateAll((items) => items.map((item) => new URL((item as HTMLAnchorElement).href).pathname.replace(/\/$/, '')))).toEqual([
       '/crypto-processing',
-      '/invoicing',
       '/ramp',
+      '/invoicing',
       '/mass-payouts',
     ])
     await expect(page.locator(`${panel} li`)).toHaveCount(6)
