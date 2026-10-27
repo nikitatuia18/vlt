@@ -167,7 +167,7 @@ export function PayoutsIllustration() {
   }
 
   return (
-    <CardFrame>
+    <CardFrame lift={24}>
       <div ref={ref} className="absolute top-[216px] left-10 h-[271px] w-[388px]">
         <svg width="388" height="271" viewBox="0 0 388 271" fill="none" className="absolute inset-0 text-typography-primary">
           <g stroke="currentColor" strokeOpacity={0.12} strokeWidth={1}>

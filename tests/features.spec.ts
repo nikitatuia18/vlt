@@ -103,7 +103,7 @@ test('cards: radius 40, white and grey fills, 40 px padding on desktop', async (
   }
 })
 
-test('the whole white card is a link to its page (no arrow button); coming-soon cards have a badge instead', async ({ page }) => {
+test('the whole white card is a link to its page (the arrow in the corner is only a picture); coming-soon cards have a badge instead', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
   await page.goto('/')
   const pages: Record<string, string> = { crypto: '/crypto-processing', invoicing: '/invoicing', ramp: '/ramp', payouts: '/mass-payouts' }
@@ -112,13 +112,58 @@ test('the whole white card is a link to its page (no arrow button); coming-soon 
     expect(await link.evaluate((element) => element.tagName)).toBe('A')
     await expect(link).toHaveAttribute('href', pages[id])
     await expect(link).toContainText(title)
-    // One link per card, and no round button inside.
-    await expect(link.locator('a')).toHaveCount(0)
+    // One link per card, and no round button inside: the arrow is a plain box.
+    await expect(link.locator('a, button')).toHaveCount(0)
     await expect(page.locator(`[data-el="features__card-${id}-cta"]`)).toHaveCount(0)
+    expect(await link.locator(`[data-el="features__card-${id}-arrow"]`).evaluate((element) => element.tagName)).toBe('SPAN')
   }
   // A click on an empty part of the card (far from the text) opens its page.
   await card(page, 'invoicing').click({ position: { x: 200, y: 450 } })
   await expect(page).toHaveURL(/invoicing$/)
+})
+
+test('white card: the arrow circle sits in the bottom right corner; under the pointer the card turns grey and the circle stays white', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto('/')
+  const target = card(page, 'invoicing')
+  const arrow = page.locator('[data-el="features__card-invoicing-arrow"]')
+  await target.scrollIntoViewIfNeeded()
+  await page.waitForTimeout(1500) // the card has risen into place
+  const cardBox = (await target.boundingBox())!
+  const arrowBox = (await arrow.boundingBox())!
+  expect(arrowBox.width).toBeCloseTo(48, 0)
+  expect(cardBox.x + cardBox.width - (arrowBox.x + arrowBox.width)).toBeCloseTo(40, 0)
+  expect(cardBox.y + cardBox.height - (arrowBox.y + arrowBox.height)).toBeCloseTo(40, 0)
+  await expect(target).toHaveCSS('background-color', 'rgb(255, 255, 255)')
+  await target.hover({ position: { x: 200, y: 450 } })
+  await expect(target).toHaveCSS('background-color', 'rgb(243, 243, 243)') // surface-hover
+  await expect(arrow).toHaveCSS('background-color', 'rgb(255, 255, 255)') // surface-subtle: stays white
+  await expect(arrow.locator('> span')).toHaveCSS('animation-name', 'nudge-push')
+})
+
+test('the round arrow does not cover the pictures of the cards (all widths)', async ({ page }) => {
+  for (const width of [393, 768, 1024, 1280, 1440, 2560]) {
+    await page.setViewportSize({ width, height: 900 })
+    await page.goto('/')
+    await page.evaluate(() => document.fonts.ready)
+    // The pictures that stand low in the card: the invoice with its button, the figure 0.0 %, the lines to the recipients.
+    const pairs: [string, string][] = [
+      ['invoicing', '[data-el="features__invoicing-doc"]'],
+      ['ramp', '[data-el="features__ramp-counter"]'],
+      ['payouts', '[data-el^="features__payouts-recipient-"]'],
+    ]
+    for (const [id, pictureSelector] of pairs) {
+      await card(page, id).scrollIntoViewIfNeeded()
+      const arrow = (await page.locator(`[data-el="features__card-${id}-arrow"]`).boundingBox())!
+      for (const picture of await card(page, id).locator(pictureSelector).all()) {
+        const rect = await picture.boundingBox()
+        if (!rect || rect.width === 0) continue
+        const overlapX = Math.min(arrow.x + arrow.width, rect.x + rect.width) - Math.max(arrow.x, rect.x)
+        const overlapY = Math.min(arrow.y + arrow.height, rect.y + rect.height) - Math.max(arrow.y, rect.y)
+        expect(overlapX > 1 && overlapY > 1, `${id} at ${width}: ${JSON.stringify({ arrow, rect })}`).toBe(false)
+      }
+    }
+  }
 })
 
 test('white card grows 3 % under the pointer without moving its neighbours', async ({ page }) => {

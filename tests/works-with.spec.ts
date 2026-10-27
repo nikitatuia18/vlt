@@ -117,6 +117,23 @@ test('hover: the card grows 3 % and turns grey, the circle with the arrow stays 
   await expect(target).toHaveCSS('background-color', 'rgb(243, 243, 243)') // surface-hover
   await expect(arrow).toHaveCSS('background-color', 'rgb(255, 255, 255)') // surface-subtle
   await expect.poll(() => target.evaluate((element) => getComputedStyle(element).scale)).toBe('1.03')
+  // The arrow gives its short push (interactive-nudge) while the pointer is on the card, and stands still when the card is not hovered.
+  const picture = arrow.locator('> span')
+  await expect(picture).toHaveCSS('animation-name', 'nudge-push')
+  await page.mouse.move(5, 5)
+  await expect(picture).toHaveCSS('animation-name', 'none')
+})
+
+test('reduced motion: the card still turns grey, but nothing moves (no scale, no push of the arrow)', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto('/crypto-processing')
+  const target = card(page, 'invoicing')
+  await target.scrollIntoViewIfNeeded()
+  await target.hover({ position: { x: 100, y: 120 } })
+  await expect(target).toHaveCSS('background-color', 'rgb(243, 243, 243)')
+  await expect(target).toHaveCSS('scale', 'none')
+  await expect(page.locator('[data-el="works-with__card-invoicing-arrow"] > span')).toHaveCSS('animation-name', 'none')
 })
 
 test('dark theme: dark cards, a lighter hover, the circle darker than the hovered card', async ({ page }) => {

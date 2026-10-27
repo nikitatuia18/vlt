@@ -82,6 +82,7 @@ html.theme-ripple::view-transition-new(root) {
  *   interactive        buttons, pills, chips, round links
  *   interactive-card   a large clickable surface (a card): same grow, a lighter press; the card turns grey with `hover:bg-surface-hover`
  *   interactive-group  a part that answers when its parent (.group) is hovered or pressed (the round plus of an accordion row)
+ *   interactive-nudge  the arrow of a card: a short push up and to the right and back when the card (.group) is hovered (below)
  */
 :root {
   --scale-hover: 1.03;
@@ -140,11 +141,9 @@ html.theme-ripple::view-transition-new(root) {
 }
 
 /*
- * Three variants of the nudge of the arrow when its card (.group) is hovered, shown at /ui-kit for the designer to choose from; none is on the site yet.
- * The arrow moves with `translate`, so it adds to the scale of the card. Only where a pointer can hover and not under reduced motion.
- *   nudge-a   one step up and to the right, stays there while the pointer is on the card
- *   nudge-b   a short push up and to the right and back, once per hover
- *   nudge-c   leaves the circle up and to the right and comes back from the lower left, once per hover
+ * The arrow of a card answers the hover of the card (.group): one short push up and to the right and back, once per hover (the designer chose it
+ * among three variants on 2026-10-27). It moves with `translate`, so it adds to the scale of the card. Only where a pointer can hover and not under
+ * reduced motion. Put it on the arrow inside a `.group` card (`ArrowCircle` does).
  */
 @keyframes nudge-push {
   0%,
@@ -156,47 +155,11 @@ html.theme-ripple::view-transition-new(root) {
   }
 }
 
-@keyframes nudge-through {
-  0% {
-    translate: 0 0;
-  }
-  45% {
-    translate: 16px -16px;
-  }
-  46% {
-    translate: -16px 16px;
-  }
-  100% {
-    translate: 0 0;
-  }
-}
-
-@utility nudge-a {
-  transition: translate var(--interactive-duration) var(--interactive-ease);
-  @media (prefers-reduced-motion: no-preference) {
-    @media (hover: hover) {
-      :where(.group):hover & {
-        translate: 3px -3px;
-      }
-    }
-  }
-}
-
-@utility nudge-b {
+@utility interactive-nudge {
   @media (prefers-reduced-motion: no-preference) {
     @media (hover: hover) {
       :where(.group):hover & {
         animation: nudge-push 450ms var(--interactive-ease);
-      }
-    }
-  }
-}
-
-@utility nudge-c {
-  @media (prefers-reduced-motion: no-preference) {
-    @media (hover: hover) {
-      :where(.group):hover & {
-        animation: nudge-through 600ms var(--interactive-ease);
       }
     }
   }

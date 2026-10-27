@@ -132,7 +132,7 @@ export function InvoicingIllustration() {
   const tickStyle = { y: useTransform(frame, tickY), opacity: useTransform(frame, tickOpacity), scale: useTransform(frame, tickScale) }
 
   return (
-    <CardFrame>
+    <CardFrame shiftX={-76}>
       <div ref={ref} className="absolute top-[123px] left-[52px] h-[478px] w-[464px]">
         {/* The document: a card of 246 × 301 px (radius 24: a value of the design, not a token). */}
         <motion.div

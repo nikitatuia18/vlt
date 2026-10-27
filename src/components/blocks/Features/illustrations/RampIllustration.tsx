@@ -23,7 +23,7 @@ export function RampIllustration() {
   const y = useTransform(frame, (value) => -DISTANCE * scrollCurve(Math.min(1, value / FRAMES)))
 
   return (
-    <CardFrame anchor="bottom-right">
+    <CardFrame anchor="bottom-right" shiftX={-72}>
       <div ref={ref} data-el="features__ramp-counter" className="absolute top-[381px] left-[162px] h-32 w-58.5">
         <p className="flex h-32 font-display text-[6.75rem] leading-32 font-light tracking-[-0.02em] text-typography-primary">
           <span data-el="features__ramp-counter-prefix" className="w-22.25">

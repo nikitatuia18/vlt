@@ -7,6 +7,10 @@ const DESIGN_HEIGHT = 550
 type CardFrameProps = {
   /** Which corner of the card the picture keeps when the card is narrower than the design. */
   anchor?: 'bottom-left' | 'bottom-right'
+  /** Moves the picture sideways (negative: left), in real px; it keeps the picture clear of the round arrow in the corner of the card (48 px on every card width). */
+  shiftX?: number
+  /** Moves the picture up, in real px. */
+  lift?: number
   children: ReactNode
 }
 
@@ -15,7 +19,7 @@ type CardFrameProps = {
  * (tablet, phone) the whole picture shrinks around the lower corner, so that it keeps its place and nothing is cut.
  * Wider cards keep the design size. Pointer events go through.
  */
-export function CardFrame({ anchor = 'bottom-left', children }: CardFrameProps) {
+export function CardFrame({ anchor = 'bottom-left', shiftX = 0, lift = 0, children }: CardFrameProps) {
   const ref = useRef<HTMLDivElement>(null)
   const [scale, setScale] = useState(1)
 
@@ -34,7 +38,14 @@ export function CardFrame({ anchor = 'bottom-left', children }: CardFrameProps) 
     <div ref={ref} aria-hidden="true" className="pointer-events-none absolute inset-0">
       <div
         className={`absolute bottom-0 ${right ? 'right-0' : 'left-0'}`}
-        style={{ width: DESIGN_WIDTH, height: DESIGN_HEIGHT, transform: `scale(${scale})`, transformOrigin: right ? 'bottom right' : 'bottom left' }}
+        style={{
+          width: DESIGN_WIDTH,
+          height: DESIGN_HEIGHT,
+          // `translate` is not scaled with the picture, on purpose: the arrow it must clear keeps its size on every card width.
+          translate: `${shiftX}px ${-lift}px`,
+          transform: `scale(${scale})`,
+          transformOrigin: right ? 'bottom right' : 'bottom left',
+        }}
       >
         {children}
       </div>
