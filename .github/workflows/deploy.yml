@@ -31,6 +31,8 @@ jobs:
         env:
           # The site lives in a sub-folder of the domain (…github.io/vlt/), see vite.config.ts.
           VITE_BASE: /vlt/
+          # The Calendly event of the page "Book a demo": a variable of the repository (Settings -> Variables -> CALENDLY_URL); empty = the placeholder in the code.
+          VITE_CALENDLY_URL: ${{ vars.CALENDLY_URL }}
       # Pages has no fallback to index.html: a direct visit to /vlt/ui-kit would be a 404 without this copy.
       - run: cp dist/index.html dist/404.html
       - uses: actions/upload-pages-artifact@v3

@@ -1,6 +1,6 @@
 # Страница «Book a demo» (`/book-a-demo`)
 
-Не из Figma, собрана в коде на дизайн-системе. Готово 2026-10-27, ждёт оценки дизайнера и **реальной ссылки Calendly**.
+Не из Figma, собрана в коде на дизайн-системе. Готово и выложено 2026-10-27; подключение Calendly (аккаунт, ссылка) отдано разработке.
 
 ## Тексты
 Список и шаги — из ТЗ дизайнера дословно (в «Choose a convenient time slot below» исправлено «bellow»). Тексты карточки — **черновик** (ТЗ даёт смысл, не слова): «Your meeting is booked. / Check your email for the calendar invitation. See you on the call.», «Opening the calendar…», «We could not open the calendar. / Open the calendar in a new tab». Всё в `src/pages/book-a-demo/content.ts`.
@@ -20,3 +20,11 @@
 
 ## Тесты
 `tests/book-a-demo.spec.ts` (виджет подменяется заглушкой через `page.route`, сообщение — `MessageEvent` с нужным `origin`); страница в списке «текст по словам» `tests/reveal.spec.ts`. Реальную запись автотестом не проверить.
+
+## Для разработки: что осталось подключить
+Дизайнер не знает Calendly, подключение отдано разработчикам. Сделано: интерфейс, загрузка виджета, обработка конца записи. Осталось:
+1. Завести аккаунт и тип события Calendly («Demo»), взять ссылку `https://calendly.com/<аккаунт>/<событие>`.
+2. Записать её в переменную репозитория `CALENDLY_URL` (GitHub: Settings → Secrets and variables → Actions → Variables); `deploy.yml` передаёт её сборке как `VITE_CALENDLY_URL`. Пока пусто — стоит заглушка из `calendly.ts`, и календарь покажет ошибку Calendly.
+3. В Calendly: приглашение на почту и ссылка на звонок (конференц-связь) настраиваются в самом событии; на сайте это не требуется.
+4. Проверить живую запись один раз руками (тестом не проверить): календарь, выбор времени, сообщение «Your meeting is booked».
+5. По желанию: передавать имя и email из своей формы (`prefill` в `initInlineWidget`), метки `utm`, письмо/CRM по событию — на стороне разработки.

@@ -2,7 +2,7 @@
  * The link of the Calendly event the page books. PLACEHOLDER until the real one is given: set `VITE_CALENDLY_URL`
  * (`.env.local` locally, a variable of the build for the publication), see docs/pages/book-a-demo.md.
  */
-export const CALENDLY_URL: string = import.meta.env.VITE_CALENDLY_URL ?? 'https://calendly.com/velant-pay/demo'
+export const CALENDLY_URL: string = import.meta.env.VITE_CALENDLY_URL || 'https://calendly.com/velant-pay/demo'
 
 const WIDGET_SCRIPT = 'https://assets.calendly.com/assets/external/widget.js'
 const WIDGET_STYLE = 'https://assets.calendly.com/assets/external/widget.css'
