@@ -21,7 +21,7 @@ const tileClasses =
   'absolute top-0 left-0 isolate grid place-items-center rounded-pill bg-surface-subtle ring-1 ring-inset ring-border-subtle will-change-transform'
 const ICON_SIZE = 48
 const linkClasses =
-  'transition-colors hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-brand'
+  'interactive hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-brand'
 
 /**
  * Logo tiles with a wave running through them (Figma `logos__track`). The parent is the content column

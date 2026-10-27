@@ -18,7 +18,7 @@ import { ProductsMenu } from './ProductsMenu'
 /** Scrolling less than this many px in the other direction does not flip the header (a trembling finger or wheel). */
 const SCROLL_THRESHOLD = 6
 
-const linkBaseClasses = 'rounded-pill px-4 py-3 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-brand'
+const linkBaseClasses = 'rounded-pill px-4 py-3 interactive focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-brand'
 // The selected item is filled with the same color as a hovered one (grey in Light, lighter than the bar in Dark).
 const linkCurrentClasses = 'bg-surface-hover text-typography-primary'
 const linkDefaultClasses = 'text-typography-secondary hover:bg-surface-hover'

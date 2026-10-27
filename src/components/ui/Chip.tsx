@@ -17,7 +17,7 @@ export function Chip({ selected, onClick, children }: { selected: boolean; onCli
       type="button"
       aria-pressed={selected}
       onClick={onClick}
-      className={`type-ui-md rounded-pill px-4 py-2 ring-1 transition-colors ring-inset focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-brand ${
+      className={`type-ui-md rounded-pill px-4 py-2 ring-1 interactive ring-inset focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-brand ${
         selected ? 'bg-surface-inverse text-typography-inverse ring-transparent' : 'bg-surface-subtle text-typography-primary ring-border-subtle hover:bg-surface-hover'
       }`}
     >

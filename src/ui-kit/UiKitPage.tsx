@@ -192,7 +192,7 @@ export default function UiKitPage() {
         <Section
           id="buttons"
           title="Buttons"
-          note="ButtonLink: three variants (primary, secondary, inverse for a brand-colored banner) and two sizes (md 44 px in the header, lg 56 px in sections). Hover, active and focus states use the Figma tokens; try them with the mouse and the keyboard."
+          note="ButtonLink: three variants (primary, secondary, inverse for a brand-colored banner) and two sizes (md 44 px in the header, lg 56 px in sections). Hover, active and focus states use the Figma tokens. Every interactive element answers the pointer the same way: it grows 5 % on hover and shrinks to 96 % while pressed (class `interactive`, src/styles/index.css); try it with the mouse and the keyboard."
         >
           <div className="flex flex-col gap-6">
             {(['md', 'lg'] as const).map((size) => (

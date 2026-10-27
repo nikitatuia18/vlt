@@ -19,7 +19,7 @@ type ButtonLinkProps = Omit<ComponentProps<'a'>, 'children'> & {
 }
 
 const baseClasses =
-  'inline-flex items-center justify-center rounded-pill whitespace-nowrap transition-colors ' +
+  'inline-flex items-center justify-center rounded-pill whitespace-nowrap interactive ' +
   'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-brand'
 
 const sizeClasses: Record<ButtonLinkSize, string> = {
@@ -33,7 +33,7 @@ const variantClasses: Record<ButtonLinkVariant, string> = {
   secondary:
     'bg-surface-subtle text-typography-primary ring-1 ring-inset ring-border-subtle hover:bg-surface-hover',
   // White in both themes (static colors): for a button on a brand-colored banner.
-  inverse: 'bg-surface-static-w text-typography-static-b hover:bg-surface-static-w/90',
+  inverse: 'bg-surface-static-w text-typography-static-b hover:bg-surface-static-w/90 active:bg-surface-static-w/80',
 }
 
 // Icon slot (px) per button size, and the glyph size inside the slot as drawn in Figma (insets 4.58% / 5.21%).

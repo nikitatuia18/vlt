@@ -54,21 +54,22 @@ export function FeatureCard({ id, title, description, href, illustration, classN
       variant="card"
       delay={revealDelay}
       data-el={`features__card-${id}`}
-      className={`relative flex h-137.5 flex-col justify-between overflow-clip rounded-40 bg-surface-subtle p-6 ring-1 ring-inset ring-border-subtle tablet:p-10 ${className}`}
+      className={`group relative isolate flex h-137.5 flex-col justify-between overflow-clip rounded-40 bg-surface-subtle p-6 ring-1 ring-inset ring-border-subtle interactive-card tablet:p-10 motion-safe:has-focus-visible:scale-(--scale-hover) ${className}`}
     >
       {illustration && (
-        <div data-el={`features__${id}-illustration`} aria-hidden="true" className="pointer-events-none absolute inset-0">
+        <div data-el={`features__${id}-illustration`} aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
           {illustration}
         </div>
       )}
       <CardText id={id} title={title} description={description} className={textClassName} delay={revealDelay + 0.2} />
       {/* The "Learn more" text of the design is hidden (a 2 px wide clipped box): it is the accessible name. */}
+      {/* The link is not positioned, so its ::after stretches over the whole card: the card is clickable, there is still one link. */}
       <IconLink
         href={href}
         size="lg"
         aria-label={`Learn more: ${title}`}
         data-el={`features__card-${id}-cta`}
-        className="relative"
+        className="group-hover:bg-surface-hover after:absolute after:inset-0"
       >
         <span className="grid size-6 place-items-center">
           <Icon src={exportIconSrc} width={21.5} height={21.5} />

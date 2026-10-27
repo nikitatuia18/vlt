@@ -56,7 +56,7 @@ export function FaqItem({ item, isOpen, onToggle, isLast, index }: FaqItemProps)
           <span
             data-el={`faq__item-${id}-toggle`}
             aria-hidden="true"
-            className="relative inline-flex size-11 shrink-0 items-center justify-center rounded-pill bg-surface-subtle text-icon-primary ring-1 ring-border-subtle ring-inset transition-colors group-hover:bg-surface-hover"
+            className="relative inline-flex size-11 shrink-0 items-center justify-center rounded-pill bg-surface-subtle text-icon-primary ring-1 ring-border-subtle ring-inset interactive-group group-hover:bg-surface-hover"
           >
             {/* The plus turns into the minus and back (the vertical bar lies down); the picture is the Figma icons redrawn as two bars. */}
             <PlusMinusIcon isMinus={isOpen} />

@@ -74,6 +74,71 @@ html.theme-ripple::view-transition-new(root) {
   }
 }
 
+/*
+ * Interactive elements (docs/ui-kit.md, section 1, rule 6): whatever the visitor can press grows a little under the pointer and shrinks a little
+ * while pressed; the color changes by its own hover / active classes. One rule for all, so the whole site answers a touch in one way.
+ * Scale uses the `scale` property, not `transform`: it adds to the motion of the element (appearing, a wave) and does not replace it.
+ * Hover only where a pointer can hover; nothing moves under reduced motion (the color still changes); a disabled element stays still.
+ *   interactive        buttons, pills, chips, round links
+ *   interactive-card   a large clickable surface (a card): same grow, a lighter press
+ *   interactive-group  a part that answers when its parent (.group) is hovered or pressed (the round plus of an accordion row)
+ */
+:root {
+  --scale-hover: 1.05;
+  --scale-press: 0.96;
+  --scale-press-card: 0.98;
+  --interactive-duration: 200ms;
+  --interactive-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@utility interactive {
+  transition-property: color, background-color, border-color, scale;
+  transition-duration: var(--interactive-duration);
+  transition-timing-function: var(--interactive-ease);
+  @media (prefers-reduced-motion: no-preference) {
+    @media (hover: hover) {
+      &:not(:disabled, [aria-disabled="true"]):hover {
+        scale: var(--scale-hover);
+      }
+    }
+    &:not(:disabled, [aria-disabled="true"]):active {
+      scale: var(--scale-press);
+    }
+  }
+}
+
+@utility interactive-card {
+  transition-property: scale;
+  transition-duration: 300ms;
+  transition-timing-function: var(--interactive-ease);
+  @media (prefers-reduced-motion: no-preference) {
+    @media (hover: hover) {
+      &:hover {
+        scale: var(--scale-hover);
+      }
+    }
+    &:active {
+      scale: var(--scale-press-card);
+    }
+  }
+}
+
+@utility interactive-group {
+  transition-property: color, background-color, scale;
+  transition-duration: var(--interactive-duration);
+  transition-timing-function: var(--interactive-ease);
+  @media (prefers-reduced-motion: no-preference) {
+    @media (hover: hover) {
+      :where(.group):hover > & {
+        scale: var(--scale-hover);
+      }
+    }
+    :where(.group):active > & {
+      scale: var(--scale-press);
+    }
+  }
+}
+
 @layer base {
   /*
    * No automatic scroll anchoring: a block that gets shorter above the viewer (the Global block after its scene) is compensated in code
