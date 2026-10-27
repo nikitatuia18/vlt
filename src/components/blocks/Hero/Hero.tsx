@@ -1,4 +1,5 @@
 import { Reveal, RevealLines } from '../../../motion/reveal'
+import { href } from '../../../lib/route'
 import { ButtonLink } from '../../ui/ButtonLink'
 import { Container } from '../../ui/Container'
 import { InteractiveDots } from '../../ui/InteractiveDots'
@@ -51,7 +52,7 @@ export function Hero() {
           <div data-el="hero__actions" className="flex w-full flex-col gap-4 tablet:w-auto tablet:flex-row">
             <Reveal variant="fade" atLoad delay={1.35} className="w-full tablet:w-auto">
               <ButtonLink
-                href="#book-a-demo"
+                href={href('book-a-demo')}
                 size="lg"
                 variant="dark"
                 icon="arrow"

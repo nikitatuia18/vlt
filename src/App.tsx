@@ -9,6 +9,7 @@ const CryptoProcessingPage = lazy(() => import('./pages/crypto-processing/Crypto
 const InvoicingPage = lazy(() => import('./pages/invoicing/InvoicingPage'))
 const RampPage = lazy(() => import('./pages/ramp/RampPage'))
 const MassPayoutsPage = lazy(() => import('./pages/mass-payouts/MassPayoutsPage'))
+const BookDemoPage = lazy(() => import('./pages/book-a-demo/BookDemoPage'))
 
 // One page per address: no router library is needed while the pages are few. Pages of products follow `docs/pages.md`.
 const pages: Record<string, ReturnType<typeof lazy>> = {
@@ -17,6 +18,7 @@ const pages: Record<string, ReturnType<typeof lazy>> = {
   '/invoicing': InvoicingPage,
   '/ramp': RampPage,
   '/mass-payouts': MassPayoutsPage,
+  '/book-a-demo': BookDemoPage,
 }
 
 export default function App() {

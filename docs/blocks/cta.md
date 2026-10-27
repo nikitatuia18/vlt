@@ -4,7 +4,7 @@ Figma: кадр `page-home--desktop` → слой `cta` (`1110:9106`). Комп�
 Статус: готово. Планшет и мобильный размеры **выведены** (мобильный кадр не разбирали по просьбе дизайнера).
 
 ## Что в блоке
-Оранжевый баннер: слева заголовок «Tell us what you're building.», подзаголовок «We'll map your payment flow and show you how Velant can handle it.» и белая кнопка «Book a demo» (ведёт в заглушку `#book-a-demo`); справа человек, стоящий на нижней кромке баннера и поднимающийся над верхней на 96 px, и три стеклянных бейджа рядом: Pay-in / Pay-out, Multi-currency, Instant KYB. Первый бейдж стоит за человеком, два других перед ним (как в макете).
+Оранжевый баннер: слева заголовок «Tell us what you're building.», подзаголовок «We'll map your payment flow and show you how Velant can handle it.» и белая кнопка «Book a demo» (ведёт на `/book-a-demo`); справа человек, стоящий на нижней кромке баннера и поднимающийся над верхней на 96 px, и три стеклянных бейджа рядом: Pay-in / Pay-out, Multi-currency, Instant KYB. Первый бейдж стоит за человеком, два других перед ним (как в макете).
 
 ## Из макета
 Рамка секции снизу, колонка 1440 px с отступом 40 px, вертикальные отступы 140 px; баннер 496 px высотой (текст 272 + зазор 48 + кнопка 56 + паддинги по 60), радиус 60, заливка `surface-brand-default`; заголовок `display-xl` 80/88 шириной 600, подзаголовок `heading-md` 24/32 шириной 429, зазор 32; кнопка `lg` 56 px, белая (`surface-static-w`), текст `typography-static-b`; бейджи: стекло (`backdrop-blur` 8 px, `surface-black-16`, рамка `border-subtle`), белый текст, иконки `icon-card`, `icon-global`, `icon-security`.

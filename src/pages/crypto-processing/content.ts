@@ -1,6 +1,7 @@
 import type { FaqItemData } from '../../components/blocks/Faq/items'
 import type { IndustryItemData } from '../../components/blocks/Industries/items'
 import type { ProductContent } from '../ProductPage'
+import { href } from '../../lib/route'
 
 /*
  * Texts of the Crypto Processing page: DRAFT, written with the copywriter (docs/pages/crypto-processing.md, where the questions
@@ -8,7 +9,7 @@ import type { ProductContent } from '../ProductPage'
  * the text is written without it.
  */
 
-const bookDemo = { label: 'Book a demo', href: '#book-a-demo' }
+const bookDemo = { label: 'Book a demo', href: href('book-a-demo') }
 
 /** Industries: scenes of accepting crypto, in the order they open (the first and the last are light, the others glow). */
 const industries: readonly IndustryItemData[] = [

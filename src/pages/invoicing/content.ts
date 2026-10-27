@@ -1,13 +1,14 @@
 import type { FaqItemData } from '../../components/blocks/Faq/items'
 import type { IndustryItemData } from '../../components/blocks/Industries/items'
 import type { ProductContent } from '../ProductPage'
+import { href } from '../../lib/route'
 
 /*
  * Texts of the Invoicing page: DRAFT, written with the copywriter (docs/pages/invoicing.md, section "Тексты (версия 2)", where the questions
  * to the product are). [CONFIRM] = a fact we do not have yet: the text is written without it.
  */
 
-const bookDemo = { label: 'Book a demo', href: '#book-a-demo' }
+const bookDemo = { label: 'Book a demo', href: href('book-a-demo') }
 
 /** Industries: who bills across borders, in the order the cards open (the first and the last are light, the others glow). */
 const industries: readonly IndustryItemData[] = [

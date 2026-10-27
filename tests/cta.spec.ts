@@ -39,7 +39,7 @@ test('texts and the button of the design', async ({ page }) => {
   await expect(page.locator('[data-el="cta__badge-kyb-label"]')).toHaveText('Instant KYB')
   const button = page.locator('[data-el="cta__cta-primary"]')
   await expect(button).toHaveText('Book a demo')
-  await expect(button).toHaveAttribute('href', '#book-a-demo')
+  await expect(button).toHaveAttribute('href', '/book-a-demo')
 })
 
 test('desktop frame (2560): banner 496 px high, radius 60, padding 60; picture and badges where the design has them', async ({ page }) => {

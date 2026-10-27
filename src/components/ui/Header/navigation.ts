@@ -27,5 +27,5 @@ export const navItems: readonly NavItem[] = [
 /** The ids of the blocks of the menu, for the scroll spy. */
 export const navBlockIds: readonly string[] = navItems.map((item) => item.id)
 
-export const demoCta: HeaderCta = { label: 'Book a demo', href: '#book-a-demo' }
+export const demoCta: HeaderCta = { label: 'Book a demo', href: href('book-a-demo') }
 export const exploreCta: HeaderCta = { label: 'Explore products', href: href('', 'products') }

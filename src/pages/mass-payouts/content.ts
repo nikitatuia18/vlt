@@ -1,13 +1,14 @@
 import type { FaqItemData } from '../../components/blocks/Faq/items'
 import type { IndustryItemData } from '../../components/blocks/Industries/items'
 import type { ProductContent } from '../ProductPage'
+import { href } from '../../lib/route'
 
 /*
  * Texts of the Mass Payouts page: DRAFT, written with the copywriter (docs/pages/mass-payouts.md, where the questions to the product are).
  * Texts marked "from the design" are the ones of the home page. [CONFIRM] = a fact we do not have yet: the text is written without it.
  */
 
-const bookDemo = { label: 'Book a demo', href: '#book-a-demo' }
+const bookDemo = { label: 'Book a demo', href: href('book-a-demo') }
 
 /** Industries: who pays many people often, in the order the cards open (the first and the last are light, the others glow). */
 const industries: readonly IndustryItemData[] = [

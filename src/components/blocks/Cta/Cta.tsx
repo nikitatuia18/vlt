@@ -4,6 +4,7 @@ import iconGlobal from '../../../assets/cta/icon-global.svg'
 import iconSecurity from '../../../assets/cta/icon-security.svg'
 import person from '../../../assets/cta/img-cta-person.webp'
 import { Reveal, RevealLines } from '../../../motion/reveal'
+import { href } from '../../../lib/route'
 import { ButtonLink } from '../../ui/ButtonLink'
 import { Container } from '../../ui/Container'
 import { CornerDots } from '../../ui/CornerDots'
@@ -80,7 +81,7 @@ export function Cta({ title = "Tell us what you're building.", subtitle = "We'll
                   />
                 </div>
                 <Reveal variant="fade" delay={1.5}>
-                  <ButtonLink href="#book-a-demo" variant="inverse" size="lg" icon="arrow" labelReveal={{ delay: 1.6 }} data-el="cta__cta-primary">
+                  <ButtonLink href={href('book-a-demo')} variant="inverse" size="lg" icon="arrow" labelReveal={{ delay: 1.6 }} data-el="cta__cta-primary">
                     Book a demo
                   </ButtonLink>
                 </Reveal>
