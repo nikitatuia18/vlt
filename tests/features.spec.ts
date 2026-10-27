@@ -103,28 +103,47 @@ test('cards: radius 40, white and grey fills, 40 px padding on desktop', async (
   }
 })
 
-test('round "Learn more" links: 48 px circles with an accessible name; coming-soon cards have a badge instead', async ({ page }) => {
+test('the whole white card is a link to its page (no arrow button); coming-soon cards have a badge instead', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
   await page.goto('/')
+  const pages: Record<string, string> = { crypto: '/crypto-processing', invoicing: '/invoicing', ramp: '/ramp', payouts: '/mass-payouts' }
   for (const [id, title] of [['crypto', 'Crypto Processing'], ['invoicing', 'Invoicing'], ['ramp', 'Crypto to Cash'], ['payouts', 'Mass Payouts']]) {
-    const link = page.locator(`[data-el="features__card-${id}-cta"]`)
-    await expect(link).toHaveAttribute('aria-label', `Learn more: ${title}`)
-    // Crypto Processing and Invoicing have their pages; the others are placeholders until their pages are made.
-    const pages: Record<string, string> = { crypto: '/crypto-processing', invoicing: '/invoicing', ramp: '/ramp', payouts: '/mass-payouts' }
-    await expect(link).toHaveAttribute('href', pages[id] ?? /^#/)
-    const linkBox = (await link.boundingBox())!
-    expect(linkBox.width).toBeCloseTo(48, 0)
-    expect(linkBox.height).toBeCloseTo(48, 0)
-    // Bottom-left of the card, 40 px from its edges.
-    const cardBox = (await card(page, id).boundingBox())!
-    expect(linkBox.x - cardBox.x).toBeCloseTo(40, 0)
-    expect(cardBox.y + cardBox.height - (linkBox.y + linkBox.height)).toBeCloseTo(40, 0)
+    const link = card(page, id)
+    expect(await link.evaluate((element) => element.tagName)).toBe('A')
+    await expect(link).toHaveAttribute('href', pages[id])
+    await expect(link).toContainText(title)
+    // One link per card, and no round button inside.
+    await expect(link.locator('a')).toHaveCount(0)
+    await expect(page.locator(`[data-el="features__card-${id}-cta"]`)).toHaveCount(0)
   }
-  for (const id of ['banking', 'wallet']) {
+  // A click on an empty part of the card (far from the text) opens its page.
+  await card(page, 'invoicing').click({ position: { x: 200, y: 450 } })
+  await expect(page).toHaveURL(/invoicing$/)
+})
+
+test('white card grows 3 % under the pointer without moving its neighbours', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto('/')
+  const target = card(page, 'invoicing')
+  const neighbour = card(page, 'ramp')
+  await target.scrollIntoViewIfNeeded()
+  const before = { card: (await target.boundingBox())!, neighbour: (await neighbour.boundingBox())! }
+  await target.hover({ position: { x: 200, y: 450 } })
+  await expect.poll(() => target.evaluate((element) => getComputedStyle(element).scale)).toBe('1.03')
+  expect(await neighbour.boundingBox()).toEqual(before.neighbour)
+  expect((await target.boundingBox())!.width).toBeCloseTo(before.card.width * 1.03, 0)
+  await page.mouse.down()
+  await expect.poll(() => target.evaluate((element) => getComputedStyle(element).scale)).toBe('0.985')
+  // Letting go would click the link and leave the page.
+})
+
+for (const id of ['banking', 'wallet']) {
+  test(`grey card ${id}: no link, a badge`, async ({ page }) => {
+    await page.goto('/')
     await expect(card(page, id).locator('a')).toHaveCount(0)
     await expect(page.locator(`[data-el="features__card-${id}-badge"]`)).toHaveText('Coming soon')
-  }
-})
+  })
+}
 
 test('the four white cards have their animated picture (details: tests/features-illustrations.spec.ts); the grey ones have none', async ({ page }) => {
   await page.goto('/')

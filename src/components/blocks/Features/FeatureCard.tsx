@@ -1,9 +1,6 @@
 import type { ReactNode } from 'react'
-import exportIconSrc from '../../../assets/icons/export.svg'
 import { Reveal, RevealLines } from '../../../motion/reveal'
 import { Badge } from '../../ui/Badge'
-import { Icon } from '../../ui/Icon'
-import { IconLink } from '../../ui/IconLink'
 import type { FeatureCardData } from './cards'
 
 type CardTextProps = Pick<FeatureCardData, 'id' | 'title' | 'description'> & {
@@ -44,17 +41,18 @@ type FeatureCardProps = FeatureCardData & {
 }
 
 /**
- * White card with a round "Learn more" link. Figma `features__card-{id}`.
+ * White card, the whole card is the link (no arrow button: the designer's decision, 2026-10-27). Figma `features__card-{id}`.
  * Radius 40 and height 550 px are from the design; padding 24 below tablet and the same height on small screens are derived.
  */
 export function FeatureCard({ id, title, description, href, illustration, className = '', textClassName, revealDelay = 0 }: FeatureCardProps) {
   return (
     <Reveal
-      as="article"
+      as="a"
       variant="card"
+      href={href}
       delay={revealDelay}
       data-el={`features__card-${id}`}
-      className={`group relative isolate flex h-137.5 flex-col justify-between overflow-clip rounded-40 bg-surface-subtle p-6 ring-1 ring-inset ring-border-subtle interactive-card tablet:p-10 motion-safe:has-focus-visible:scale-(--scale-hover) ${className}`}
+      className={`relative isolate flex h-137.5 flex-col justify-between overflow-clip rounded-40 bg-surface-subtle p-6 ring-1 ring-inset ring-border-subtle interactive-card focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-typography-brand tablet:p-10 ${className}`}
     >
       {illustration && (
         <div data-el={`features__${id}-illustration`} aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
@@ -62,19 +60,6 @@ export function FeatureCard({ id, title, description, href, illustration, classN
         </div>
       )}
       <CardText id={id} title={title} description={description} className={textClassName} delay={revealDelay + 0.2} />
-      {/* The "Learn more" text of the design is hidden (a 2 px wide clipped box): it is the accessible name. */}
-      {/* The link is not positioned, so its ::after stretches over the whole card: the card is clickable, there is still one link. */}
-      <IconLink
-        href={href}
-        size="lg"
-        aria-label={`Learn more: ${title}`}
-        data-el={`features__card-${id}-cta`}
-        className="group-hover:bg-surface-hover after:absolute after:inset-0"
-      >
-        <span className="grid size-6 place-items-center">
-          <Icon src={exportIconSrc} width={21.5} height={21.5} />
-        </span>
-      </IconLink>
     </Reveal>
   )
 }

@@ -84,9 +84,9 @@ html.theme-ripple::view-transition-new(root) {
  *   interactive-group  a part that answers when its parent (.group) is hovered or pressed (the round plus of an accordion row)
  */
 :root {
-  --scale-hover: 1.05;
-  --scale-press: 0.96;
-  --scale-press-card: 0.98;
+  --scale-hover: 1.03;
+  --scale-press: 0.97;
+  --scale-press-card: 0.985;
   --interactive-duration: 200ms;
   --interactive-ease: cubic-bezier(0.22, 1, 0.36, 1);
 }

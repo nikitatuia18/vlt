@@ -5,7 +5,7 @@ export type FeatureCardData = {
   id: string
   title: string
   description: string
-  /** Link target of the round "Learn more" button. Placeholders: the design has no URLs. */
+  /** Link target of the whole card. Placeholders: the design has no URLs. */
   href: string
 }
 
