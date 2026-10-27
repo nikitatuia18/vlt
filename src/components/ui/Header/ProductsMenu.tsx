@@ -10,6 +10,9 @@ import { productMenuItems, type ProductMenuItem } from './productMenu'
 /** The pointer may cross the gap between the item and the panel, or leave for a moment, without the panel closing. */
 const CLOSE_DELAY_MS = 150
 
+/** Scrolling down by more than this between two scroll events closes the panel (same as the header's own threshold). */
+const SCROLL_DOWN_CLOSE_PX = 6
+
 /** Three rows; the products go down the left column first, then down the right one. */
 const ROWS = 3
 
@@ -60,7 +63,7 @@ function ProductItem({ item, index, isOpen }: { item: ProductMenuItem; index: nu
 
 /**
  * The dropdown of the menu item "Products" (desktop): a panel with the products of the site, two columns. It opens when the pointer is on
- * the item or on the panel, or when the item gets the keyboard focus, and closes with Escape, a click, a scroll, or when the pointer
+ * the item or on the panel, or when the item gets the keyboard focus, and closes with Escape, a click, a scroll down, or when the pointer
  * and the focus have left. The item stays a link to the block "Products" of the home page.
  * `children` draws the item; it gets the state of the panel for `aria-expanded` and the fill.
  */
@@ -83,12 +86,18 @@ export function ProductsMenu({ children }: { children: (isOpen: boolean, panelId
   }
   useEffect(() => () => clearTimeout(closeTimer.current), [])
 
-  // A panel that hangs open while the page moves under it (wheel, a click on the item that glides to the block) is in the way.
+  // The header slides away when the page goes down, and the panel must go with it. Only that direction closes it: after a scroll up the smooth scroll
+  // glides on for about a second, and the pointer that reaches the item meanwhile must still open the panel.
   useEffect(() => {
     if (!isOpen) return
-    const close = () => setIsOpen(false)
-    window.addEventListener('scroll', close, { passive: true })
-    return () => window.removeEventListener('scroll', close)
+    let lastY = window.scrollY
+    const closeOnScrollDown = () => {
+      const y = window.scrollY
+      if (y - lastY > SCROLL_DOWN_CLOSE_PX) setIsOpen(false)
+      lastY = y
+    }
+    window.addEventListener('scroll', closeOnScrollDown, { passive: true })
+    return () => window.removeEventListener('scroll', closeOnScrollDown)
   }, [isOpen])
 
   const onFocus = (event: FocusEvent<HTMLDivElement>) => {
@@ -114,7 +123,7 @@ export function ProductsMenu({ children }: { children: (isOpen: boolean, panelId
       role="presentation"
       data-el="header__products"
       data-open={isOpen}
-      className="relative"
+      className="relative flex"
       onMouseEnter={open}
       onMouseLeave={closeSoon}
       onFocus={onFocus}

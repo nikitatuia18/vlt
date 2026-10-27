@@ -268,6 +268,22 @@ test.describe('Products dropdown (desktop)', () => {
     await expect(page.locator(trigger)).toBeFocused()
   })
 
+  test('right after a scroll up the pointer on Products opens the panel at once (the smooth scroll is still gliding)', async ({ page }) => {
+    await page.mouse.move(700, 500)
+    await page.mouse.wheel(0, 3000)
+    await page.waitForTimeout(2500)
+    await page.mouse.wheel(0, -120)
+    await page.waitForTimeout(100)
+    await page.hover(trigger)
+    await page.waitForTimeout(500)
+    await expect(page.locator(panel)).toBeVisible()
+  })
+
+  test('the label of Products sits on the same line as the other menu items', async ({ page }) => {
+    const label = async (id: string) => (await page.locator(`[data-el="header__menu-item-${id}"] span`).first().boundingBox())!.y
+    expect(await label('products')).toBeCloseTo(await label('industries'), 0)
+  })
+
   test('a click on a product leads to its page; a click on Products closes the panel and still glides to the block', async ({ page }) => {
     await page.hover(trigger)
     await page.click('[data-el="header__products-item-invoicing"]')
