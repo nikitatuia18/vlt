@@ -20,7 +20,7 @@ export type ProductMenuItem = {
  * because that file is imported by the tests in Node, where the SVG imports below do not work.
  */
 export const productMenuItems: readonly ProductMenuItem[] = [
-  { id: 'crypto-processing', label: 'Crypto Processing', description: 'Accept, convert and settle crypto payments via a single integration.', icon: cryptoProcessingIcon, href: href('crypto-processing') },
+  { id: 'crypto-processing', label: 'Crypto Processing', description: 'Accept, convert and settle crypto via one integration.', icon: cryptoProcessingIcon, href: href('crypto-processing') },
   { id: 'crypto-to-cash', label: 'Crypto to Cash', description: 'Convert between your currency and crypto, in both directions.', icon: cryptoToCashIcon, href: href('ramp') },
   { id: 'invoicing', label: 'Invoicing', description: 'Issue invoices in your currency and accept payments in crypto.', icon: invoicingIcon, href: href('invoicing') },
   { id: 'mass-payouts', label: 'Mass Payouts', description: 'Pay teams and partners worldwide in one workflow.', icon: massPayoutsIcon, href: href('mass-payouts') },
