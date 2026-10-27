@@ -35,6 +35,7 @@
 | `ButtonLink` | кнопка-ссылка «таблетка» (`<a>`); подпись-строка появляется по словам | `labelReveal`: когда и с какой задержкой играет подпись; `variant`: `primary` \| `secondary` \| `inverse` (белая кнопка на баннере цвета бренда, статичные цвета, одинакова в обеих темах); `size`: `md` (44 px, шапка) \| `lg` (56 px, секции); `icon`: `'export'`; остальное как у `<a>` |
 | `IconButton` | круглая кнопка под одну иконку 24 px | `size`: `md` 44 px (шапка) \| `lg` 48 px; как у `<button>`; обязателен `aria-label` |
 | `IconLink` | то же, но ссылка (`<a>`), например стрелка в карточке | `size` как у `IconButton`; как у `<a>`; обязателен `aria-label` |
+| `ArrowCircle` | круг со стрелкой ↗ (`arrow-up-right.svg`, тонкая, 24 px) в углу карточки, которая вся является ссылкой; обычный `<span aria-hidden>`, не ссылка (ссылку в ссылку класть нельзя); круг белый (`surface-subtle`) и не меняет цвет, когда карточка серая от наведения | `className`; `arrowClassName` — отклик стрелки на hover карточки (варианты `nudge-a/b/c` в `/ui-kit`, раздел «Arrow circle», ждут выбора дизайнера); родитель — карточка с `group`; плашки Works great with и карточки Features |
 | `PlusMinusIcon` | плюс, который превращается в минус и обратно (вертикальная черта ложится на горизонтальную, `duration.morph` 0,4 с) | `isMinus`; `className`; цвет — текущий (`currentColor`); учитывает reduced motion |
 | `Badge` | маленькая пилюля-метка, например «Coming soon» | `icon`: `'clock'`; `size`: `'md'` / `'sm'` (малая, для списков и меню); как у `<span>` |
 | `ThemeToggle` | переключатель Light/Dark (солнце/луна) | как у `<button>`, кроме `children`/`onClick` |
@@ -59,6 +60,7 @@
 - **Industries (тёмные сцены)** дали (стекло и параллакс потом убрали, см. 8.2): `GlowBackdrop`, пять токенов `surface-glow-*` (исключение, см. tokens-map.md), карточку с прозрачной заливкой `surface-white-16` (стекло позже убрали, см. 8.2) и приём «часть страницы тёмная»: элемент с `data-theme="dark"` переворачивает все токены внутри себя. Всё это в витрине, раздел «Glow».
 - **Industries** дал: ColumnFade (линии колонки уходят вниз за блок и гаснут), нижние CornerDots и линию под блоком.
 - **Features** дал: `Badge`, `IconLink`, `IconButton` размера `lg`, `CornerDots`, радиус 40.
+- **Works great with** (2026-10-27) дал: `ArrowCircle` и тонкую стрелку `arrow-up-right.svg`, серый hover целой карточки (`hover:bg-surface-hover` вместе с `interactive-card`, у которого теперь в `transition` и цвет фона).
 
 ### Пока внутри блоков (вынести, когда повторится)
 - Карточки `FeatureCard` / `SoonCard` (`Features`): белая карточка с круглой ссылкой и серая с бейджем.

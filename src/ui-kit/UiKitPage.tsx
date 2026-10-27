@@ -19,6 +19,7 @@ import { InteractiveDots } from '../components/ui/InteractiveDots'
 import { ThemeToggle } from '../components/ui/ThemeToggle'
 import { TypedLog } from '../components/ui/TypedLog'
 import { useTheme } from '../lib/theme'
+import { ArrowShowcase } from './ArrowShowcase'
 import { AppearanceSections, GlowSection, ThemeSceneSection } from './MotionShowcase'
 import { Section } from './Section'
 import tokensCss from '../styles/tokens.css?raw'
@@ -260,6 +261,8 @@ export default function UiKitPage() {
             </p>
           </div>
         </Section>
+
+        <ArrowShowcase />
 
         <Section id="badges" title="Badges" note="Badge: a small pill label with an optional icon, for example &quot;Coming soon&quot;. `size=&quot;sm&quot;` is the small one, for lists and menus.">
           <div className="flex flex-wrap items-center gap-4">

@@ -130,6 +130,14 @@ export const ramp: ProductContent = {
     primaryCta: bookDemo,
     secondaryCta: { label: 'See how it works', href: '#how-it-works' },
   },
+  // DRAFT [CONFIRM: the lines about how the products work together]
+  worksWith: {
+    items: [
+      { product: 'crypto-processing', description: 'Accept crypto, cash out in one place.' },
+      { product: 'invoicing', description: 'Invoice in local currency, settle in crypto.' },
+      { product: 'mass-payouts', description: 'Fund a batch from your balance.' },
+    ],
+  },
   industries: { items: industries, activeId: 'fintech' },
   faq: { items: faqItems, openId: 'cost' },
   cta: { title: 'Ready to move money both ways?', subtitle: "We'll walk through a transfer from bank to wallet and back." },

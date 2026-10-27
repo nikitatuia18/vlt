@@ -128,6 +128,14 @@ export const massPayouts: ProductContent = {
     primaryCta: bookDemo,
     secondaryCta: { label: 'See how it works', href: '#how-it-works' },
   },
+  // DRAFT [CONFIRM: the lines about how the products work together]
+  worksWith: {
+    items: [
+      { product: 'crypto-to-cash', description: 'Top up in fiat, pay out in crypto.' },
+      { product: 'crypto-processing', description: 'Pay out straight from incoming crypto.' },
+      { product: 'invoicing', description: 'Pay suppliers against their invoices.' },
+    ],
+  },
   industries: { items: industries, activeId: 'payroll' },
   faq: { items: faqItems, openId: 'methods' },
   cta: { title: 'Ready to send your first batch?', subtitle: "We'll build a sample batch with your countries and payout methods." },

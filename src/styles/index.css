@@ -80,7 +80,7 @@ html.theme-ripple::view-transition-new(root) {
  * Scale uses the `scale` property, not `transform`: it adds to the motion of the element (appearing, a wave) and does not replace it.
  * Hover only where a pointer can hover; nothing moves under reduced motion (the color still changes); a disabled element stays still.
  *   interactive        buttons, pills, chips, round links
- *   interactive-card   a large clickable surface (a card): same grow, a lighter press
+ *   interactive-card   a large clickable surface (a card): same grow, a lighter press; the card turns grey with `hover:bg-surface-hover`
  *   interactive-group  a part that answers when its parent (.group) is hovered or pressed (the round plus of an accordion row)
  */
 :root {
@@ -108,7 +108,7 @@ html.theme-ripple::view-transition-new(root) {
 }
 
 @utility interactive-card {
-  transition-property: scale;
+  transition-property: scale, background-color;
   transition-duration: 300ms;
   transition-timing-function: var(--interactive-ease);
   @media (prefers-reduced-motion: no-preference) {
@@ -135,6 +135,69 @@ html.theme-ripple::view-transition-new(root) {
     }
     :where(.group):active > & {
       scale: var(--scale-press);
+    }
+  }
+}
+
+/*
+ * Three variants of the nudge of the arrow when its card (.group) is hovered, shown at /ui-kit for the designer to choose from; none is on the site yet.
+ * The arrow moves with `translate`, so it adds to the scale of the card. Only where a pointer can hover and not under reduced motion.
+ *   nudge-a   one step up and to the right, stays there while the pointer is on the card
+ *   nudge-b   a short push up and to the right and back, once per hover
+ *   nudge-c   leaves the circle up and to the right and comes back from the lower left, once per hover
+ */
+@keyframes nudge-push {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  40% {
+    translate: 4px -4px;
+  }
+}
+
+@keyframes nudge-through {
+  0% {
+    translate: 0 0;
+  }
+  45% {
+    translate: 16px -16px;
+  }
+  46% {
+    translate: -16px 16px;
+  }
+  100% {
+    translate: 0 0;
+  }
+}
+
+@utility nudge-a {
+  transition: translate var(--interactive-duration) var(--interactive-ease);
+  @media (prefers-reduced-motion: no-preference) {
+    @media (hover: hover) {
+      :where(.group):hover & {
+        translate: 3px -3px;
+      }
+    }
+  }
+}
+
+@utility nudge-b {
+  @media (prefers-reduced-motion: no-preference) {
+    @media (hover: hover) {
+      :where(.group):hover & {
+        animation: nudge-push 450ms var(--interactive-ease);
+      }
+    }
+  }
+}
+
+@utility nudge-c {
+  @media (prefers-reduced-motion: no-preference) {
+    @media (hover: hover) {
+      :where(.group):hover & {
+        animation: nudge-through 600ms var(--interactive-ease);
+      }
     }
   }
 }

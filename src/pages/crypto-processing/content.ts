@@ -124,6 +124,14 @@ export const cryptoProcessing: ProductContent = {
     primaryCta: bookDemo,
     secondaryCta: { label: 'See how it works', href: '#how-it-works' },
   },
+  // DRAFT [CONFIRM: the lines about how the products work together]
+  worksWith: {
+    items: [
+      { product: 'invoicing', description: 'Bill in local currency, get paid in crypto.' },
+      { product: 'crypto-to-cash', description: 'Crypto to your currency and back, from 0.5%.' },
+      { product: 'mass-payouts', description: 'Pay teams and partners in one batch.' },
+    ],
+  },
   industries: { items: industries, activeId: 'ecommerce' },
   faq: { items: faqItems, openId: 'receive' },
   cta: { title: 'Ready to accept crypto payments?', subtitle: "We'll map the path from your client's wallet to your account." },

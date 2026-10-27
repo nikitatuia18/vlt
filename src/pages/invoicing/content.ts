@@ -126,6 +126,14 @@ export const invoicing: ProductContent = {
     primaryCta: bookDemo,
     secondaryCta: { label: 'See how it works', href: '#how-it-works' },
   },
+  // DRAFT [CONFIRM: the lines about how the products work together]
+  worksWith: {
+    items: [
+      { product: 'crypto-processing', description: 'Accept the crypto behind every invoice.' },
+      { product: 'crypto-to-cash', description: 'Turn what you earn into local currency.' },
+      { product: 'mass-payouts', description: 'Pay contractors from the same balance.' },
+    ],
+  },
   industries: { items: industries, activeId: 'agencies' },
   faq: { items: faqItems, openId: 'payer' },
   cta: { title: 'Ready to get paid in crypto?', subtitle: "We'll show how an invoice goes from created to reconciled." },
