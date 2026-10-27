@@ -354,17 +354,17 @@ Jonas Weber,DE,600.00
 
 ## Industries (данные страницы; формат `Industries/items.ts`, кнопка у всех «Book a demo»)
 
-Порядок и свечение: `industry-first` и `agencies` светлые (без `glow`), остальные 2–6 по кругу `violet`, `pink`, `orange`, `blue`, `green`. Открыт при загрузке: `payroll`. Каждая строка до 54 знаков (самая длинная 48). Отобраны сценарии «платишь многим и часто»; «импорт-экспорт и поставщики» не вошли: сценарий уже есть на Ramp («Pay suppliers abroad in USDT») и на главной («Export/Import»).
+Порядок и свечение: `industry-first` и `agencies` светлые (без `glow`), остальные 2–6 по кругу `violet`, `pink`, `orange`, `blue`, `green`. Открыт при загрузке: `payroll`. Каждая строка до 54 знаков (самая длинная 48). Отобраны сценарии «платишь многим и часто»; «импорт-экспорт и поставщики» не вошли: сценарий уже есть на Ramp («Pay suppliers abroad in USDT») и на главной («Trade»).
 
 | # (id) | Заголовок | Строка 1 (с точкой) | Строка 2 (без точки) | Знаков (заг. / 1 / 2) | Статус |
 |---|---|---|---|---|---|
 | 1 (`industry-first`) | Industry-first scenarios | Mass payouts built around the people you pay. | Find the group that looks like yours | 24 / 45 / 36 | черновик (заголовок общий) |
-| 2 (`payroll`, violet) | Payroll and contractors | Pay your team and contractors in many countries. | Run the same list every month | 23 / 48 / 29 | черновик `[CONFIRM: слово «payroll» и что оно значит юридически (мы не работодатель и не EOR?); на главной в Industries уже есть «Operations and payroll» с близким смыслом]` |
-| 3 (`marketplaces`, pink) | Marketplaces and platforms | Pay out every seller in one run. | One report to reconcile every payout | 26 / 31 / 36 | черновик `[CONFIRM: отчёт для сверки]`; граница с Ramp (там «Pay users out to their local banks») |
-| 4 (`partners`, orange) | Partner and referral programs | Pay affiliates and partners every month. | Send commissions by bank, crypto, or card | 29 / 40 / 41 | черновик |
-| 5 (`gig`, blue) | Gig platforms and creators | Pay many workers and creators at once. | Add them from one file or one API call | 26 / 38 / 38 | черновик `[CONFIRM: API]` |
-| 6 (`refunds`, green) | Refunds and rebates | Return money to many customers in one batch. | Keep a record of each payout | 19 / 44 / 28 | черновик `[CONFIRM: возвраты на карты и счета клиентов]` |
-| 7 (`agencies`) | Agencies and studios | Pay freelancers when a project closes. | Send one list, not one transfer per person | 20 / 38 / 42 | черновик |
+| 2 (`payroll`, violet) | Payroll | Pay your team and contractors in many countries. | Run the same list every month | 23 / 48 / 29 | черновик `[CONFIRM: слово «payroll» и что оно значит юридически (мы не работодатель и не EOR?); на главной в Industries уже есть «Payroll» с близким смыслом]` |
+| 3 (`marketplaces`, pink) | Marketplaces | Pay out every seller in one run. | One report to reconcile every payout | 26 / 31 / 36 | черновик `[CONFIRM: отчёт для сверки]`; граница с Ramp (там «Pay users out to their local banks») |
+| 4 (`partners`, orange) | Affiliates | Pay affiliates and partners every month. | Send commissions by bank, crypto, or card | 29 / 40 / 41 | черновик |
+| 5 (`gig`, blue) | Creators | Pay many workers and creators at once. | Add them from one file or one API call | 26 / 38 / 38 | черновик `[CONFIRM: API]` |
+| 6 (`refunds`, green) | Refunds | Return money to many customers in one batch. | Keep a record of each payout | 19 / 44 / 28 | черновик `[CONFIRM: возвраты на карты и счета клиентов]` |
+| 7 (`agencies`) | Agencies | Pay freelancers when a project closes. | Send one list, not one transfer per person | 20 / 38 / 42 | черновик |
 
 ## Faq (формат `Faq/items.ts`: `question`, `lead`, `answer`)
 
@@ -437,7 +437,7 @@ Jonas Weber,DE,600.00
 - Дата ближайшего запуска в Schedule считается кодом (на 2026-10-26: Nov 1); если нужна статика, подставить любое 1-е число.
 - Пометка «Example amounts and recipients.» — предложение (как на Ramp); если лишняя, убрать.
 - Английский US; слово «licence» в Faq — как на главной (слово в слово).
-- «Payroll» оставлено в Industries 2 с пометкой: пересечение со словами главной («Operations and payroll») и юридическая нагрузка слова.
+- «Payroll» оставлено в Industries 2 с пометкой: пересечение со словами главной («Payroll») и юридическая нагрузка слова.
 
 ## Самое спорное (на решение дизайнера и продукта)
 

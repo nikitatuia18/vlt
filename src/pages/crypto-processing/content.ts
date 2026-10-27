@@ -26,13 +26,13 @@ const industries: readonly IndustryItemData[] = [
   {
     id: 'marketplaces',
     glow: 'pink',
-    title: 'Marketplaces and platforms',
+    title: 'Marketplaces',
     description: ['Let buyers pay in crypto on your platform.', 'See every payment status through the API'],
   },
   {
     id: 'luxury-automotive',
     glow: 'orange',
-    title: 'Luxury goods and Automotive',
+    title: 'Luxury',
     // [CONFIRM: limits on the size of a payment]
     description: ['Take high-value payments in crypto from buyers abroad.', 'Receive the settlement in your account'],
   },
@@ -46,13 +46,13 @@ const industries: readonly IndustryItemData[] = [
   {
     id: 'export-import',
     glow: 'green',
-    title: 'Export/Import',
+    title: 'Trade',
     // To check with the product: the comparison with banks.
     description: ['Get paid by buyers abroad in crypto.', 'Skip the chain of correspondent banks'],
   },
   {
     id: 'psps-acquirers',
-    title: 'PSPs and Acquirers',
+    title: 'PSPs',
     description: ['Offer crypto as a payment method to your merchants.', 'One integration instead of a separate crypto stack'],
   },
 ]

@@ -19,39 +19,39 @@ const industries: readonly IndustryItemData[] = [
   {
     id: 'agencies',
     glow: 'violet',
-    title: 'Agencies and media buyers',
+    title: 'Agencies',
     description: ['Invoice every client in their own currency.', 'See who opened it and who paid'],
   },
   {
     id: 'saas',
     glow: 'pink',
-    title: 'SaaS and subscriptions',
+    title: 'SaaS',
     // [CONFIRM: recurring invoices and subscriptions]
     description: ['Bill customers abroad in their local currency.', 'Every payment is matched to its invoice'],
   },
   {
     id: 'wholesale',
     glow: 'orange',
-    title: 'B2B trade and wholesale',
+    title: 'Wholesale',
     // [CONFIRM: limits on the size of an invoice]
     description: ['Send large invoices to buyers in other countries.', 'Share one link instead of bank details'],
   },
   {
     id: 'consulting',
     glow: 'blue',
-    title: 'Consulting and freelancers',
+    title: 'Consulting',
     description: ['Send a clean invoice to a client in any country.', 'Follow it from sent to paid'],
   },
   {
     id: 'marketplaces',
     glow: 'green',
-    title: 'Marketplaces and platforms',
+    title: 'Marketplaces',
     // [CONFIRM: events and API]
     description: ['Issue invoices to users in every market.', 'Get an event when each one is paid'],
   },
   {
     id: 'logistics',
-    title: 'Logistics and freight',
+    title: 'Logistics',
     description: ['Invoice shippers and carriers in local currency.', 'One payment link for every shipment'],
   },
 ]

@@ -19,40 +19,40 @@ const industries: readonly IndustryItemData[] = [
   {
     id: 'payroll',
     glow: 'violet',
-    title: 'Payroll and contractors',
-    // [CONFIRM: the word "payroll" and what it means legally (we are not an employer or an EOR?); the home page already has "Operations and payroll"]
+    title: 'Payroll',
+    // [CONFIRM: the word "payroll" and what it means legally (we are not an employer or an EOR?); the home page already has "Payroll"]
     description: ['Pay your team and contractors in many countries.', 'Run the same list every month'],
   },
   {
     id: 'marketplaces',
     glow: 'pink',
-    title: 'Marketplaces and platforms',
+    title: 'Marketplaces',
     // [CONFIRM: a report for reconciliation; the border with the ramp ("Pay users out to their local banks")]
     description: ['Pay out every seller in one run.', 'One report to reconcile every payout'],
   },
   {
     id: 'partners',
     glow: 'orange',
-    title: 'Partner and referral programs',
+    title: 'Affiliates',
     description: ['Pay affiliates and partners every month.', 'Send commissions by bank, crypto, or card'],
   },
   {
     id: 'gig',
     glow: 'blue',
-    title: 'Gig platforms and creators',
+    title: 'Creators',
     // [CONFIRM: the API]
     description: ['Pay many workers and creators at once.', 'Add them from one file or one API call'],
   },
   {
     id: 'refunds',
     glow: 'green',
-    title: 'Refunds and rebates',
+    title: 'Refunds',
     // [CONFIRM: refunds to cards and accounts of customers]
     description: ['Return money to many customers in one batch.', 'Keep a record of each payout'],
   },
   {
     id: 'agencies',
-    title: 'Agencies and studios',
+    title: 'Agencies',
     description: ['Pay freelancers when a project closes.', 'Send one list, not one transfer per person'],
   },
 ]

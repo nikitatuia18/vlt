@@ -42,7 +42,7 @@ export const footerColumns: readonly FooterColumn[] = [
       { id: 'merchants', label: 'Merchants', href: '#merchants' },
       { id: 'platforms', label: 'Platforms', href: '#platforms' },
       { id: 'complex-operations', label: 'Complex operations', href: '#complex-operations' },
-      { id: 'psps-acquirers', label: 'PSPs & Acquirers', href: '#psps-acquirers' },
+      { id: 'psps-acquirers', label: 'PSPs', href: '#psps-acquirers' },
     ],
   },
   {

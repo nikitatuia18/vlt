@@ -30,7 +30,7 @@
 - Отличие от «Run a test payment»: там три колонки и один платёж, здесь несколько счетов и их состояние.
 
 ## Общие блоки со своими текстами
-- **Industries** (до 7 карточек): Agencies and media buyers, SaaS and subscriptions, B2B trade and wholesale, Consulting and freelancers, Marketplaces and platforms, Logistics and freight (первая и последняя «светлые», остальные со свечением). Список уточнить у продукта.
+- **Industries** (до 7 карточек): Agencies, SaaS, Wholesale, Consulting, Marketplaces, Logistics (первая и последняя «светлые», остальные со свечением). Список уточнить у продукта.
 - **Faq:** кто может заплатить и нужен ли ему аккаунт; в каких валютах выставлять; что с недоплатой и переплатой; фиксируется ли курс и сколько живёт ссылка; напоминания и регулярные счета; брендинг и PDF; как счёт связывается с платежом (вебхуки, API); комиссии; срок подключения; лицензия и безопасность (из Crypto Processing).
 - **Cta:** вариант заголовка в духе «Ready to get paid in crypto?»; тексты пишет `copywriter`.
 
@@ -256,12 +256,12 @@ Header → `invoicing__hero` → Logos → `invoicing__steps` → Industries →
 | # (id) | Заголовок | Строка 1 (с точкой) | Строка 2 (без точки) | Знаков (заг. / 1 / 2) | Статус |
 |---|---|---|---|---|---|
 | 1 (`industry-first`) | Industry-first scenarios | Invoicing shaped around how your industry bills. | Pick the scenario closest to yours | 24 / 48 / 34 | черновик (заголовок общий) |
-| 2 (`agencies`, violet) | Agencies and media buyers | Invoice every client in their own currency. | See who opened it and who paid | 25 / 43 / 30 | черновик |
-| 3 (`saas`, pink) | SaaS and subscriptions | Bill customers abroad in their local currency. | Every payment is matched to its invoice | 22 / 46 / 39 | черновик `[CONFIRM: регулярные счета и подписки]` |
-| 4 (`wholesale`, orange) | B2B trade and wholesale | Send large invoices to buyers in other countries. | Share one link instead of bank details | 23 / 49 / 38 | черновик `[CONFIRM: лимиты на сумму счёта]` |
-| 5 (`consulting`, blue) | Consulting and freelancers | Send a clean invoice to a client in any country. | Follow it from sent to paid | 26 / 48 / 27 | черновик |
-| 6 (`marketplaces`, green) | Marketplaces and platforms | Issue invoices to users in every market. | Get an event when each one is paid | 26 / 40 / 34 | черновик `[CONFIRM: события и API]` |
-| 7 (`logistics`) | Logistics and freight | Invoice shippers and carriers in local currency. | One payment link for every shipment | 21 / 48 / 35 | черновик |
+| 2 (`agencies`, violet) | Agencies | Invoice every client in their own currency. | See who opened it and who paid | 25 / 43 / 30 | черновик |
+| 3 (`saas`, pink) | SaaS | Bill customers abroad in their local currency. | Every payment is matched to its invoice | 22 / 46 / 39 | черновик `[CONFIRM: регулярные счета и подписки]` |
+| 4 (`wholesale`, orange) | Wholesale | Send large invoices to buyers in other countries. | Share one link instead of bank details | 23 / 49 / 38 | черновик `[CONFIRM: лимиты на сумму счёта]` |
+| 5 (`consulting`, blue) | Consulting | Send a clean invoice to a client in any country. | Follow it from sent to paid | 26 / 48 / 27 | черновик |
+| 6 (`marketplaces`, green) | Marketplaces | Issue invoices to users in every market. | Get an event when each one is paid | 26 / 40 / 34 | черновик `[CONFIRM: события и API]` |
+| 7 (`logistics`) | Logistics | Invoice shippers and carriers in local currency. | One payment link for every shipment | 21 / 48 / 35 | черновик |
 
 Самая длинная строка 49 знаков (в Crypto Processing 54, на главной 61): вёрстка не страдает.
 

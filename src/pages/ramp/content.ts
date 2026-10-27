@@ -19,7 +19,7 @@ const industries: readonly IndustryItemData[] = [
   {
     id: 'fintech',
     glow: 'violet',
-    title: 'Fintech and neobanks',
+    title: 'Fintech',
     // [CONFIRM: may it be built into the product of a client; the API]
     description: ['Offer Crypto to Cash inside your product.', 'Connect once through the API'],
   },
@@ -33,27 +33,27 @@ const industries: readonly IndustryItemData[] = [
   {
     id: 'treasury',
     glow: 'orange',
-    title: 'Treasury and finance teams',
+    title: 'Treasury',
     // [CONFIRM: locking of the rate]
     description: ['Move company funds between bank and wallet.', 'Lock the rate before each transfer'],
   },
   {
     id: 'marketplaces',
     glow: 'blue',
-    title: 'Marketplaces and platforms',
+    title: 'Marketplaces',
     // [CONFIRM: a scenario for the clients of a client; the border with Mass Payouts]
     description: ['Fund user balances from bank transfers.', 'Pay users out to their local banks'],
   },
   {
     id: 'import-export',
     glow: 'green',
-    title: 'Import and export',
+    title: 'Trade',
     // [CONFIRM: the coin]
     description: ['Pay suppliers abroad in USDT.', 'Fund it from your own bank account'],
   },
   {
     id: 'agencies',
-    title: 'Agencies and freelancers',
+    title: 'Freelancers',
     // [CONFIRM: the rail of the payout]
     description: ['Turn crypto from clients into local currency.', 'Cash out to your bank by a local rail'],
   },

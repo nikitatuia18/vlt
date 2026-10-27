@@ -205,12 +205,12 @@ Header → `ramp__hero` → Logos → `ramp__flow` → Industries → Faq → Ct
 | # (id) | Заголовок | Строка 1 (с точкой) | Строка 2 (без точки) | Знаков (заг. / 1 / 2) | Статус |
 |---|---|---|---|---|---|
 | 1 (`industry-first`) | Industry-first scenarios | Crypto to Cash shaped around your industry. | Choose the flow that looks like yours | 24 / 45 / 37 | черновик (заголовок общий) |
-| 2 (`fintech`, violet) | Fintech and neobanks | Offer Crypto to Cash inside your product. | Connect once through the API | 19 / 43 / 30 | черновик `[CONFIRM: можно ли встраивать в продукт клиента; API]` |
+| 2 (`fintech`, violet) | Fintech | Offer Crypto to Cash inside your product. | Connect once through the API | 19 / 43 / 30 | черновик `[CONFIRM: можно ли встраивать в продукт клиента; API]` |
 | 3 (`crypto-native`, pink) | Crypto-native companies | Pay fiat costs from crypto you already hold. | Sell USDT, get money in your bank | 23 / 44 / 32 | черновик `[CONFIRM: монета]` |
-| 4 (`treasury`, orange) | Treasury and finance teams | Move company funds between bank and wallet. | Lock the rate before each transfer | 26 / 43 / 34 | черновик `[CONFIRM: фиксация курса]` |
-| 5 (`marketplaces`, blue) | Marketplaces and platforms | Fund user balances from bank transfers. | Pay users out to their local banks | 26 / 39 / 34 | черновик `[CONFIRM: сценарий для клиентов клиента; граница с Mass Payouts]` |
-| 6 (`import-export`, green) | Import and export | Pay suppliers abroad in USDT. | Fund it from your own bank account | 17 / 29 / 34 | черновик `[CONFIRM: монета]` |
-| 7 (`agencies`) | Agencies and freelancers | Turn crypto from clients into local currency. | Cash out to your bank by a local rail | 24 / 45 / 37 | черновик `[CONFIRM: рельс выплаты]` |
+| 4 (`treasury`, orange) | Treasury | Move company funds between bank and wallet. | Lock the rate before each transfer | 26 / 43 / 34 | черновик `[CONFIRM: фиксация курса]` |
+| 5 (`marketplaces`, blue) | Marketplaces | Fund user balances from bank transfers. | Pay users out to their local banks | 26 / 39 / 34 | черновик `[CONFIRM: сценарий для клиентов клиента; граница с Mass Payouts]` |
+| 6 (`import-export`, green) | Trade | Pay suppliers abroad in USDT. | Fund it from your own bank account | 17 / 29 / 34 | черновик `[CONFIRM: монета]` |
+| 7 (`agencies`) | Freelancers | Turn crypto from clients into local currency. | Cash out to your bank by a local rail | 24 / 45 / 37 | черновик `[CONFIRM: рельс выплаты]` |
 
 ## Faq (формат `Faq/items.ts`: `question`, `lead`, `answer`)
 

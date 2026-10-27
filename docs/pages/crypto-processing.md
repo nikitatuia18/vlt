@@ -138,7 +138,7 @@
 | Место | Что повторяется | Предложение (не применено) |
 |---|---|---|
 | Industries, E-commerce, строка 1: «Add crypto to your checkout through one integration.» | «through one integration» слово в слово повторяет заголовок hero | «Let shoppers pay in crypto at your checkout.» (43) |
-| Industries, PSPs and Acquirers, строка 2: «One integration instead of a separate crypto stack» | третий «one integration» на странице | допустимо (другой смысл); при желании «No separate crypto stack to build» (34) |
+| Industries, PSPs, строка 2: «One integration instead of a separate crypto stack» | третий «one integration» на странице | допустимо (другой смысл); при желании «No separate crypto stack to build» (34) |
 | Industries, Marketplaces, строка 2: «Follow every payment through the API» | эхо «Follow one payment» в блоке 1 | «See every payment status through the API» (39) |
 | Cta subtitle: «We'll map the path from your client's wallet to your account.» | путь «кошелёк клиента → счёт» уже в подзаголовке hero (при рекомендованном заголовке блока 1 «Follow one payment.» конфликта с блоком 1 нет) | оставить; если нужно меньше повторов: «We'll show you the payment path for your business.» (52) |
 | Cta title: «Ready to accept crypto payments?» | эхо заголовка hero | оставить: в конце страницы повтор сознательный |
@@ -290,11 +290,11 @@ POST /v1/payments
 |---|---|---|---|---|---|
 | 1 (`industry-first`) | Industry-first scenarios | Crypto acceptance shaped around your industry. | Pick a scenario and see it in a demo | 24 / 46 / 35 | черновик (заголовок с главной) |
 | 2 (`ecommerce`) | E-commerce | Add crypto to your checkout through one integration. | Shoppers pay from their wallet, you receive fiat | 10 / 52 / 48 | черновик |
-| 3 (`marketplaces`) | Marketplaces and platforms | Let buyers pay in crypto on your platform. | Follow every payment through the API | 26 / 42 / 36 | черновик |
-| 4 (`luxury-automotive`) | Luxury goods and Automotive | Take high-value payments in crypto from buyers abroad. | Receive the settlement in your account | 27 / 54 / 38 | черновик `[CONFIRM: лимиты на сумму платежа]` |
+| 3 (`marketplaces`) | Marketplaces | Let buyers pay in crypto on your platform. | Follow every payment through the API | 26 / 42 / 36 | черновик |
+| 4 (`luxury-automotive`) | Luxury | Take high-value payments in crypto from buyers abroad. | Receive the settlement in your account | 27 / 54 / 38 | черновик `[CONFIRM: лимиты на сумму платежа]` |
 | 5 (`real-estate`) | Real estate | Accept deposits and final payments in crypto. | Settle to your account in the currency you use | 11 / 45 / 46 | черновик `[CONFIRM: валюты расчёта]` |
-| 6 (`export-import`) | Export/Import | Get paid by buyers abroad in crypto. | Skip the chain of correspondent banks | 13 / 35 / 37 | черновик (проверить с продуктом: сравнение с банками) |
-| 7 (`psps-acquirers`) | PSPs and Acquirers | Offer crypto as a payment method to your merchants. | One integration instead of a separate crypto stack | 18 / 51 / 50 | черновик (отрасль взята из «Solutions» футера) |
+| 6 (`export-import`) | Trade | Get paid by buyers abroad in crypto. | Skip the chain of correspondent banks | 13 / 35 / 37 | черновик (проверить с продуктом: сравнение с банками) |
+| 7 (`psps-acquirers`) | PSPs | Offer crypto as a payment method to your merchants. | One integration instead of a separate crypto stack | 18 / 51 / 50 | черновик (отрасль взята из «Solutions» футера) |
 
 Кнопка у всех — «Book a demo» (11), как на главной. Заголовок блока общий: «From first payment to final payout.» (35, макет).
 
@@ -350,6 +350,6 @@ POST /v1/payments
 4. Вторая кнопка hero — «See how it works» (якорь на блок 1), потому что документации и страницы продуктов пока нет; запасной вариант «Explore products».
 5. Названия событий `payment.created` / `confirmed` / `settled` — из задания, не подтверждены продуктом.
 6. Тексты в сценах и лентах (hero, схема, лента событий) считаются частью иллюстраций и не появляются по словам; код печатается по символам, как в Global (нужно согласие пользователя).
-7. Industries: 7 пунктов, как на главной (вводный + 6 сценариев, ради совпадения с тёмными сценами: у пунктов 1 и 7 нет свечения); отрасли выбраны из главной и «Solutions» футера (Merchants, Platforms, PSPs & Acquirers). Startups и Operations and payroll на этой странице не повторяются.
+7. Industries: 7 пунктов, как на главной (вводный + 6 сценариев, ради совпадения с тёмными сценами: у пунктов 1 и 7 нет свечения); отрасли выбраны из главной и «Solutions» футера (Merchants, Platforms, PSPs). Startups и Payroll на этой странице не повторяются.
 8. Ответы FAQ про безопасность, лицензию и «custom» повторены с главной слово в слово, включая «licence» (UK).
 9. Длина: заголовки до 8 слов (самый длинный — «How a crypto payment reaches your account.»), описания 60–110 знаков; пункты Industries на 20 % не превышают строки главной (самая длинная строка 54 против 61 у главной).

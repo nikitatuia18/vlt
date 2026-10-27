@@ -47,7 +47,7 @@ test('texts: the title, the seven items and a description for each, no button (s
   await page.goto('/')
   await expect(page.getByRole('heading', { level: 2, name: 'From first payment to final payout.' })).toBeAttached()
   expect(industries.map((i) => i.title)).toEqual([
-    'Industry-first scenarios', 'E-commerce', 'Startups', 'Luxury goods and Automotive', 'Real estate', 'Export/Import', 'Operations and payroll',
+    'Industry-first scenarios', 'E-commerce', 'Startups', 'Luxury', 'Real estate', 'Trade', 'Payroll',
   ])
   for (const entry of industries) {
     await expect(page.locator(`[data-el="industries__item-${entry.id}-title"]`)).toHaveText(entry.title)
@@ -188,7 +188,7 @@ test('the open item is a white card (radius 32, padding 60 x 40) and the descrip
   expect(await color('industry-first')).toBe('rgb(24, 24, 24)') // typography-primary
   expect(await color('real-estate')).not.toBe('rgb(24, 24, 24)') // typography-tertiary (grey)
 
-  await scrollToProgress(page, 0.8) // Export/Import is open, the first item is closed again
+  await scrollToProgress(page, 0.8) // Trade is open, the first item is closed again
   await expect(details).toHaveAttribute('aria-hidden', 'true')
   expect((await details.boundingBox())!.height).toBeLessThan(2)
   expect(await inner.evaluate((el) => getComputedStyle(el).paddingLeft)).toBe('0px')
@@ -255,7 +255,7 @@ test('dark theme: the open card is dark and its title is white', async ({ page }
   await page.screenshot({ path: 'tests/artifacts/industries-desktop-1440-dark.png' })
 })
 
-// The dark scenes: the block turns dark while E-commerce, Startups, Luxury, Real estate or Export/Import is open,
+// The dark scenes: the block turns dark while E-commerce, Startups, Luxury, Real estate or Trade is open,
 // a glow of its own hue lies behind the glass card. The first and the last items stay light.
 const scenes: Record<string, string | null> = {
   'industry-first': null,

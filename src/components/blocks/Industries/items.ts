@@ -41,7 +41,7 @@ export const industries: readonly IndustryItemData[] = [
   {
     id: 'luxury-automotive',
     glow: 'orange',
-    title: 'Luxury goods and Automotive',
+    title: 'Luxury',
     description: ['Close high-value deals with instant crypto settlement.', 'No card limits, no waiting for funds'],
   },
   {
@@ -53,12 +53,12 @@ export const industries: readonly IndustryItemData[] = [
   {
     id: 'export-import',
     glow: 'green',
-    title: 'Export/Import',
+    title: 'Trade',
     description: ['Pay suppliers and get paid across borders in one workflow.', 'Skip slow correspondent banks'],
   },
   {
     id: 'operations-payroll',
-    title: 'Operations and payroll',
+    title: 'Payroll',
     description: ['Pay teams and contractors worldwide, on schedule.', 'One batch, many currencies'],
   },
 ]
