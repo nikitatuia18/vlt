@@ -215,3 +215,68 @@ test('the Header is one reusable component: the page chooses the current item (U
   // In the UI Kit they are not pinned: they stay in the flow.
   expect(await headers.nth(0).evaluate((el) => getComputedStyle(el).position)).toBe('relative')
 })
+test.describe('Products dropdown (desktop)', () => {
+  const panel = '[data-el="header__products-menu"]'
+  const trigger = '[data-el="header__menu-item-products"]'
+
+  test.beforeEach(async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 })
+    await page.goto('/')
+    await page.evaluate(() => document.fonts.ready)
+  })
+
+  test('opens on hover with six products: four links, two marked Soon without a link; closes when the pointer leaves', async ({ page }) => {
+    await expect(page.locator(panel)).toBeHidden()
+    await page.hover(trigger)
+    await expect(page.locator(panel)).toBeVisible()
+    await expect(page.locator(trigger)).toHaveAttribute('aria-expanded', 'true')
+
+    const links = page.locator(`${panel} a`)
+    await expect(links).toHaveCount(4)
+    expect(await links.evaluateAll((items) => items.map((item) => new URL((item as HTMLAnchorElement).href).pathname.replace(/\/$/, '')))).toEqual([
+      '/crypto-processing',
+      '/invoicing',
+      '/ramp',
+      '/mass-payouts',
+    ])
+    await expect(page.locator(`${panel} li`)).toHaveCount(6)
+    for (const id of ['banking', 'wallet']) {
+      const item = page.locator(`[data-el="header__products-item-${id}"]`)
+      await expect(item).toHaveAttribute('aria-disabled', 'true')
+      await expect(item).toContainText('Soon')
+    }
+    await expect(page.locator(panel)).toContainText('Crypto to Cash')
+    await page.screenshot({ path: 'tests/artifacts/header-products-menu-1440.png', clip: { x: 0, y: 0, width: 1440, height: 520 } })
+
+    // The pointer may cross the gap under the bar and stay on the panel.
+    await page.mouse.move(400, 130)
+    await page.waitForTimeout(400)
+    await expect(page.locator(panel)).toBeVisible()
+    await page.mouse.move(1200, 600)
+    await expect(page.locator(panel)).toBeHidden()
+  })
+
+  test('keyboard: Tab to the item opens it, Escape closes it and keeps the focus on the item; Tab goes on into the products', async ({ page }) => {
+    await page.focus(trigger)
+    await page.keyboard.press('Shift+Tab')
+    await page.keyboard.press('Tab')
+    await expect(page.locator(panel)).toBeVisible()
+    await page.keyboard.press('Tab')
+    await expect(page.locator('[data-el="header__products-item-crypto-processing"]')).toBeFocused()
+    await page.keyboard.press('Escape')
+    await expect(page.locator(panel)).toBeHidden()
+    await expect(page.locator(trigger)).toBeFocused()
+  })
+
+  test('a click on a product leads to its page; a click on Products closes the panel and still glides to the block', async ({ page }) => {
+    await page.hover(trigger)
+    await page.click('[data-el="header__products-item-invoicing"]')
+    await expect(page).toHaveURL(/\/invoicing$/)
+  })
+
+  test('there is no dropdown below the desktop width (the burger has its own menu)', async ({ page }) => {
+    await page.setViewportSize({ width: 1024, height: 800 })
+    await expect(page.locator(trigger)).toBeHidden()
+    await expect(page.locator(panel)).toBeHidden()
+  })
+})

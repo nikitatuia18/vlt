@@ -1,5 +1,5 @@
 /*
- * The demo values of the scenes of the Crypto on- and off-ramp page. They are for the picture only, NOT a list of what the product supports
+ * The demo values of the scenes of the Crypto to Cash page. They are for the picture only, NOT a list of what the product supports
  * and not its rates [CONFIRM: the fee (is 0.5% a fee or a margin of the rate), coins, networks, rails, the life of the quote].
  * Every scene keeps its own state: the hero, the routes and the quote do not follow one another. No file here imports pictures (flags, svg): the tests import this file (see docs/lessons.md); the flags are joined in by id from `Global/pins.ts`.
  */

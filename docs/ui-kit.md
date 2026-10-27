@@ -29,7 +29,7 @@
 | `IconButton` | круглая кнопка под одну иконку 24 px | `size`: `md` 44 px (шапка) \| `lg` 48 px; как у `<button>`; обязателен `aria-label` |
 | `IconLink` | то же, но ссылка (`<a>`), например стрелка в карточке | `size` как у `IconButton`; как у `<a>`; обязателен `aria-label` |
 | `PlusMinusIcon` | плюс, который превращается в минус и обратно (вертикальная черта ложится на горизонтальную, `duration.morph` 0,4 с) | `isMinus`; `className`; цвет — текущий (`currentColor`); учитывает reduced motion |
-| `Badge` | маленькая пилюля-метка, например «Coming soon» | `icon`: `'clock'`; как у `<span>` |
+| `Badge` | маленькая пилюля-метка, например «Coming soon» | `icon`: `'clock'`; `size`: `'md'` / `'sm'` (малая, для списков и меню); как у `<span>` |
 | `ThemeToggle` | переключатель Light/Dark (солнце/луна) | как у `<button>`, кроме `children`/`onClick` |
 | `Icon` | одноцветный SVG из Figma цветом текста | `src`, `width`, `height` (размер SVG из Figma) |
 | `Container` | колонка контента: содержимое до 1440 px, боковой отступ (16 / 32 / 80) снаружи | как у `<div>` |

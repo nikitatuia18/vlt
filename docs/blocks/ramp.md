@@ -1,4 +1,4 @@
-# Страница Crypto on- and off-ramp
+# Страница Crypto to Cash
 
 Адрес: `/ramp`. Структура и тексты (черновик): [../pages/ramp.md](../pages/ramp.md), раздел «Тексты (версия 2)»; как делать страницы продуктов: [../pages.md](../pages.md). У Mosta такой страницы нет, разбор не делался: взят их принцип «понятный экран продукта», сцены свои.
 Код: [src/pages/ramp/](../../src/pages/ramp/) · тесты: [tests/ramp.spec.ts](../../tests/ramp.spec.ts).

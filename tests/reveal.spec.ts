@@ -467,3 +467,25 @@ for (const path of ['/', '/crypto-processing', '/invoicing', '/ramp', '/mass-pay
   })
   expect(outside, 'texts that do not use the word reveal').toEqual([])
 })
+
+test('header: the words of the Products dropdown rise one after another each time it opens', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto('/')
+  await page.waitForTimeout(2500)
+  const description = '[data-el="header__products-item-invoicing"] p'
+  await page.hover('[data-el="header__menu-item-products"]')
+  await page.waitForTimeout(350)
+  const early = await wordShifts(page, description)
+  expect(early.length).toBeGreaterThan(6)
+  expect(early[0]).toBeLessThan(early.at(-1)!)
+  const farthest = async () => Math.max(...(await wordShifts(page, description)).map(Math.abs))
+  await expect.poll(farthest, SETTLE).toBeCloseTo(0, 1)
+
+  // Closed, the words go back under their masks; opened again, they play again.
+  await page.mouse.move(1200, 700)
+  await expect.poll(async () => Math.max(...(await wordShifts(page, description))), { timeout: 6000 }).toBeGreaterThan(3)
+  await page.hover('[data-el="header__menu-item-products"]')
+  await page.waitForTimeout(350)
+  expect(Math.max(...(await wordShifts(page, description)))).toBeGreaterThan(3)
+  await expect.poll(farthest, SETTLE).toBeCloseTo(0, 1)
+})

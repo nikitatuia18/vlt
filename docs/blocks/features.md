@@ -4,7 +4,7 @@ Figma: кадр `page-home--desktop` → слой `features` (`1110:8798`). Ко
 Статус: блок собран, **иллюстрации и анимации во всех четырёх белых карточках готовы (2026-10-21)** — спек [features.motion.md](features.motion.md), код `src/components/blocks/Features/illustrations/`, тесты `tests/features-illustrations.spec.ts`. Карточки держат размер макета; иллюстрации лежат в слоте `illustration`.
 
 ## Что в блоке
-Заголовок: «Accept. Move. Hold. Pay out.» + «Everything you need to move money.» Сетка карточек: Crypto Processing (на две колонки), Invoicing, Crypto on- and off-ramp, Mass Payouts и колонка из двух серых карточек Banking и Wallet с бейджем «Coming soon». У четырёх белых карточек внизу слева круглая ссылка-стрелка («Learn more»), у серых — бейдж вместо ссылки. Внизу колонки две декоративные точки 5 px (`CornerDots`): они стоят строго в углу, в центре пересечения нижней границы секции и линий колонки (положение проверяют тесты).
+Заголовок: «Accept. Move. Hold. Pay out.» + «Everything you need to move money.» Сетка карточек: Crypto Processing (на две колонки), Invoicing, Crypto to Cash, Mass Payouts и колонка из двух серых карточек Banking и Wallet с бейджем «Coming soon». У четырёх белых карточек внизу слева круглая ссылка-стрелка («Learn more»), у серых — бейдж вместо ссылки. Внизу колонки две декоративные точки 5 px (`CornerDots`): они стоят строго в углу, в центре пересечения нижней границы секции и линий колонки (положение проверяют тесты).
 
 ## Размеры по макету (десктоп, кадр 2560)
 | Элемент | Значение |
@@ -38,7 +38,7 @@ Figma: кадр `page-home--desktop` → слой `features` (`1110:8798`). Ко
 |---|---|---|
 | Crypto Processing | `img-tesseract` (`1213:723`) | точечный фон `InteractiveDots` (вместо статичной `features__card-crypto-bg`) и тессеракт: живой 4D-куб на canvas вместо гифки дизайнера (6,9 МБ); светлый в Dark |
 | Invoicing | `features__invoicing-illustration` (`1110:8815`) | документ влетает, наполняется, кнопка «Send invoice» нажимается, лоадер, галочка, документ улетает; цикл 8,2 с |
-| Crypto on- and off-ramp | `features__ramp-counter` (`1110:8853`) | счётчик 0.0% → 0.5% за 1,2 с; шрифт Manrope Light 108 px вместо Urbanist Light 120 (в проекте нет Urbanist) |
+| Crypto to Cash | `features__ramp-counter` (`1110:8853`) | счётчик 0.0% → 0.5% за 1,2 с; шрифт Manrope Light 108 px вместо Urbanist Light 120 (в проекте нет Urbanist) |
 | Mass Payouts | `features__payouts-illustration` (`1110:8871`) | штрихи бегут от монеты к способам, вспышка рамок, штрихи к аватарам; 1,6 с, пауза 2,4 с, повтор |
 Ресурсы — `src/assets/features/` (аватары 84 × 84, монета, иконки банка/карты/крипты, галочка #16A34A — цвет жёстко в макете). Данные Figma Motion и тексты — `docs/figma-motion/features/`. Тексты внутри иллюстраций («Invoice #2144», «$12,263.00», «Due in 7 days», «Send invoice», «Bank transfer»…) — часть картинок, лежат в коде иллюстраций. Размеры текста внутри картинок (сумма 28 px, счётчик 108 px) — размеры иллюстрации, а не стили страницы; радиус документа 24 — значение макета.
 

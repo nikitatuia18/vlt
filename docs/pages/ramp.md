@@ -1,4 +1,4 @@
-# Страница Crypto on- and off-ramp: структура и тексты (черновик, 2026-10-26)
+# Страница Crypto to Cash: структура и тексты (черновик, 2026-10-26)
 
 **Сцены версии 1 (hero «Каждая точка — 5 €», блок `ramp__flow`) устарели; актуальные тексты сцен — в разделе «Тексты (версия 2, 2026-10-26)» в конце файла. Faq, Industries, Cta, meta и заголовок hero из версии 1 остаются в силе.**
 
@@ -6,7 +6,7 @@
 Образцы: [invoicing.md](invoicing.md) (раздел «Тексты (версия 2)»), [crypto-processing.md](crypto-processing.md); как делать страницы — [../pages.md](../pages.md). Референс Mosta не использован: у них страницы ramp нет.
 Знаки считаются с пробелами и знаками препинания (стрелка `→` и точка `·` — по одному знаку). `[CONFIRM]` = нужен факт продукта: в `content.ts` текст пойдёт без факта, метка останется комментарием, на сайт она не попадает. Слов «Demo» на странице нет (кроме кнопки «Book a demo» и фразы «during the demo» в ответах Faq, как на двух готовых страницах).
 
-Опора на факты (только из сайта, макета и кода): карточка главной «Crypto on- and off-ramp. Convert seamlessly between fiat and crypto with rates from 0.5%.» (`Features/cards.ts`; в навыке стоит устаревшее «от 0.0%», берём 0.5% `[CONFIRM]`); цифры макета «99.9% Target SLA uptime», «15+ Direct local rails», «<1 sec API processing time» (`Global.tsx`); шаги подключения демо → KYB → запуск → первая боевая транзакция; «From 1 week» для интеграции; лицензия (ответ главной слово в слово). Названия рельсов — из `Global/pins.ts`: для EUR там «SEPA / INSTANT», для USD «ACH / Fedwire / FedNow», для BRL «Pix / TED»; на странице в картинке использован только `SEPA` (EUR), с `[CONFIRM]`.
+Опора на факты (только из сайта, макета и кода): карточка главной «Crypto to Cash. Convert seamlessly between fiat and crypto with rates from 0.5%.» (`Features/cards.ts`; в навыке стоит устаревшее «от 0.0%», берём 0.5% `[CONFIRM]`); цифры макета «99.9% Target SLA uptime», «15+ Direct local rails», «<1 sec API processing time» (`Global.tsx`); шаги подключения демо → KYB → запуск → первая боевая транзакция; «From 1 week» для интеграции; лицензия (ответ главной слово в слово). Названия рельсов — из `Global/pins.ts`: для EUR там «SEPA / INSTANT», для USD «ACH / Fedwire / FedNow», для BRL «Pix / TED»; на странице в картинке использован только `SEPA` (EUR), с `[CONFIRM]`.
 
 ## Решено дизайнером (не пересматривается)
 - Hero-сцена «Каждая точка — 5 €»: слева банк, справа кошелёк, 200 точек = 1 000 €, 1 точка (0,5 %) отделяется оранжевой и уходит в сторону (комиссия); кнопка Flip меняет направление, посетитель вводит сумму.
@@ -204,8 +204,8 @@ Header → `ramp__hero` → Logos → `ramp__flow` → Industries → Faq → Ct
 
 | # (id) | Заголовок | Строка 1 (с точкой) | Строка 2 (без точки) | Знаков (заг. / 1 / 2) | Статус |
 |---|---|---|---|---|---|
-| 1 (`industry-first`) | Industry-first scenarios | On- and off-ramp shaped around your industry. | Choose the flow that looks like yours | 24 / 45 / 37 | черновик (заголовок общий) |
-| 2 (`fintech`, violet) | Fintech and neobanks | Offer on- and off-ramp inside your product. | Connect once through the API | 19 / 43 / 30 | черновик `[CONFIRM: можно ли встраивать в продукт клиента; API]` |
+| 1 (`industry-first`) | Industry-first scenarios | Crypto to Cash shaped around your industry. | Choose the flow that looks like yours | 24 / 45 / 37 | черновик (заголовок общий) |
+| 2 (`fintech`, violet) | Fintech and neobanks | Offer Crypto to Cash inside your product. | Connect once through the API | 19 / 43 / 30 | черновик `[CONFIRM: можно ли встраивать в продукт клиента; API]` |
 | 3 (`crypto-native`, pink) | Crypto-native companies | Pay fiat costs from crypto you already hold. | Sell USDT, get money in your bank | 23 / 44 / 32 | черновик `[CONFIRM: монета]` |
 | 4 (`treasury`, orange) | Treasury and finance teams | Move company funds between bank and wallet. | Lock the rate before each transfer | 26 / 43 / 34 | черновик `[CONFIRM: фиксация курса]` |
 | 5 (`marketplaces`, blue) | Marketplaces and platforms | Fund user balances from bank transfers. | Pay users out to their local banks | 26 / 39 / 34 | черновик `[CONFIRM: сценарий для клиентов клиента; граница с Mass Payouts]` |
@@ -241,7 +241,7 @@ Header → `ramp__hero` → Logos → `ramp__flow` → Industries → Faq → Ct
 
 | Поле | Текст | Знаков | Статус |
 |---|---|---|---|
-| `meta.title` | Crypto on- and off-ramp — Velant Pay | 36 | черновик (как у Crypto Processing: название продукта с карточки главной) |
+| `meta.title` | Crypto to Cash — Velant Pay | 36 | черновик (как у Crypto Processing: название продукта с карточки главной) |
 | `meta.description` | Convert between fiat and crypto with rates from 0.5%. Deposit from your bank, receive crypto in your wallet, or pay out to your bank. | 133 | черновик `[CONFIRM: 0.5%, payout на банк]` |
 
 ## Вопросы к продукту `[CONFIRM]`
@@ -270,7 +270,7 @@ Header → `ramp__hero` → Logos → `ramp__flow` → Industries → Faq → Ct
 - Демо-набор: EUR, USDT, Ethereum / Tron / Polygon, SEPA, курс 0.92 в обе стороны, вымышленные адреса и референс. Для картинки; в Faq и подзаголовках фактов из них нет, кроме названных в `[CONFIRM]`.
 - 30 секунд, таймер и обновление котировки — решение дизайнера, в тексте помечены `[CONFIRM]`.
 - Пользователь страницы — сама компания (её банк и её кошелёк), не её клиенты (`[CONFIRM]` вопрос 10).
-- Название продукта в `meta` и на странице — как в карточке главной («Crypto on- and off-ramp»); в `hero` слова «ramp» нет: оно в `meta` и ссылке с главной.
+- Название продукта в `meta` и на странице — как в карточке главной («Crypto to Cash»); в `hero` слова «ramp» нет: оно в `meta` и ссылке с главной.
 - Станции Convert в двух направлениях — один компонент: меняются только суммы и строки Fee.
 - Консоль на Convert в off-ramp пишет комиссию в USDT (`5.00 USDT`), а итог в EUR.
 

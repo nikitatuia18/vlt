@@ -261,7 +261,7 @@ export default function UiKitPage() {
           </div>
         </Section>
 
-        <Section id="badges" title="Badges" note="Badge: a small pill label with an optional icon, for example &quot;Coming soon&quot;.">
+        <Section id="badges" title="Badges" note="Badge: a small pill label with an optional icon, for example &quot;Coming soon&quot;. `size=&quot;sm&quot;` is the small one, for lists and menus.">
           <div className="flex flex-wrap items-center gap-4">
             <Badge>New</Badge>
             <Badge icon="clock">Coming soon</Badge>
@@ -303,7 +303,7 @@ export default function UiKitPage() {
         <Section
           id="header"
           title="Header"
-          note="Header: one component for every page. The page passes which menu item is current (`currentId`, a grey fill like a hovered item) and, if needed, other items or buttons. In a page it is pinned to the top and hides while scrolling down; here `isPinned={false}` keeps it in the flow."
+          note="Header: one component for every page. The page passes which menu item is current (`currentId`, a grey fill like a hovered item) and, if needed, other items or buttons. In a page it is pinned to the top and hides while scrolling down; here `isPinned={false}` keeps it in the flow. &quot;Products&quot; opens a dropdown with the products (hover or keyboard focus; the words rise each time it opens): the list is in `Header/productMenu.ts`, the icons in `assets/icons/products/`."
         >
           <div className="flex flex-col gap-6 overflow-hidden rounded-32 ring-1 ring-border-subtle">
             <Header isPinned={false} currentId="products" />

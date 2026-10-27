@@ -32,7 +32,7 @@ test('texts of the design: header and the six cards', async ({ page }) => {
   const cards: [string, string, string][] = [
     ['crypto', 'Crypto Processing', 'Accept, convert, and settle crypto payments via a single integration.'],
     ['invoicing', 'Invoicing', 'Issue invoices in local currency and accept payments in crypto.'],
-    ['ramp', 'Crypto on- and off-ramp', 'Convert seamlessly between fiat and crypto with rates from 0.5%.'],
+    ['ramp', 'Crypto to Cash', 'Convert seamlessly between fiat and crypto with rates from 0.5%.'],
     ['payouts', 'Mass Payouts', 'Automate global payouts to teams and partners in a single workflow.'],
     ['banking', 'Banking', 'Dedicated IBANs and corporate accounts in Tier-1 banks.'],
     ['wallet', 'Wallet', 'Secure custody and digital asset management for your platform.'],
@@ -106,7 +106,7 @@ test('cards: radius 40, white and grey fills, 40 px padding on desktop', async (
 test('round "Learn more" links: 48 px circles with an accessible name; coming-soon cards have a badge instead', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
   await page.goto('/')
-  for (const [id, title] of [['crypto', 'Crypto Processing'], ['invoicing', 'Invoicing'], ['ramp', 'Crypto on- and off-ramp'], ['payouts', 'Mass Payouts']]) {
+  for (const [id, title] of [['crypto', 'Crypto Processing'], ['invoicing', 'Invoicing'], ['ramp', 'Crypto to Cash'], ['payouts', 'Mass Payouts']]) {
     const link = page.locator(`[data-el="features__card-${id}-cta"]`)
     await expect(link).toHaveAttribute('aria-label', `Learn more: ${title}`)
     // Crypto Processing and Invoicing have their pages; the others are placeholders until their pages are made.

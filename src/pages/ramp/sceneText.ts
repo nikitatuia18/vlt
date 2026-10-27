@@ -1,5 +1,5 @@
 /*
- * Short texts inside the scenes of the Crypto on- and off-ramp page (micro interfaces). DRAFT, from the copywriter (docs/pages/ramp.md, "версия 2").
+ * Short texts inside the scenes of the Crypto to Cash page (micro interfaces). DRAFT, from the copywriter (docs/pages/ramp.md, "версия 2").
  * The sums, the rate, the network, the rails and the addresses are DEMO values (demo.ts): not a list of what the product supports [CONFIRM].
  * The page does not say "demo" anywhere, so the scenes only have to look believable.
  */

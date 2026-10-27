@@ -3,7 +3,7 @@ import type { IndustryItemData } from '../../components/blocks/Industries/items'
 import type { ProductContent } from '../ProductPage'
 
 /*
- * Texts of the Crypto on- and off-ramp page: DRAFT, written with the copywriter (docs/pages/ramp.md, where the questions to the product are).
+ * Texts of the Crypto to Cash page: DRAFT, written with the copywriter (docs/pages/ramp.md, where the questions to the product are).
  * Texts marked "from the design" are the ones of the home page. [CONFIRM] = a fact we do not have yet: the text is written without it.
  */
 
@@ -14,7 +14,7 @@ const industries: readonly IndustryItemData[] = [
   {
     id: 'industry-first',
     title: 'Industry-first scenarios',
-    description: ['On- and off-ramp shaped around your industry.', 'Choose the flow that looks like yours'],
+    description: ['Crypto to Cash shaped around your industry.', 'Choose the flow that looks like yours'],
     cta: bookDemo,
   },
   {
@@ -22,7 +22,7 @@ const industries: readonly IndustryItemData[] = [
     glow: 'violet',
     title: 'Fintech and neobanks',
     // [CONFIRM: may it be built into the product of a client; the API]
-    description: ['Offer on- and off-ramp inside your product.', 'Connect once through the API'],
+    description: ['Offer Crypto to Cash inside your product.', 'Connect once through the API'],
     cta: bookDemo,
   },
   {
@@ -125,7 +125,7 @@ const faqItems: readonly FaqItemData[] = [
 
 export const ramp: ProductContent = {
   meta: {
-    title: 'Crypto on- and off-ramp — Velant Pay',
+    title: 'Crypto to Cash — Velant Pay',
     // DRAFT [CONFIRM: 0.5%, payout to a bank]
     description: 'Convert between fiat and crypto with rates from 0.5%. Deposit from your bank, receive crypto in your wallet, or pay out to your bank.',
   },

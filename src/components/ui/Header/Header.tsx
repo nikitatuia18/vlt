@@ -1,5 +1,5 @@
 import { motion, useMotionValueEvent, useScroll } from 'motion/react'
-import { useEffect, useId, useRef, useState } from 'react'
+import { Fragment, useEffect, useId, useRef, useState } from 'react'
 import { Reveal, RevealLines } from '../../../motion/reveal'
 import { appear, duration, easeOut } from '../../../motion/tokens'
 import { useRevealOn } from '../../../motion/useReveal'
@@ -13,6 +13,7 @@ import { IconButton } from '../IconButton'
 import { ThemeToggle } from '../ThemeToggle'
 import { MenuToggleIcon } from './MenuToggleIcon'
 import { demoCta, exploreCta, navItems as siteNavItems, type HeaderCta, type NavItem } from './navigation'
+import { ProductsMenu } from './ProductsMenu'
 
 /** Scrolling less than this many px in the other direction does not flip the header (a trembling finger or wheel). */
 const SCROLL_THRESHOLD = 6
@@ -122,21 +123,30 @@ export function Header({
           </Reveal>
 
           <nav aria-label="Main" data-el="header__menu" className="hidden items-center gap-2 desktop:flex">
-            {navItems.map((item, index) => (
-              <Reveal
-                as="a"
-                variant="fade"
-                atLoad
-                delay={0.4 + index * 0.06}
-                key={item.id}
-                href={item.href}
-                aria-current={item.id === currentId ? 'true' : undefined}
-                data-el={`header__menu-item-${item.id}`}
-                className={`${linkBaseClasses} type-ui-sm ${item.id === currentId ? linkCurrentClasses : linkDefaultClasses}`}
-              >
-                <RevealLines as="span" atLoad delay={0.5 + index * 0.06} lines={[item.label]} />
-              </Reveal>
-            ))}
+            {navItems.map((item, index) => {
+              // The open dropdown fills its item like the current one (and like a hovered one).
+              const menuLink = (isOpen = false, panelId?: string) => (
+                <Reveal
+                  as="a"
+                  variant="fade"
+                  atLoad
+                  delay={0.4 + index * 0.06}
+                  href={item.href}
+                  aria-current={item.id === currentId ? 'true' : undefined}
+                  aria-expanded={panelId ? isOpen : undefined}
+                  aria-controls={panelId}
+                  data-el={`header__menu-item-${item.id}`}
+                  className={`${linkBaseClasses} type-ui-sm ${item.id === currentId || isOpen ? linkCurrentClasses : linkDefaultClasses}`}
+                >
+                  <RevealLines as="span" atLoad delay={0.5 + index * 0.06} lines={[item.label]} />
+                </Reveal>
+              )
+              return item.id === 'products' ? (
+                <ProductsMenu key={item.id}>{(isOpen, panelId) => menuLink(isOpen, panelId)}</ProductsMenu>
+              ) : (
+                <Fragment key={item.id}>{menuLink()}</Fragment>
+              )
+            })}
           </nav>
         </div>
 
