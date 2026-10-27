@@ -2,7 +2,6 @@ import { motion } from 'motion/react'
 import { memo } from 'react'
 import { RevealLines } from '../../../motion/reveal'
 import { duration, easeOut } from '../../../motion/tokens'
-import { ButtonLink } from '../../ui/ButtonLink'
 import type { IndustryItemData } from './items'
 
 type IndustryItemProps = {
@@ -22,11 +21,11 @@ const titleClasses = 'type-heading-lg tablet:type-heading-xl min-[64rem]:type-di
 /**
  * One line of the list. Figma `industries__item-{id}`.
  * Closed: a grey title. Open: the title turns dark and the line becomes a white card (radius 32, border,
- * padding 60 x 40 on desktop), and the description and the button unfold under the title.
+ * padding 60 x 40 on desktop), and the description unfolds under the title.
  * Card and colors change with CSS (700 ms), the unfolding with motion.
  */
 export const IndustryItem = memo(function IndustryItem({ item, isActive, index, registerRef, onPick }: IndustryItemProps) {
-  const { id, title, description, cta, glow } = item
+  const { id, title, description, glow } = item
 
   // The box of the card. Open: padding and a fill (a white card; in a dark scene a faint see-through one, the glow shows through); closed: nothing.
   const boxClasses = `flex flex-col items-center rounded-32 text-center ring-1 ring-inset transition-[background-color,box-shadow,padding] duration-700 ease-out ${
@@ -69,18 +68,6 @@ export const IndustryItem = memo(function IndustryItem({ item, isActive, index, 
             className="type-body-md max-w-142.5 text-typography-secondary tablet:type-body-lead"
             lines={description}
           />
-          <ButtonLink
-            href={cta.href}
-            size="lg"
-            icon="export"
-            // In the dark scene the button is white (the inverse variant), in the light one it is the brand button.
-            variant={glow ? 'inverse' : 'primary'}
-            labelReveal={{ open: isActive, delay: 0.4 }}
-            data-el={`industries__item-${id}-cta`}
-            tabIndex={isActive ? undefined : -1}
-          >
-            {cta.label}
-          </ButtonLink>
         </div>
       </motion.div>
     </>
@@ -96,7 +83,7 @@ export const IndustryItem = memo(function IndustryItem({ item, isActive, index, 
       <div data-el={`industries__item-${id}-inner`} className={`${boxClasses} relative`}>
         {content}
         {onPick && !isActive && (
-          // A button over the whole closed item (the open one holds a link of its own, so it has none).
+          // A button over the whole closed item (the open one needs none).
           <button
             type="button"
             data-el={`industries__item-${id}-open`}

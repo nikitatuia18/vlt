@@ -15,7 +15,6 @@ const industries: readonly IndustryItemData[] = [
     id: 'industry-first',
     title: 'Industry-first scenarios',
     description: ['Crypto to Cash shaped around your industry.', 'Choose the flow that looks like yours'],
-    cta: bookDemo,
   },
   {
     id: 'fintech',
@@ -23,7 +22,6 @@ const industries: readonly IndustryItemData[] = [
     title: 'Fintech and neobanks',
     // [CONFIRM: may it be built into the product of a client; the API]
     description: ['Offer Crypto to Cash inside your product.', 'Connect once through the API'],
-    cta: bookDemo,
   },
   {
     id: 'crypto-native',
@@ -31,7 +29,6 @@ const industries: readonly IndustryItemData[] = [
     title: 'Crypto-native companies',
     // [CONFIRM: the coin]
     description: ['Pay fiat costs from crypto you already hold.', 'Sell USDT, get money in your bank'],
-    cta: bookDemo,
   },
   {
     id: 'treasury',
@@ -39,7 +36,6 @@ const industries: readonly IndustryItemData[] = [
     title: 'Treasury and finance teams',
     // [CONFIRM: locking of the rate]
     description: ['Move company funds between bank and wallet.', 'Lock the rate before each transfer'],
-    cta: bookDemo,
   },
   {
     id: 'marketplaces',
@@ -47,7 +43,6 @@ const industries: readonly IndustryItemData[] = [
     title: 'Marketplaces and platforms',
     // [CONFIRM: a scenario for the clients of a client; the border with Mass Payouts]
     description: ['Fund user balances from bank transfers.', 'Pay users out to their local banks'],
-    cta: bookDemo,
   },
   {
     id: 'import-export',
@@ -55,14 +50,12 @@ const industries: readonly IndustryItemData[] = [
     title: 'Import and export',
     // [CONFIRM: the coin]
     description: ['Pay suppliers abroad in USDT.', 'Fund it from your own bank account'],
-    cta: bookDemo,
   },
   {
     id: 'agencies',
     title: 'Agencies and freelancers',
     // [CONFIRM: the rail of the payout]
     description: ['Turn crypto from clients into local currency.', 'Cash out to your bank by a local rail'],
-    cta: bookDemo,
   },
 ]
 

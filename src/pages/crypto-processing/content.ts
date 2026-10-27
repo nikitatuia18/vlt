@@ -16,21 +16,18 @@ const industries: readonly IndustryItemData[] = [
     id: 'industry-first',
     title: 'Industry-first scenarios',
     description: ['Crypto acceptance shaped around your industry.', 'Pick a scenario and see it in a demo'],
-    cta: bookDemo,
   },
   {
     id: 'ecommerce',
     glow: 'violet',
     title: 'E-commerce',
     description: ['Let shoppers pay in crypto at your checkout.', 'Shoppers pay from their wallet, you receive fiat'],
-    cta: bookDemo,
   },
   {
     id: 'marketplaces',
     glow: 'pink',
     title: 'Marketplaces and platforms',
     description: ['Let buyers pay in crypto on your platform.', 'See every payment status through the API'],
-    cta: bookDemo,
   },
   {
     id: 'luxury-automotive',
@@ -38,7 +35,6 @@ const industries: readonly IndustryItemData[] = [
     title: 'Luxury goods and Automotive',
     // [CONFIRM: limits on the size of a payment]
     description: ['Take high-value payments in crypto from buyers abroad.', 'Receive the settlement in your account'],
-    cta: bookDemo,
   },
   {
     id: 'real-estate',
@@ -46,7 +42,6 @@ const industries: readonly IndustryItemData[] = [
     title: 'Real estate',
     // [CONFIRM: settlement currencies]
     description: ['Accept deposits and final payments in crypto.', 'Settle to your account in the currency you use'],
-    cta: bookDemo,
   },
   {
     id: 'export-import',
@@ -54,13 +49,11 @@ const industries: readonly IndustryItemData[] = [
     title: 'Export/Import',
     // To check with the product: the comparison with banks.
     description: ['Get paid by buyers abroad in crypto.', 'Skip the chain of correspondent banks'],
-    cta: bookDemo,
   },
   {
     id: 'psps-acquirers',
     title: 'PSPs and Acquirers',
     description: ['Offer crypto as a payment method to your merchants.', 'One integration instead of a separate crypto stack'],
-    cta: bookDemo,
   },
 ]
 

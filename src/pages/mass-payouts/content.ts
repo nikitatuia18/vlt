@@ -15,7 +15,6 @@ const industries: readonly IndustryItemData[] = [
     id: 'industry-first',
     title: 'Industry-first scenarios',
     description: ['Mass payouts built around the people you pay.', 'Find the group that looks like yours'],
-    cta: bookDemo,
   },
   {
     id: 'payroll',
@@ -23,7 +22,6 @@ const industries: readonly IndustryItemData[] = [
     title: 'Payroll and contractors',
     // [CONFIRM: the word "payroll" and what it means legally (we are not an employer or an EOR?); the home page already has "Operations and payroll"]
     description: ['Pay your team and contractors in many countries.', 'Run the same list every month'],
-    cta: bookDemo,
   },
   {
     id: 'marketplaces',
@@ -31,14 +29,12 @@ const industries: readonly IndustryItemData[] = [
     title: 'Marketplaces and platforms',
     // [CONFIRM: a report for reconciliation; the border with the ramp ("Pay users out to their local banks")]
     description: ['Pay out every seller in one run.', 'One report to reconcile every payout'],
-    cta: bookDemo,
   },
   {
     id: 'partners',
     glow: 'orange',
     title: 'Partner and referral programs',
     description: ['Pay affiliates and partners every month.', 'Send commissions by bank, crypto, or card'],
-    cta: bookDemo,
   },
   {
     id: 'gig',
@@ -46,7 +42,6 @@ const industries: readonly IndustryItemData[] = [
     title: 'Gig platforms and creators',
     // [CONFIRM: the API]
     description: ['Pay many workers and creators at once.', 'Add them from one file or one API call'],
-    cta: bookDemo,
   },
   {
     id: 'refunds',
@@ -54,13 +49,11 @@ const industries: readonly IndustryItemData[] = [
     title: 'Refunds and rebates',
     // [CONFIRM: refunds to cards and accounts of customers]
     description: ['Return money to many customers in one batch.', 'Keep a record of each payout'],
-    cta: bookDemo,
   },
   {
     id: 'agencies',
     title: 'Agencies and studios',
     description: ['Pay freelancers when a project closes.', 'Send one list, not one transfer per person'],
-    cta: bookDemo,
   },
 ]
 

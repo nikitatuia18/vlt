@@ -43,7 +43,7 @@ for (const viewport of viewports) {
   })
 }
 
-test('texts: the title, the seven items, a description and a "Book a demo" button for each (six texts are drafts)', async ({ page }) => {
+test('texts: the title, the seven items and a description for each, no button (six texts are drafts)', async ({ page }) => {
   await page.goto('/')
   await expect(page.getByRole('heading', { level: 2, name: 'From first payment to final payout.' })).toBeAttached()
   expect(industries.map((i) => i.title)).toEqual([
@@ -52,9 +52,9 @@ test('texts: the title, the seven items, a description and a "Book a demo" butto
   for (const entry of industries) {
     await expect(page.locator(`[data-el="industries__item-${entry.id}-title"]`)).toHaveText(entry.title)
     await expect(page.locator(`[data-el="industries__item-${entry.id}-desc"]`)).toHaveText(entry.description.join(' '))
-    await expect(page.locator(`[data-el="industries__item-${entry.id}-cta"]`)).toHaveText('Book a demo')
-    await expect(page.locator(`[data-el="industries__item-${entry.id}-cta"]`)).toHaveAttribute('href', '#book-a-demo')
+    await expect(page.locator(`[data-el="industries__item-${entry.id}-cta"]`)).toHaveCount(0)
   }
+  await expect(page.locator('[data-el="industries"] a')).toHaveCount(0)
   // The text of the design is kept as it is.
   await expect(page.locator('[data-el="industries__item-startups-desc"]')).toHaveText(
     'Let your clients pay in crypto, and receive fiat. Forget about chargebacks',
@@ -183,7 +183,7 @@ test('the open item is a white card (radius 32, padding 60 x 40) and the descrip
   expect(style).toEqual({ radius: '32px', background: 'rgb(255, 255, 255)', paddingX: '60px', paddingY: '40px' })
   const details = page.locator('[data-el="industries__item-industry-first-details"]')
   await expect(details).toHaveAttribute('aria-hidden', 'false')
-  expect((await details.boundingBox())!.height).toBeGreaterThan(100)
+  expect((await details.boundingBox())!.height).toBeGreaterThan(50)
   const color = (id: string) => page.locator(`[data-el="industries__item-${id}-title"]`).evaluate((el) => getComputedStyle(el).color)
   expect(await color('industry-first')).toBe('rgb(24, 24, 24)') // typography-primary
   expect(await color('real-estate')).not.toBe('rgb(24, 24, 24)') // typography-tertiary (grey)
@@ -191,7 +191,6 @@ test('the open item is a white card (radius 32, padding 60 x 40) and the descrip
   await scrollToProgress(page, 0.8) // Export/Import is open, the first item is closed again
   await expect(details).toHaveAttribute('aria-hidden', 'true')
   expect((await details.boundingBox())!.height).toBeLessThan(2)
-  await expect(page.locator('[data-el="industries__item-industry-first-cta"]')).toHaveAttribute('tabindex', '-1')
   expect(await inner.evaluate((el) => getComputedStyle(el).paddingLeft)).toBe('0px')
 })
 
@@ -257,7 +256,7 @@ test('dark theme: the open card is dark and its title is white', async ({ page }
 })
 
 // The dark scenes: the block turns dark while E-commerce, Startups, Luxury, Real estate or Export/Import is open,
-// a glow of its own hue lies behind the glass card and the button is white. The first and the last items stay light.
+// a glow of its own hue lies behind the glass card. The first and the last items stay light.
 const scenes: Record<string, string | null> = {
   'industry-first': null,
   ecommerce: 'violet',
@@ -269,7 +268,7 @@ const scenes: Record<string, string | null> = {
 }
 
 for (const [index, id] of ids.entries()) {
-  test(`scene of "${id}": ${scenes[id] ? `dark with a ${scenes[id]} glow, see-through card, white button` : 'light, brand button, no glow'}`, async ({ page }) => {
+  test(`scene of "${id}": ${scenes[id] ? `dark with a ${scenes[id]} glow, see-through card` : 'light, no glow'}`, async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 })
     await page.goto('/')
     await page.evaluate(() => document.fonts.ready)
@@ -290,20 +289,15 @@ for (const [index, id] of ids.entries()) {
     }
 
     const card = page.locator(`[data-el="industries__item-${id}-inner"]`)
-    const button = page.locator(`[data-el="industries__item-${id}-cta"]`)
     const cardBackground = await card.evaluate((el) => getComputedStyle(el).backgroundColor)
-    const buttonBackground = await button.evaluate((el) => getComputedStyle(el).backgroundColor)
     if (hue) {
-      // The card is a faint see-through fill and costs nothing to draw (no backdrop filter); the button is the white inverse one with dark text.
+      // The card is a faint see-through fill and costs nothing to draw (no backdrop filter).
       expect(cardBackground).toMatch(/rgba\(|color\(srgb/)
       expect(await card.evaluate((el) => getComputedStyle(el).backdropFilter)).toBe('none')
-      expect(buttonBackground).toBe('rgb(255, 255, 255)')
-      await expect(button).toHaveCSS('color', 'rgb(24, 24, 24)')
       // Title and page are on the dark side of the tokens.
       expect(await page.locator(`[data-el="industries__item-${id}-title"]`).evaluate((el) => getComputedStyle(el).color)).toBe('rgb(255, 255, 255)')
     } else {
       expect(cardBackground).toBe('rgb(255, 255, 255)')
-      expect(buttonBackground).not.toBe('rgb(255, 255, 255)')
     }
   })
 }
@@ -371,7 +365,7 @@ test('reduced motion: every closed item is a button that opens it (the scroll op
   await page.goto('/')
   await section(page).scrollIntoViewIfNeeded()
   expect(await activeId(page)).toBe('startups')
-  // The open item has no button of its own (it holds a link); the six closed ones have.
+  // The open item has no button of its own; the six closed ones have.
   await expect(page.locator('[data-el^="industries__item-"][data-el$="-open"]')).toHaveCount(ids.length - 1)
   await page.locator('[data-el="industries__item-ecommerce-open"]').click()
   expect(await activeId(page)).toBe('ecommerce')

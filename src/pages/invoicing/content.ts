@@ -15,14 +15,12 @@ const industries: readonly IndustryItemData[] = [
     id: 'industry-first',
     title: 'Industry-first scenarios',
     description: ['Invoicing shaped around how your industry bills.', 'Pick the scenario closest to yours'],
-    cta: bookDemo,
   },
   {
     id: 'agencies',
     glow: 'violet',
     title: 'Agencies and media buyers',
     description: ['Invoice every client in their own currency.', 'See who opened it and who paid'],
-    cta: bookDemo,
   },
   {
     id: 'saas',
@@ -30,7 +28,6 @@ const industries: readonly IndustryItemData[] = [
     title: 'SaaS and subscriptions',
     // [CONFIRM: recurring invoices and subscriptions]
     description: ['Bill customers abroad in their local currency.', 'Every payment is matched to its invoice'],
-    cta: bookDemo,
   },
   {
     id: 'wholesale',
@@ -38,14 +35,12 @@ const industries: readonly IndustryItemData[] = [
     title: 'B2B trade and wholesale',
     // [CONFIRM: limits on the size of an invoice]
     description: ['Send large invoices to buyers in other countries.', 'Share one link instead of bank details'],
-    cta: bookDemo,
   },
   {
     id: 'consulting',
     glow: 'blue',
     title: 'Consulting and freelancers',
     description: ['Send a clean invoice to a client in any country.', 'Follow it from sent to paid'],
-    cta: bookDemo,
   },
   {
     id: 'marketplaces',
@@ -53,13 +48,11 @@ const industries: readonly IndustryItemData[] = [
     title: 'Marketplaces and platforms',
     // [CONFIRM: events and API]
     description: ['Issue invoices to users in every market.', 'Get an event when each one is paid'],
-    cta: bookDemo,
   },
   {
     id: 'logistics',
     title: 'Logistics and freight',
     description: ['Invoice shippers and carriers in local currency.', 'One payment link for every shipment'],
-    cta: bookDemo,
   },
 ]
 
