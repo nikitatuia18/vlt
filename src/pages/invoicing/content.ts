@@ -22,17 +22,20 @@ const industries: readonly IndustryItemData[] = [
     glow: 'violet',
     title: 'Startups',
     description: ['Let clients pay in crypto while you receive your own currency.', 'No chargebacks to dispute'],
+    flow: { label: 'Typical flow', steps: ['Invoice the client in EUR', 'Client pays in USDT', 'EUR settles to your account'] },
   },
   {
     id: 'export-import',
     glow: 'pink',
-    title: 'Trade',
+    title: 'Export/Import',
     description: ['Get paid across borders without slow correspondent banks.', 'Paid in minutes, not days'],
+    flow: { label: 'Typical flow', steps: ['Invoice a foreign buyer in USD', 'Buyer pays in stablecoins', 'USD or EUR lands via local rails'] },
   },
   {
     id: 'real-estate',
     title: 'Real estate',
     description: ['Take deposits from buyers anywhere in the world.', 'Receive the money in the currency you need'],
+    flow: { label: 'Typical flow', steps: ['Issue a deposit invoice in GEL', 'Buyer abroad pays in crypto', 'GEL settles via RIPS'] },
   },
 ]
 

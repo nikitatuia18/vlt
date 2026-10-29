@@ -20,19 +20,22 @@ const industries: readonly IndustryItemData[] = [
   {
     id: 'payroll',
     glow: 'violet',
-    title: 'Payroll',
+    title: 'Operations & payroll',
     description: ['Pay teams and contractors worldwide, on schedule.', 'One batch, many currencies'],
+    flow: { label: 'Typical batch', steps: ['48 team members in India via UPI', '12 contractors in Europe via SEPA Instant', 'One approval, one report'] },
   },
   {
     id: 'partners',
     glow: 'pink',
-    title: 'Affiliates',
+    title: 'Affiliates & partners',
     description: ['Pay commissions to partners in their local currency.', 'Partners paid the same day'],
+    flow: { label: 'Typical batch', steps: ['Export commissions from your platform', 'Upload one CSV', 'Partners receive local currency'] },
   },
   {
     id: 'export-import',
-    title: 'Trade',
+    title: 'Export/Import',
     description: ['Pay suppliers and get paid across borders in one workflow.', 'Skip slow correspondent banks'],
+    flow: { label: 'Typical batch', steps: ['Suppliers in Brazil, Chile, USA', 'Local rails: Pix, TEF, FedNow', 'Status for every payment'] },
   },
 ]
 

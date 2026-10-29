@@ -11,6 +11,11 @@ export type IndustryItemData = {
    * No hue: the usual light block. The first and the last items have none (the scene is dark only in the middle).
    */
   glow?: GlowHue
+  /**
+   * Product pages: the card also shows the second line of the description as a green pill (the benefit) and a numbered
+   * scenario under a small caption. The home page has none (its card is the two lines only). No button in the card.
+   */
+  flow?: { label: string; steps: readonly string[] }
 }
 
 /**

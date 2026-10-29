@@ -21,25 +21,29 @@ const industries: readonly IndustryItemData[] = [
   {
     id: 'luxury-automotive',
     glow: 'violet',
-    title: 'Luxury',
+    title: 'Luxury & automotive',
     description: ['Close high-value deals and receive the money the same day.', 'No card limits, no waiting for funds'],
+    flow: { label: 'Typical flow', steps: ['Buyer pays for the order in USDT', 'Converted to EUR on arrival', 'Goods released the same day'] },
   },
   {
     id: 'ecommerce',
     glow: 'pink',
     title: 'E-commerce',
     description: ['Accept crypto at checkout and settle in local currency.', 'Reach buyers in markets where cards fail'],
+    flow: { label: 'Typical flow', steps: ['Customer picks crypto at checkout', 'Hosted page handles the payment', 'You receive local currency'] },
   },
   {
     id: 'real-estate',
     glow: 'orange',
     title: 'Real estate',
     description: ['Take deposits and payments from buyers anywhere in the world.', 'Receive the money in the currency you need'],
+    flow: { label: 'Typical flow', steps: ['Buyer abroad sends a deposit in crypto', 'Converted on arrival', 'Settled to your EUR or GEL account'] },
   },
   {
     id: 'startups',
     title: 'Startups',
     description: ['Let clients pay in crypto while you receive your own currency.', 'No chargebacks to dispute'],
+    flow: { label: 'Typical flow', steps: ['Client pays in stablecoins', 'Converted automatically, no chargebacks', 'Money in your account'] },
   },
 ]
 
