@@ -92,6 +92,33 @@ export const cryptoProcessing: ProductContent = {
   cta: { title: 'Ready to accept crypto payments?', subtitle: "We'll map the path from your client's wallet to your account." },
 }
 
+/**
+ * The strip of three points under the hero (Highlights.tsx). The texts are the designer's; each one is split at its own comma or colon:
+ * the first part is the point (dark), the rest is the detail (grey).
+ */
+export const highlightsContent = {
+  label: 'Crypto Processing in three points',
+  items: [
+    { id: 'converted', lead: 'Converted at the moment of payment,', detail: 'safe from price swings' },
+    { id: 'local-rails', lead: 'Paid out to your bank over local rails:', detail: 'SEPA Instant, FedNow, Pix, UPI, RIPS…' },
+    { id: 'no-chargebacks', lead: 'No chargebacks:', detail: 'a crypto payment cannot be pulled back' },
+  ],
+} as const
+
+/** The six cards "What you get" (WhatYouGet.tsx), the texts of the designer's reference "Velant Pay — product pages". */
+export const whatYouGetContent = {
+  eyebrow: 'What you get',
+  title: ['Built for finance teams,', 'not just developers.'],
+  items: [
+    { id: 'auto-convert', icon: 'swap', title: 'Instant auto-convert', text: 'The rate is locked when the customer pays. Settle everything in your currency, or keep a share in stablecoins.' },
+    { id: 'settlement-rails', icon: 'bank', title: 'Local settlement rails', text: 'EUR via SEPA Instant, USD via FedNow, BRL via Pix, INR via UPI, GEL via RIPS and more.' },
+    { id: 'checkout-api', icon: 'card', title: 'Hosted checkout or API', text: 'Launch with a hosted payment page, or build your own checkout on the API and webhooks.' },
+    { id: 'custody', icon: 'shield', title: 'MPC custody', text: 'Funds in transit are protected by MPC custody and shared-secret cryptography: no single key can move them.' },
+    { id: 'reporting', icon: 'chart', title: 'Real-time reporting', text: 'Follow each payment from detection to settlement, and export it for accounting and reconciliation.' },
+    { id: 'compliance', icon: 'user', title: 'Compliance built in', text: 'Registered MSB in Canada, KYB as part of onboarding, AML screening on every payment.' },
+  ],
+} as const
+
 /** Block 1: "Follow one payment" (the scene is in PaymentJourney.tsx, its texts in sceneText.ts). */
 export const flowContent = {
   title: 'Follow one payment.',

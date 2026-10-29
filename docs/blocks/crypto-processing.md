@@ -29,3 +29,9 @@ Header → hero (`ProductHero`, заголовок в две строки: «Acc
 - Факты от продукта (`[CONFIRM]` в `content.ts`, `demo.ts`, `sceneText.ts`): валюта расчёта, монеты и сети, комиссии, курс, сроки, события и способ сообщения о платеже (webhooks?).
 - Ссылка с карточки Crypto Processing на главной (`Features/cards.ts`: `#crypto-processing` → `/crypto-processing`) — после утверждения страницы.
 - Единое название продукта: в подвале «Crypto processing», в карточке «Crypto Processing».
+
+## Полоса из трёх пунктов и «What you get» (2026-10-29)
+Два новых блока по тексту и референсу дизайнера (в Figma их нет). Порядок: hero → **Highlights** → «Follow one payment» → «Run a test payment» → **WhatYouGet** → Works great with → Industries → Faq → Cta.
+- `Highlights.tsx` (`crypto-processing__highlights`): светлая карточка как у фактов Invoicing, три пункта («Converted at the moment of payment, safe from price swings» / «Paid out to your bank over local rails: SEPA Instant, FedNow, Pix, UPI, RIPS…» / «No chargebacks: a crypto payment cannot be pulled back»); начало фразы тёмное, продолжение серое; три колонки от 1024 px, ниже столбиком (на 768 три колонки тесные).
+- `WhatYouGet.tsx` (`crypto-processing__benefits`): «What you get» / «Built for finance teams, not just developers.» и шесть карточек (иконка в круге сверху, название и строка внизу). Карточки не ссылки, поэтому без hover. Колонок: 1 / 2 (от 768) / 3 (от 1024). Иконки: `swap.svg` и пять новых в `src/assets/icons/benefits/` (bank, card, shield, chart, user), нарисованы в стиле иконок меню Products (24 px, линия 1,5), в круге 20 px — **заменить на иконки дизайнера, если есть**.
+- Тексты — `highlightsContent` и `whatYouGetContent` в `content.ts`, дословно от дизайнера. Общими блоками станут, когда понадобятся на второй странице.

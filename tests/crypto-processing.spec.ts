@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test'
-import { apiContent, cryptoProcessing, flowContent } from '../src/pages/crypto-processing/content'
+import { apiContent, cryptoProcessing, flowContent, highlightsContent, whatYouGetContent } from '../src/pages/crypto-processing/content'
 import { formatAmount, settledAmount } from '../src/pages/crypto-processing/demo'
 import { heroScene, journeyScene, testScene } from '../src/pages/crypto-processing/sceneText'
 
@@ -25,7 +25,7 @@ const toBlock = (page: Page, name: string) => page.locator(`[data-el="${name}"]`
 for (const viewport of viewports) {
   test(`crypto processing page ${viewport.name}: the hero scene and both blocks fit, no horizontal scroll`, async ({ page }) => {
     await open(page, viewport.width, viewport.height)
-    for (const name of ['crypto-processing__hero__media', 'crypto-processing__flow', 'crypto-processing__api']) {
+    for (const name of ['crypto-processing__hero__media', 'crypto-processing__highlights', 'crypto-processing__flow', 'crypto-processing__api', 'crypto-processing__benefits']) {
       await toBlock(page, name)
       await page.waitForTimeout(300)
       await page.locator(`[data-el="${name}"]`).screenshot({ path: `tests/artifacts/${name}-${viewport.name}.png` })
@@ -40,7 +40,7 @@ test('the page has one h1, the blocks stand in the planned order and the shared 
   await expect(page.locator('h1')).toHaveCount(1)
   await expect(page.locator('h1')).toHaveText(cryptoProcessing.hero.title.join(' '))
   const order = await page.locator('main > section').evaluateAll((els) => els.map((el) => el.getAttribute('data-el')))
-  expect(order).toEqual(['crypto-processing__hero', 'crypto-processing__flow', 'crypto-processing__api', 'works-with', 'industries', 'faq', 'cta'])
+  expect(order).toEqual(['crypto-processing__hero', 'crypto-processing__highlights', 'crypto-processing__flow', 'crypto-processing__api', 'crypto-processing__benefits', 'works-with', 'industries', 'faq', 'cta'])
   await expect(page.locator('[data-el="cta__title"]')).toHaveText(cryptoProcessing.cta.title!)
   await expect(page.locator('[data-el="faq__list"] > li')).toHaveCount(cryptoProcessing.faq.items!.length)
   await expect(page.locator('[data-el="industries__list"] > li')).toHaveCount(cryptoProcessing.industries.items!.length)
@@ -50,6 +50,27 @@ test('the page has one h1, the blocks stand in the planned order and the shared 
   const secondary = page.locator('[data-el="crypto-processing__hero__cta-secondary"]')
   await expect(secondary).toHaveAttribute('href', '#how-it-works')
   await expect(page.locator('#how-it-works')).toHaveAttribute('data-el', 'crypto-processing__flow')
+})
+
+test('the strip of three points and the six cards "What you get" carry the texts of the designer', async ({ page }) => {
+  await open(page, 1440, 900)
+  for (const item of highlightsContent.items) {
+    await expect(page.locator(`[data-el="crypto-processing__highlight-${item.id}-text"]`)).toHaveText(`${item.lead} ${item.detail}`)
+  }
+  await expect(page.locator('[data-el="crypto-processing__benefits-eyebrow"]')).toHaveText(whatYouGetContent.eyebrow)
+  await expect(page.locator('[data-el="crypto-processing__benefits-title"]')).toHaveText(whatYouGetContent.title.join(' '))
+  await expect(page.locator('[data-el="crypto-processing__benefits-list"] > li')).toHaveCount(6)
+  const masks = new Set<string>()
+  for (const item of whatYouGetContent.items) {
+    await expect(page.locator(`[data-el="crypto-processing__benefit-${item.id}-title"]`)).toHaveText(item.title)
+    await expect(page.locator(`[data-el="crypto-processing__benefit-${item.id}-text"]`)).toHaveText(item.text)
+    const icon = page.locator(`[data-el="crypto-processing__benefit-${item.id}-icon"] > span`)
+    await expect(icon).toHaveCSS('mask-image', /^url\(/)
+    masks.add(await icon.evaluate((element) => getComputedStyle(element).maskImage))
+  }
+  expect(masks.size, 'every card has its own icon').toBe(6)
+  // Plain cards: nothing to click inside.
+  await expect(page.locator('[data-el="crypto-processing__benefits"] a, [data-el="crypto-processing__benefits"] button')).toHaveCount(0)
 })
 
 test('block 1: a station opens its panel (click and arrow keys); the coin, the network and the sum picked on Accept are used by the next station', async ({ page }) => {
