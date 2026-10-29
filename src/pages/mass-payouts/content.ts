@@ -13,11 +13,6 @@ const bookDemo = { label: 'Book a demo', href: href('book-a-demo') }
 /** Industries: who pays many people often, in the order the cards open (the first and the last are light, the others glow). */
 const industries: readonly IndustryItemData[] = [
   {
-    id: 'industry-first',
-    title: 'Industry-first scenarios',
-    description: ['Mass payouts built around the people you pay.', 'Find the group that looks like yours'],
-  },
-  {
     id: 'payroll',
     glow: 'violet',
     title: 'Operations & payroll',

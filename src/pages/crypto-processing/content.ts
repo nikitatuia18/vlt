@@ -14,11 +14,6 @@ const bookDemo = { label: 'Book a demo', href: href('book-a-demo') }
 /** Industries: scenes of accepting crypto, in the order they open (the first and the last are light, the others glow). */
 const industries: readonly IndustryItemData[] = [
   {
-    id: 'industry-first',
-    title: 'Industry-first scenarios',
-    description: ['Crypto acceptance shaped around your industry.', 'Pick a scenario and see it in a demo'],
-  },
-  {
     id: 'luxury-automotive',
     glow: 'violet',
     title: 'Luxury & automotive',

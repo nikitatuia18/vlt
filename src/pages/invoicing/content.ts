@@ -13,11 +13,6 @@ const bookDemo = { label: 'Book a demo', href: href('book-a-demo') }
 /** Industries: who bills across borders, in the order the cards open (the first and the last are light, the others glow). */
 const industries: readonly IndustryItemData[] = [
   {
-    id: 'industry-first',
-    title: 'Industry-first scenarios',
-    description: ['Invoicing shaped around how your industry bills.', 'Pick the scenario closest to yours'],
-  },
-  {
     id: 'startups',
     glow: 'violet',
     title: 'Startups',

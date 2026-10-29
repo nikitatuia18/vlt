@@ -13,11 +13,6 @@ const bookDemo = { label: 'Book a demo', href: href('book-a-demo') }
 /** Industries: who moves money between a bank and a wallet, in the order the cards open (the first and the last are light, the others glow). */
 const industries: readonly IndustryItemData[] = [
   {
-    id: 'industry-first',
-    title: 'Industry-first scenarios',
-    description: ['Crypto to Cash shaped around your industry.', 'Choose the flow that looks like yours'],
-  },
-  {
     id: 'platforms-psps',
     glow: 'violet',
     title: 'Platforms & PSPs',
