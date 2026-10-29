@@ -40,7 +40,7 @@ test('the page has one h1, the blocks stand in the planned order and the shared 
   await expect(page.locator('h1')).toHaveCount(1)
   await expect(page.locator('h1')).toHaveText(invoicing.hero.title.join(' '))
   const order = await page.locator('main > section').evaluateAll((els) => els.map((el) => el.getAttribute('data-el')))
-  expect(order).toEqual(['invoicing__hero', 'logos', 'invoicing__steps', 'works-with', 'industries', 'faq', 'cta'])
+  expect(order).toEqual(['invoicing__hero', 'invoicing__steps', 'works-with', 'industries', 'faq', 'cta'])
   await expect(page.locator('[data-el="cta__title"]')).toHaveText(invoicing.cta.title!)
   await expect(page.locator('[data-el="faq__list"] > li')).toHaveCount(invoicing.faq.items!.length)
   await expect(page.locator('[data-el="industries__list"] > li')).toHaveCount(invoicing.industries.items!.length)

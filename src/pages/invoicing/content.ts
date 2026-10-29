@@ -18,98 +18,44 @@ const industries: readonly IndustryItemData[] = [
     description: ['Invoicing shaped around how your industry bills.', 'Pick the scenario closest to yours'],
   },
   {
-    id: 'agencies',
+    id: 'startups',
     glow: 'violet',
-    title: 'Agencies',
-    description: ['Invoice every client in their own currency.', 'See who opened it and who paid'],
+    title: 'Startups',
+    description: ['Let clients pay in crypto while you receive your own currency.', 'No chargebacks to dispute'],
   },
   {
-    id: 'saas',
+    id: 'export-import',
     glow: 'pink',
-    title: 'SaaS',
-    // [CONFIRM: recurring invoices and subscriptions]
-    description: ['Bill customers abroad in their local currency.', 'Every payment is matched to its invoice'],
+    title: 'Trade',
+    description: ['Get paid across borders without slow correspondent banks.', 'Paid in minutes, not days'],
   },
   {
-    id: 'wholesale',
-    glow: 'orange',
-    title: 'Wholesale',
-    // [CONFIRM: limits on the size of an invoice]
-    description: ['Send large invoices to buyers in other countries.', 'Share one link instead of bank details'],
-  },
-  {
-    id: 'consulting',
-    glow: 'blue',
-    title: 'Consulting',
-    description: ['Send a clean invoice to a client in any country.', 'Follow it from sent to paid'],
-  },
-  {
-    id: 'marketplaces',
-    glow: 'green',
-    title: 'Marketplaces',
-    // [CONFIRM: events and API]
-    description: ['Issue invoices to users in every market.', 'Get an event when each one is paid'],
-  },
-  {
-    id: 'logistics',
-    title: 'Logistics',
-    description: ['Invoice shippers and carriers in local currency.', 'One payment link for every shipment'],
+    id: 'real-estate',
+    title: 'Real estate',
+    description: ['Take deposits from buyers anywhere in the world.', 'Receive the money in the currency you need'],
   },
 ]
 
 const faqItems: readonly FaqItemData[] = [
   {
-    id: 'payer',
-    question: 'Who can pay an invoice, and do they need an account?',
-    // [CONFIRM: account and checks of the payer]
-    lead: 'Your client pays from their own wallet.',
-    answer: 'We will confirm during the demo whether they need to sign up first.',
-  },
-  {
-    id: 'currencies',
-    question: 'Which currencies can I invoice in?',
-    // [CONFIRM: the list of currencies, what the company receives]
-    lead: "Your client's local currency.",
-    answer: 'We will confirm the list of supported currencies during the demo.',
-  },
-  {
-    id: 'mismatch',
-    question: 'What if a client pays too little or too much?',
-    // [CONFIRM: underpayment, overpayment, partial payment, refunds]
-    answer: 'We will walk you through how underpayments and overpayments are handled for your flow.',
+    id: 'account',
+    question: 'Does my client need an account with Velant Pay?',
+    answer: 'No. The client opens the payment link and pays from the wallet they already use.',
   },
   {
     id: 'rate',
-    question: 'How long are the rate and the payment link valid?',
-    // [CONFIRM: when the rate is fixed, the life of the link]
-    answer: 'On the demo we will confirm how the rate is set and how long a link stays active.',
+    question: 'What if the crypto price moves before the client pays?',
+    answer: 'The invoice is fixed in your currency. The crypto amount is calculated at payment time, so you receive what you billed.',
   },
   {
-    id: 'reminders',
-    question: 'Can I send reminders or recurring invoices?',
-    // [CONFIRM: reminders, recurring invoices]
-    lead: 'Tell us how you bill.',
-    answer: 'We will confirm which reminders and billing schedules fit your setup.',
+    id: 'currencies',
+    question: 'Which currencies can I invoice and settle in?',
+    answer: 'You can invoice in EUR, USD, CAD, GEL and other local currencies, and settle to any currency we cover on local rails.',
   },
   {
-    id: 'branding',
-    question: 'Can I add my logo and send a PDF?',
-    // [CONFIRM: PDF, logo, templates]
-    answer: 'We will confirm PDF export and branding options during the demo.',
-  },
-  {
-    id: 'matching',
-    question: 'How is an invoice matched to a payment?',
-    // [CONFIRM: the mechanism of matching, the events, the API, accounting integrations]
-    lead: 'The payment finds its own invoice.',
-    answer: 'Your system gets an event when an invoice is paid and reconciled. We will confirm the events and API for your setup during the demo.',
-  },
-  {
-    id: 'cost-timeline',
-    question: 'How much does it cost, and how fast can I start?',
-    // [CONFIRM: the fees; whether "from 1 week" is about invoices] ("From 1 week" and KYB are from the home page)
-    lead: 'It depends on your flow.',
-    answer: 'Book a demo and we will walk you through the fees. Integration takes from 1 week, and KYB is included in onboarding.',
+    id: 'start',
+    question: 'How fast can we start?',
+    answer: 'API integration typically takes from one week, with KYB done during onboarding. One-off invoices can go out from the dashboard as soon as your account is approved.',
   },
 ]
 
@@ -135,8 +81,8 @@ export const invoicing: ProductContent = {
       { product: 'mass-payouts', description: 'Pay contractors from the same balance.' },
     ],
   },
-  industries: { items: industries, activeId: 'agencies' },
-  faq: { items: faqItems, openId: 'payer' },
+  industries: { items: industries, activeId: 'startups' },
+  faq: { items: faqItems, openId: 'account' },
   cta: { title: 'Ready to get paid in crypto?', subtitle: "We'll show how an invoice goes from created to reconciled." },
 }
 

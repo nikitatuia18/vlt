@@ -21,97 +21,41 @@ const industries: readonly IndustryItemData[] = [
     id: 'payroll',
     glow: 'violet',
     title: 'Payroll',
-    // [CONFIRM: the word "payroll" and what it means legally (we are not an employer or an EOR?); the home page already has "Payroll"]
-    description: ['Pay your team and contractors in many countries.', 'Run the same list every month'],
-  },
-  {
-    id: 'marketplaces',
-    glow: 'pink',
-    title: 'Marketplaces',
-    // [CONFIRM: a report for reconciliation; the border with the ramp ("Pay users out to their local banks")]
-    description: ['Pay out every seller in one run.', 'One report to reconcile every payout'],
+    description: ['Pay teams and contractors worldwide, on schedule.', 'One batch, many currencies'],
   },
   {
     id: 'partners',
-    glow: 'orange',
+    glow: 'pink',
     title: 'Affiliates',
-    description: ['Pay affiliates and partners every month.', 'Send commissions by bank, crypto, or card'],
+    description: ['Pay commissions to partners in their local currency.', 'Partners paid the same day'],
   },
   {
-    id: 'gig',
-    glow: 'blue',
-    title: 'Creators',
-    // [CONFIRM: the API]
-    description: ['Pay many workers and creators at once.', 'Add them from one file or one API call'],
-  },
-  {
-    id: 'refunds',
-    glow: 'green',
-    title: 'Refunds',
-    // [CONFIRM: refunds to cards and accounts of customers]
-    description: ['Return money to many customers in one batch.', 'Keep a record of each payout'],
-  },
-  {
-    id: 'agencies',
-    title: 'Agencies',
-    description: ['Pay freelancers when a project closes.', 'Send one list, not one transfer per person'],
+    id: 'export-import',
+    title: 'Trade',
+    description: ['Pay suppliers and get paid across borders in one workflow.', 'Skip slow correspondent banks'],
   },
 ]
 
 const faqItems: readonly FaqItemData[] = [
   {
-    id: 'methods',
-    question: 'How do recipients get paid, and in which countries?',
-    // [CONFIRM: the list of countries and the methods by country; whether "15+ direct local rails" belongs to the payouts]
-    lead: 'By bank transfer, in crypto, or on a card.',
-    answer: 'Bank payouts use direct local rails. Tell us your countries and we will confirm the methods for each.',
+    id: 'rails',
+    question: 'Which countries and rails can I pay out to?',
+    answer: 'CAD via Interac e-Transfer / EFT, USD via ACH / Fedwire / FedNow, EUR via SEPA / Instant, GEL via RTGS / RIPS, INR via IMPS / NEFT / UPI, BRL via Pix / TED, CLP via TEF, KGS via XKS, AZN via AZIPS and ARS via CBU / CVU.',
   },
   {
-    id: 'details',
-    question: 'How do recipients give their payment details?',
-    // [CONFIRM: how the details are collected (a column in the file, a form of the recipient, a profile) and which checks run]
-    lead: 'Details are checked before you pay.',
-    answer: 'We will confirm during the demo how recipients share their details and which checks run.',
+    id: 'funding',
+    question: 'How do I fund a batch?',
+    answer: 'From your balance in local currency or stablecoins. Where currencies differ, we convert as part of the batch.',
   },
   {
-    id: 'batch-size',
-    question: 'How many recipients can I pay in one batch?',
-    // [CONFIRM: the limit of recipients and of the sum in a batch; for CSV and for the API]
-    lead: 'Tell us your volume.',
-    answer: 'We will confirm batch size limits for your setup during the demo.',
+    id: 'wrong-detail',
+    question: 'What happens if a recipient detail is wrong?',
+    answer: 'Pre-flight validation flags it before you approve, so you can fix it without holding up the rest of the batch.',
   },
   {
-    id: 'timing',
-    question: 'How fast do recipients get paid?',
-    // [CONFIRM: times by method and country; the word "instant" is not used]
-    lead: 'It depends on the method and the country.',
-    answer: 'We will confirm typical times for each method and country during the demo.',
-  },
-  {
-    id: 'report',
-    question: 'Can I get a report for my accountants?',
-    // [CONFIRM: the report exists; its format and fields]
-    lead: 'Every batch has a report you can download.',
-    answer: 'We will confirm the report format and fields for your reconciliation during the demo.',
-  },
-  {
-    id: 'cost',
-    question: 'How much does it cost?',
-    // [CONFIRM: the fee model; no number without the product]
-    lead: 'It depends on your flow.',
-    answer: 'Book a demo and we will walk you through the fees.',
-  },
-  {
-    id: 'start',
-    question: 'How do I connect, and how long does it take?',
-    // [CONFIRM: does "from 1 week" hold for the payouts; CSV and the API] (lead and the second sentence are from the home page and Crypto Processing)
-    lead: 'From 1 week.',
-    answer: 'Use a CSV file or the API. Book a demo, pass KYB, and send your first live transaction.',
-  },
-  {
-    id: 'licence',
-    question: 'What licence do you have?',
-    answer: 'Velant Pay operates under a Canadian MSB licence and works with licensed third-party financial providers.',
+    id: 'custom-method',
+    question: 'What if I need a currency or rail that isn\'t listed?',
+    answer: 'Most likely we can help. Tell us what you\'re building, and we\'ll look at custom payment methods, currencies, settlement flows, and other requirements with our team.',
   },
 ]
 
@@ -138,7 +82,7 @@ export const massPayouts: ProductContent = {
     ],
   },
   industries: { items: industries, activeId: 'payroll' },
-  faq: { items: faqItems, openId: 'methods' },
+  faq: { items: faqItems, openId: 'rails' },
   cta: { title: 'Ready to send your first batch?', subtitle: "We'll build a sample batch with your countries and payout methods." },
 }
 

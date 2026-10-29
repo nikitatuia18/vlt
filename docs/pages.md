@@ -4,8 +4,8 @@
 Страницы продуктов нет в Figma (область Figma по CLAUDE.md — только кадры главной): строим в коде на дизайн-системе, дизайнер оценивает в браузере.
 
 ## Из чего страница
-`ProductPage` ([src/pages/ProductPage.tsx](../src/pages/ProductPage.tsx)) собирает: Header → `ProductHero` → Logos → **два блока про продукт** (`sections`) → **Works great with** (`WorksWith`, три плашки с другими продуктами, [blocks/works-with.md](blocks/works-with.md)) → Industries → Faq → Cta → Footer. Оболочка (skip-link, шапка, `main`, подвал) — `PageShell`.
-Общие блоки главной принимают тексты пропсами; без пропсов показывают тексты главной: `Industries` (`items`, `activeId`), `Faq` (`items`, `title`, `openId`), `Cta` (`title`, `subtitle`). Logos одинаков на всех страницах.
+`ProductPage` ([src/pages/ProductPage.tsx](../src/pages/ProductPage.tsx)) собирает: Header → `ProductHero` (ленты логотипов нет: она только на главной, правка 2026-10-29) → **два блока про продукт** (`sections`) → **Works great with** (`WorksWith`, три плашки с другими продуктами, [blocks/works-with.md](blocks/works-with.md)) → Industries → Faq → Cta → Footer. Оболочка (skip-link, шапка, `main`, подвал) — `PageShell`.
+Общие блоки главной принимают тексты пропсами; без пропсов показывают тексты главной: `Industries` (`items`, `activeId`), `Faq` (`items`, `title`, `openId`), `Cta` (`title`, `subtitle`). Тексты Industries и Faq на страницах — из референса дизайнера «Velant Pay — продуктовые страницы» (2026-10-29), без `[CONFIRM]`.
 
 ## Как добавить страницу продукта
 1. **Тексты.** Звать `copywriter` (раздел «Страница продукта» навыка `project-copywriting`): карта вопросов посетителя → структура → тексты → вопросы к продукту. Результат: `docs/pages/<product>.md`. Структуру и тексты утверждает пользователь. Факты не придумываем: пробелы помечены `[CONFIRM]`.

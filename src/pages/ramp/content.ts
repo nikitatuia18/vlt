@@ -18,102 +18,44 @@ const industries: readonly IndustryItemData[] = [
     description: ['Crypto to Cash shaped around your industry.', 'Choose the flow that looks like yours'],
   },
   {
-    id: 'fintech',
+    id: 'platforms-psps',
     glow: 'violet',
-    title: 'Fintech',
-    // [CONFIRM: may it be built into the product of a client; the API]
-    description: ['Offer Crypto to Cash inside your product.', 'Connect once through the API'],
-  },
-  {
-    id: 'crypto-native',
-    glow: 'pink',
-    title: 'Crypto-native companies',
-    // [CONFIRM: the coin]
-    description: ['Pay fiat costs from crypto you already hold.', 'Sell USDT, get money in your bank'],
+    title: 'Platforms & PSPs',
+    description: ['Embed a ramp in your product.', 'Let your users top up by bank transfer and cash out to their own account, under your brand and through our API.'],
   },
   {
     id: 'treasury',
-    glow: 'orange',
+    glow: 'pink',
     title: 'Treasury',
-    // [CONFIRM: locking of the rate]
-    description: ['Move company funds between bank and wallet.', 'Lock the rate before each transfer'],
+    description: ['Move between stablecoins and cash.', 'Rebalance crypto revenue into operating currencies, or park cash in stablecoins between payment runs.'],
   },
   {
-    id: 'marketplaces',
-    glow: 'blue',
-    title: 'Marketplaces',
-    // [CONFIRM: a scenario for the clients of a client; the border with Mass Payouts]
-    description: ['Fund user balances from bank transfers.', 'Pay users out to their local banks'],
-  },
-  {
-    id: 'import-export',
-    glow: 'green',
-    title: 'Trade',
-    // [CONFIRM: the coin]
-    description: ['Pay suppliers abroad in USDT.', 'Fund it from your own bank account'],
-  },
-  {
-    id: 'agencies',
-    title: 'Freelancers',
-    // [CONFIRM: the rail of the payout]
-    description: ['Turn crypto from clients into local currency.', 'Cash out to your bank by a local rail'],
+    id: 'otc',
+    title: 'OTC',
+    description: ['Large tickets, one desk.', 'For high-value conversions, our OTC desk quotes and executes with you directly.'],
   },
 ]
 
 const faqItems: readonly FaqItemData[] = [
   {
     id: 'cost',
-    question: 'How much does it cost?',
-    // [CONFIRM: 0.5% is from the card of the home page (design); a fee or a margin of the rate; steps by volume; may it be named on the page]
-    lead: 'Rates from 0.5%.',
-    answer: 'The final fee depends on your flow. Book a demo and we will walk you through it.',
+    question: 'What does conversion cost?',
+    answer: 'Fees start from 0.0%. Your exact price depends on the corridors and volumes you need: book a call and we will send you a quote.',
   },
   {
-    id: 'rate',
-    question: 'How long is the rate locked?',
-    // [CONFIRM: 30 seconds is the decision of the designer, not of the product; what happens after]
-    lead: 'For 30 seconds.',
-    answer: 'Then the quote updates, so you confirm a current rate.',
+    id: 'directions',
+    question: 'Do you support both on-ramp and off-ramp?',
+    answer: 'Yes. Money to crypto and crypto to money run through the same integration.',
   },
   {
-    id: 'rails',
-    question: 'Which banks and payment rails do you support?',
-    // [CONFIRM: "15+" is from the Global block of the design; does it belong to the ramp; the list by country]
-    lead: '15+ direct local rails.',
-    answer: 'Tell us your country and currency, and we will confirm the rails for it.',
-  },
-  {
-    id: 'coins',
-    question: 'Which coins and networks can I use?',
-    // [CONFIRM: coins and networks]
-    lead: 'Tell us what you hold.',
-    answer: 'We will confirm the coins and networks available for your flow during the demo.',
-  },
-  {
-    id: 'wallet',
-    question: 'Do I need my own wallet?',
-    // [CONFIRM: own wallet or a wallet of Velant (Wallet on the home page is "Coming soon")]
-    lead: 'You choose the address and the network.',
-    answer: 'We will confirm the wallet options for your setup during the demo.',
-  },
-  {
-    id: 'limits-time',
-    question: 'How much can I convert, and how fast?',
-    // [CONFIRM: limits, times by rail]
-    lead: 'It depends on the rail and the network.',
-    answer: 'We will confirm limits and typical times for your setup during the demo.',
+    id: 'large',
+    question: 'Can I convert large amounts?',
+    answer: 'Yes. Large tickets go to our OTC desk, which quotes and executes with you directly.',
   },
   {
     id: 'start',
-    question: 'How do I get started?',
-    // [CONFIRM: does "from 1 week" hold for the ramp] (lead and answer are from the home page and Crypto Processing)
-    lead: 'From 1 week.',
-    answer: 'Book a demo, pass KYB, and send your first live transaction. KYB is included as part of the onboarding process.',
-  },
-  {
-    id: 'licence',
-    question: 'What licence do you have?',
-    answer: 'Velant Pay operates under a Canadian MSB licence and works with licensed third-party financial providers.',
+    question: 'What do I need to get started?',
+    answer: 'A completed KYB check with our compliance team. Integration typically takes from one week, with KYB done during onboarding.',
   },
 ]
 
@@ -139,7 +81,7 @@ export const ramp: ProductContent = {
       { product: 'mass-payouts', description: 'Fund a batch from your balance.' },
     ],
   },
-  industries: { items: industries, activeId: 'fintech' },
+  industries: { items: industries, activeId: 'platforms-psps' },
   faq: { items: faqItems, openId: 'cost' },
   cta: { title: 'Ready to move money both ways?', subtitle: "We'll walk through a transfer from bank to wallet and back." },
 }
