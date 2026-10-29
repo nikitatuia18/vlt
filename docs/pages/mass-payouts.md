@@ -86,7 +86,7 @@ Header → `mass-payouts__hero` → Logos → `mass-payouts__batch` → `mass-pa
 |---|---|---|---|
 | `mass-payouts__hero` | что это, масштаб | One balance, / any number of recipients. | Большая карточка: слева облако точек = баланс (USDT), справа плавающие точки = получатели; под картинкой ползунок 10 / 250 / 1,000 / 10,000, «Pay everyone», счётчик «Paid 0 of 1,000», строка итога |
 | `logos` | доверие | — | как на главной |
-| `mass-payouts__batch` | как добавить список, что проверяется | Bring your list. We check it. | Переключатель CSV / API / Schedule; CSV: drop-зона и «Use sample CSV», 10 строк с проверкой ✓, ошибка «IBAN missing» и «Fix», итог «Batch ready»; API: печатается запрос, приходит тот же батч; Schedule: каждое 1-е число, следующий запуск |
+| `mass-payouts__batch` | как добавить список, что проверяется | Upload, validate, approve, pay. | Переключатель CSV / API / Schedule; CSV: drop-зона и «Use sample CSV», 10 строк с проверкой ✓, ошибка «IBAN missing» и «Fix», итог «Batch ready»; API: печатается запрос, приходит тот же батч; Schedule: каждое 1-е число, следующий запуск |
 | `mass-payouts__routing` | как платим, сбои, отчёт | Everyone is paid their way. | Доска из трёх полос; получатели сами садятся по стране, их можно перетащить; «Pay»: статусы, один сбой повторяется сам; итог «Paid 10 · Retried 1» и «Download report» |
 | `industries` | для кого | общий («Industry-first scenarios») | данные ниже |
 | `faq` | детали | общий | данные ниже |
@@ -176,7 +176,7 @@ Header → `mass-payouts__hero` → Logos → `mass-payouts__batch` → `mass-pa
 
 | data-el | Текст | Знаков | Статус |
 |---|---|---|---|
-| `mass-payouts__batch-title` | Bring your list. We check it. | 29 | черновик (вариант B) |
+| `mass-payouts__batch-title` | Upload, validate, approve, pay. | 30 | заголовок дизайнера 2026-10-29 (был вариант B «Bring your list. We check it.») |
 | `mass-payouts__batch-intro` | Upload a CSV file, send the list through the API, or run it on a schedule. Pick a source and see the batch appear. | 114 | черновик `[CONFIRM: три способа добавить список]` (запасной: «Pick a source and watch the list turn into a batch.», 51) |
 
 ### Переключатель источника (внутри сцены)

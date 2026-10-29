@@ -84,9 +84,9 @@ export const massPayouts: ProductContent = {
   cta: { title: 'Ready to send your first batch?', subtitle: "We'll build a sample batch with your countries and payout methods." },
 }
 
-/** Block 1: "Bring your list. We check it." (the scene is in BatchScene.tsx, its texts in sceneText.ts). */
+/** Block 1: "Upload, validate, approve, pay." (the scene is in BatchScene.tsx, its texts in sceneText.ts). */
 export const batchContent = {
-  title: 'Bring your list. We check it.',
+  title: 'Upload, validate, approve, pay.',
   // [CONFIRM: the three ways to add a list]
   intro: 'Upload a CSV file, send the list through the API, or run it on a schedule. Pick a source and see the batch appear.',
 } as const

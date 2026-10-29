@@ -21,7 +21,7 @@ const dark = `${pill} bg-surface-inverse text-typography-inverse hover:opacity-9
 const light = `${pill} bg-surface-subtle text-typography-primary ring-1 ring-border-subtle ring-inset hover:bg-surface-hover`
 
 /**
- * Block 1 of the Mass Payouts page: "Bring your list. We check it." `mass-payouts__batch`.
+ * Block 1 of the Mass Payouts page: "Upload, validate, approve, pay." `mass-payouts__batch`.
  * One list becomes a batch in three ways (a switch): a CSV file (drop one, or use the sample: the rows appear and are checked, one has an error and a "Fix"),
  * a request to the API (it is typed, and the same batch comes back checked), or a schedule (every month on the 1st). Each way keeps its own state.
  * Texts inside the scene are part of the picture: they are not revealed by words.
