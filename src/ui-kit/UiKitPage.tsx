@@ -11,6 +11,7 @@ import { Footer } from '../components/ui/Footer'
 import { Header } from '../components/ui/Header'
 import { MenuToggleIcon } from '../components/ui/Header/MenuToggleIcon'
 import { PlusMinusIcon } from '../components/ui/PlusMinusIcon'
+import { RevealLines } from '../motion/reveal'
 import { CornerDots } from '../components/ui/CornerDots'
 import { Icon } from '../components/ui/Icon'
 import { IconButton } from '../components/ui/IconButton'
@@ -261,6 +262,16 @@ export default function UiKitPage() {
             <MorphIcons />
             <p className="type-body-sm max-w-110 text-typography-secondary">
               Icons that change shape: MenuToggleIcon (burger to cross) and PlusMinusIcon (plus to minus), 0.4 s (duration.morph). Press them.
+            </p>
+          </div>
+          <div className="mt-6 flex flex-wrap items-center gap-6">
+            <RevealLines
+              as="p"
+              className="type-heading-xl text-typography-primary"
+              lines={[[{ text: 'Cash' }, { text: '⇄', icon: 'swap' }, { text: 'crypto.' }]]}
+            />
+            <p className="type-body-sm max-w-110 text-typography-secondary">
+              An icon inside a line of text: a segment with icon (InlineIcon, 1 em, the color of the text) rises from its mask like a word; its text stays for readers.
             </p>
           </div>
         </Section>

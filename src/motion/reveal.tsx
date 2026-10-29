@@ -5,7 +5,7 @@ import { motionTags, variants, type Tag, type Variant } from './revealVariants'
 import { easeOut } from './tokens'
 import { useFontsReady, useRevealOn } from './useReveal'
 
-export { RevealLines, type TextReveal } from './RevealLines'
+export { RevealLines, type Line, type Segment, type TextReveal } from './RevealLines'
 
 /*
  * Appearance of the page (docs/reveal.motion.md). A few ready-made ways to appear, used by all blocks, so the whole site moves

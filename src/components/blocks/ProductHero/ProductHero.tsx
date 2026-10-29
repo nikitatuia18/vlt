@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { Reveal, RevealLines } from '../../../motion/reveal'
+import { Reveal, RevealLines, type Line } from '../../../motion/reveal'
 import { ButtonLink } from '../../ui/ButtonLink'
 import { Container } from '../../ui/Container'
 import { InteractiveDots } from '../../ui/InteractiveDots'
@@ -7,8 +7,8 @@ import { InteractiveDots } from '../../ui/InteractiveDots'
 export type ProductHeroProps = {
   /** Slug of the product: the `data-el` of the block is `{product}__hero`. */
   product: string
-  /** The heading, one string per line. */
-  title: readonly string[]
+  /** The heading, one entry per line; an entry may be a list of segments when a part has its own color or is an icon (see `RevealLines`). */
+  title: readonly Line[]
   subtitle: string
   primaryCta: { label: string; href: string }
   secondaryCta: { label: string; href: string }

@@ -1,14 +1,29 @@
 import { motion, type Variants } from 'motion/react'
 import { createElement, useEffect, useRef, useState, type RefObject, type Ref } from 'react'
+import { InlineIcon, type InlineIconName } from '../components/ui/InlineIcon'
 import { motionTags } from './revealVariants'
 import { useTriggerProps, type Trigger } from './revealTrigger'
 import { appear, easeOut } from './tokens'
 import { useRevealOn } from './useReveal'
 
-/** A piece of a line with its own class (for example the first words of an answer in a stronger color). */
-type Segment = { text: string; className?: string }
-type Line = string | readonly Segment[]
+/**
+ * A piece of a line with its own class (for example the first words of an answer in a stronger color).
+ * With `icon` the piece is one "word" drawn as that icon (it rises from its mask like the words); `text` is then what readers and copy get.
+ */
+export type Segment = { text: string; className?: string; icon?: InlineIconName }
+export type Line = string | readonly Segment[]
 const segmentsOf = (line: Line): readonly Segment[] => (typeof line === 'string' ? [{ text: line }] : line)
+
+/** The content of a word: its text, or for an icon the icon with the text kept for readers (screen readers, copy, search). */
+const textOf = (text: string, icon?: InlineIconName) =>
+  icon ? (
+    <>
+      <InlineIcon name={icon} />
+      <span className="sr-only">{text}</span>
+    </>
+  ) : (
+    text
+  )
 
 /** How the text of a part of the design system (a button label, a badge) appears: the same options as RevealLines. */
 export type TextReveal = { delay?: number; atLoad?: boolean; when?: boolean; atPageEnd?: boolean; open?: boolean; step?: number }
@@ -107,7 +122,7 @@ export function RevealLines({ lines, as = 'h2', by = 'word', step, open, joinBel
         <span key={index} className={lineBox}>
           {segmentsOf(line).map((segment, segmentIndex, all) => (
             <span key={segmentIndex} className={segment.className}>
-              {segment.text}
+              {textOf(segment.text, segment.icon)}
               {segmentIndex < all.length - 1 ? ' ' : null}
             </span>
           ))}
@@ -125,14 +140,17 @@ export function RevealLines({ lines, as = 'h2', by = 'word', step, open, joinBel
         {lines.map((line, lineIndex) => (
           <span key={lineIndex} className={lineBox}>
             {segmentsOf(line)
-              .flatMap((segment) => segment.text.split(' ').filter(Boolean).map((word) => ({ word, wordClass: segment.className })))
-              .map(({ word, wordClass }, wordIndex) => (
+              .flatMap((segment) =>
+                // An icon is one word, whatever its text is.
+                (segment.icon ? [segment.text] : segment.text.split(' ').filter(Boolean)).map((word) => ({ word, wordClass: segment.className, icon: segment.icon })),
+              )
+              .map(({ word, wordClass, icon }, wordIndex) => (
                 <span key={wordIndex} className={wordClass}>
                   {wordIndex > 0 ? ' ' : null}
                   {/* Every word has its own mask (a little taller below and wider at the sides, so the tails of g, y are not cut). */}
                   <span data-mask="" className="-mx-[0.06em] -mb-[0.16em] inline-block overflow-hidden px-[0.06em] pb-[0.16em] align-top">
                     <motion.span className="inline-block" style={growFrom} variants={wordVariants} custom={delay + counted++ * gap}>
-                      {word}
+                      {textOf(word, icon)}
                     </motion.span>
                   </span>
                 </span>

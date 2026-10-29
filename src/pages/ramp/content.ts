@@ -57,12 +57,16 @@ const faqItems: readonly FaqItemData[] = [
 export const ramp: ProductContent = {
   meta: {
     title: 'Crypto to Cash — Velant Pay',
-    // DRAFT [CONFIRM: 0.5%, payout to a bank]
-    description: 'Convert between fiat and crypto with rates from 0.5%. Deposit from your bank, receive crypto in your wallet, or pay out to your bank.',
+    // DRAFT [CONFIRM: 0.0%, payout to a bank]
+    description: 'Convert between fiat and crypto with fees from 0.0%. Deposit from your bank, receive crypto in your wallet, or pay out to your bank.',
   },
   hero: {
     product: 'ramp',
-    title: ['Move money between', 'your bank and your wallet.'],
+    // The designer's heading (2026-10-29): an arrow icon between the words, the fee in the brand color.
+    title: [
+      [{ text: 'Cash' }, { text: '⇄', icon: 'swap' }, { text: 'crypto.' }],
+      [{ text: 'From' }, { text: '0.0%.', className: 'text-typography-brand' }],
+    ],
     // [CONFIRM: the rate and the fee are shown before the confirmation (as in the scene); "crypto": which coins]
     subtitle: 'Turn fiat into crypto and back. See the fee and the rate before you convert.',
     primaryCta: bookDemo,

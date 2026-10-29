@@ -53,7 +53,9 @@ for (const viewport of viewports) {
 test('the page has one h1, the blocks stand in the planned order and the shared blocks carry the texts of the product', async ({ page }) => {
   await open(page, 1440, 900)
   await expect(page.locator('h1')).toHaveCount(1)
-  await expect(page.locator('h1')).toHaveText(ramp.hero.title.join(' '))
+  // The lines are lists of segments (an arrow icon and a coloured fee); the icon keeps its text for readers.
+  const lineText = (line: (typeof ramp.hero.title)[number]) => (typeof line === 'string' ? line : line.map((segment) => segment.text).join(' '))
+  await expect(page.locator('h1')).toHaveText(ramp.hero.title.map(lineText).join(' '))
   const order = await page.locator('main > section').evaluateAll((nodes) => nodes.map((node) => node.getAttribute('data-el')))
   expect(order).toEqual(['ramp__hero', 'ramp__routes', 'ramp__quote', 'works-with', 'industries', 'faq', 'cta'])
   await expect(el(page, 'cta__title')).toHaveText(ramp.cta.title!)
