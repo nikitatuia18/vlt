@@ -76,7 +76,7 @@ export const ramp: ProductContent = {
       { product: 'mass-payouts', description: 'Fund a batch from your balance.' },
     ],
   },
-  industries: { items: industries, activeId: 'platforms-psps' },
+  industries: { items: industries, activeId: 'platforms-psps', eyebrow: "Who it's for", title: 'Platforms, treasuries and traders.' },
   faq: { items: faqItems, openId: 'cost' },
   cta: { title: 'Ready to move money both ways?', subtitle: "We'll walk through a transfer from bank to wallet and back." },
 }

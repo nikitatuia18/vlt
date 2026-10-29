@@ -79,7 +79,7 @@ export const massPayouts: ProductContent = {
       { product: 'invoicing', description: 'Pay suppliers against their invoices.' },
     ],
   },
-  industries: { items: industries, activeId: 'payroll' },
+  industries: { items: industries, activeId: 'payroll', eyebrow: "Who it's for", title: 'Pay people anywhere, on schedule.' },
   faq: { items: faqItems, openId: 'rails' },
   cta: { title: 'Ready to send your first batch?', subtitle: "We'll build a sample batch with your countries and payout methods." },
 }

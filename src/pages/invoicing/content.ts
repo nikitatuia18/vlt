@@ -79,7 +79,7 @@ export const invoicing: ProductContent = {
       { product: 'mass-payouts', description: 'Pay contractors from the same balance.' },
     ],
   },
-  industries: { items: industries, activeId: 'startups' },
+  industries: { items: industries, activeId: 'startups', eyebrow: "Who it's for", title: 'For businesses whose clients hold crypto.' },
   faq: { items: faqItems, openId: 'account' },
   cta: { title: 'Ready to get paid in crypto?', subtitle: "We'll show how an invoice goes from created to reconciled." },
 }

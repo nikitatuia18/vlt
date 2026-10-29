@@ -33,9 +33,13 @@ export type IndustriesProps = {
   items?: readonly IndustryItemData[]
   /** The item that is open first with reduced motion. Default: the one of the design (Startups). */
   activeId?: string
+  /** The heading of the block. Default: the one of the home page. */
+  title?: string
+  /** A small line above the heading (product pages: "Who it's for"). Default: none. */
+  eyebrow?: string
 }
 
-export function Industries({ items = industries, activeId = DESIGN_ACTIVE_ID }: IndustriesProps = {}) {
+export function Industries({ items = industries, activeId = DESIGN_ACTIVE_ID, title = 'From first payment to final payout.', eyebrow }: IndustriesProps = {}) {
   const designActiveIndex = Math.max(0, items.findIndex((item) => item.id === activeId))
   // The hues that exist in the list (one glow layer each; they cross-fade).
   const glowHues = [...new Set(items.flatMap((item) => (item.glow ? [item.glow] : [])))] as GlowHue[]
@@ -147,12 +151,20 @@ export function Industries({ items = industries, activeId = DESIGN_ACTIVE_ID }: 
               data-el="industries__slider"
               className="relative flex flex-col items-center gap-8 will-change-transform tablet:gap-10 desktop:gap-12 desktop:px-10"
             >
-              <div data-el="industries__header" className="flex w-full flex-col items-center text-center">
+              <div data-el="industries__header" className="flex w-full flex-col items-center gap-3 text-center">
+                {eyebrow && (
+                  <RevealLines
+                    as="p"
+                    data-el="industries__eyebrow"
+                    className="type-body-md text-typography-secondary tablet:type-body-lead"
+                    lines={[eyebrow]}
+                  />
+                )}
                 <RevealLines
                   id="industries-title"
                   data-el="industries__title"
                   className="type-heading-lg max-w-156 text-typography-primary tablet:type-heading-xl min-[64rem]:type-display-sm"
-                  lines={['From first payment to final payout.']}
+                  lines={[title]}
                 />
               </div>
 

@@ -87,7 +87,7 @@ export const cryptoProcessing: ProductContent = {
       { product: 'mass-payouts', description: 'Pay teams and partners in one batch.' },
     ],
   },
-  industries: { items: industries, activeId: 'luxury-automotive' },
+  industries: { items: industries, activeId: 'luxury-automotive', eyebrow: "Who it's for", title: 'Made for high-value and cross-border sales.' },
   faq: { items: faqItems, openId: 'assets' },
   cta: { title: 'Ready to accept crypto payments?', subtitle: "We'll map the path from your client's wallet to your account." },
 }
