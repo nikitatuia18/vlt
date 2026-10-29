@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test'
-import { invoicing, stepsContent } from '../src/pages/invoicing/content'
+import { factsContent, invoicing, stepsContent } from '../src/pages/invoicing/content'
 import { formatMoney, INVOICE_NO, totals, type Draft } from '../src/pages/invoicing/demo'
 
 const viewports = [
@@ -40,7 +40,11 @@ test('the page has one h1, the blocks stand in the planned order and the shared 
   await expect(page.locator('h1')).toHaveCount(1)
   await expect(page.locator('h1')).toHaveText(invoicing.hero.title.join(' '))
   const order = await page.locator('main > section').evaluateAll((els) => els.map((el) => el.getAttribute('data-el')))
-  expect(order).toEqual(['invoicing__hero', 'invoicing__steps', 'works-with', 'industries', 'faq', 'cta'])
+  expect(order).toEqual(['invoicing__hero', 'invoicing__steps', 'invoicing__facts', 'works-with', 'industries', 'faq', 'cta'])
+  for (const fact of factsContent.items) {
+    await expect(page.locator(`[data-el="invoicing__fact-${fact.id}-value"]`)).toHaveText(fact.value)
+    await expect(page.locator(`[data-el="invoicing__fact-${fact.id}-text"]`)).toHaveText(fact.text)
+  }
   await expect(page.locator('[data-el="cta__title"]')).toHaveText(invoicing.cta.title!)
   await expect(page.locator('[data-el="faq__list"] > li')).toHaveCount(invoicing.faq.items!.length)
   await expect(page.locator('[data-el="industries__list"] > li')).toHaveCount(invoicing.industries.items!.length)

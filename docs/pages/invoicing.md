@@ -136,7 +136,7 @@ Header → `invoicing__hero` → Logos → `invoicing__steps` → Industries →
 | data-el | Текст | Знаков | Статус |
 |---|---|---|---|
 | `invoicing__hero-title` | Invoice in local currency. / Let clients pay in crypto. (две строки) | 26 + 26 | черновик (вариант A) |
-| `invoicing__hero-subtitle` | Bill your client in their own currency. They pay in crypto, the payment finds its invoice, and you see every status on the way. | 127 | черновик `[CONFIRM: что получает компания (валюта, куда); где видны статусы: кабинет, API]` |
+| `invoicing__hero-subtitle` | Bill your client in their own currency. The amount is fixed, so the exchange rate is never their risk. They pay in crypto and the payment finds its invoice. | 150 | черновик (2026-10-29: главная фишка — курсовой риск не на клиенте, по замечанию дизайнера) `[CONFIRM: что получает компания (валюта, куда); где видны статусы: кабинет, API]` |
 | `invoicing__hero-cta-primary` | Book a demo | 11 | макет |
 | `invoicing__hero-cta-secondary` (якорь на `invoicing__steps`) | See how it works | 16 | черновик (как на Crypto Processing) |
 

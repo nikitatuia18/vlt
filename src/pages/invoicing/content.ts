@@ -66,8 +66,9 @@ export const invoicing: ProductContent = {
   hero: {
     product: 'invoicing',
     title: ['Invoice in local currency.', 'Let clients pay in crypto.'],
+    // The main point is that the exchange-rate risk is not on the client (designer's note 2026-10-29).
     // [CONFIRM: what the company receives (currency, where to); where the statuses are seen: a dashboard, the API]
-    subtitle: 'Bill your client in their own currency. They pay in crypto, the payment finds its invoice, and you see every status on the way.',
+    subtitle: 'Bill your client in their own currency. The amount is fixed, so the exchange rate is never their risk. They pay in crypto and the payment finds its invoice.',
     primaryCta: bookDemo,
     secondaryCta: { label: 'See how it works', href: '#how-it-works' },
   },
@@ -83,6 +84,16 @@ export const invoicing: ProductContent = {
   faq: { items: faqItems, openId: 'account' },
   cta: { title: 'Ready to get paid in crypto?', subtitle: "We'll show how an invoice goes from created to reconciled." },
 }
+
+/** The strip of three facts under the steps (`InvoiceFacts.tsx`). DRAFT [CONFIRM: "any wallet", the fixed amount, round-the-clock payments]. */
+export const factsContent = {
+  label: 'Invoicing in numbers',
+  items: [
+    { id: 'link', value: '1 link', text: 'per invoice, payable from any wallet' },
+    { id: 'fx', value: '0%', text: 'FX risk: the amount is fixed in your currency' },
+    { id: 'hours', value: '24/7', text: 'clients can pay any day, at any hour' },
+  ],
+} as const
 
 /** The block of three steps (the scenes are in StepCreate.tsx, StepSend.tsx, StepPay.tsx; their texts in sceneText.ts). */
 export const stepsContent = {
