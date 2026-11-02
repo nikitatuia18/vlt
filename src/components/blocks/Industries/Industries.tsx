@@ -73,7 +73,10 @@ export function Industries({ items = industries, activeId = DESIGN_ACTIVE_ID, ti
   // With reduced motion the block is a plain one that shows the dark scene of Startups at once: it darkens the site only while it is on the screen.
   const sectionRef = useRef<HTMLElement>(null)
   const onScreen = useInView(sectionRef, { amount: 0.3 })
-  const darkScene = glow && (!reducedMotion || onScreen)
+  // The pinned stage is a screen high, so half of it on screen means the scene is really being watched. Without this check a list that
+  // starts with a glowing item (the product pages have no intro card) would hold the whole site dark from the first load.
+  const stageOnScreen = useInView(stageRef, { amount: 0.5 })
+  const darkScene = glow && (reducedMotion ? onScreen : stageOnScreen)
   useForcedTheme(darkScene ? 'dark' : null, { origin: { x: 0.5, y: 0.5 } })
 
   // Far from the block (a screen above or below, the margin also covers the stage that hangs out below the block) nothing is measured:
